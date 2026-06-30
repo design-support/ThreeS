@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>設計項目選択</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .choice-panel { display: flex; flex-direction: column; align-items: flex-start; margin: 40px auto 0 auto; width: 300px; }
+    .choice-title { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
+    .radio-label { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+    .btn-panel { display: flex; justify-content: center; margin-top: 30px; }
+    .decision-btn { font-size: 18px; padding: 8px 32px; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onOpen()">記録</button>
+      <button onclick="onClose()">終了</button>
+    </div>
+  </nav>
+  <div class="choice-panel">
+    <div class="choice-title" id="choice-title">設計項目選択 ファイル名:</div>
+    <label class="radio-label"><input type="radio" name="choice" value="1">1.基本設計</label>
+    <label class="radio-label"><input type="radio" name="choice" value="2">2.ワイヤロープ</label>
+    <label class="radio-label"><input type="radio" name="choice" value="3">3.ドラム</label>
+    <label class="radio-label"><input type="radio" name="choice" value="4">4.減速比</label>
+    <label class="radio-label"><input type="radio" name="choice" value="5">5.歯車Ⅰ</label>
+    <label class="radio-label"><input type="radio" name="choice" value="6">6.つめ車装置</label>
+    <label class="radio-label"><input type="radio" name="choice" value="7">7.ブレーキ装置</label>
+    <label class="radio-label"><input type="radio" name="choice" value="8">8.軸</label>
+    <label class="radio-label"><input type="radio" name="choice" value="9">9.軸受と軸金具</label>
+    <label class="radio-label"><input type="radio" name="choice" value="10">10.歯車Ⅱ</label>
+    <label class="radio-label"><input type="radio" name="choice" value="11">11.フレーム</label>
+    <div class="btn-panel">
+      <button class="decision-btn" onclick="onDecision()">決定</button>
+    </div>
+  </div>
+  <script>
+    // ファイル名をセットする場合はここで
+    const fileName = localStorage.getItem('selectedFileName') || '';
+    document.getElementById('choice-title').textContent = '設計項目選択 ファイル名:' + fileName;
+
+    
+    function onOpen() {
+      // 単位付きで分かりやすく表示
+      const keyUnitMap = {
+         '区切り1': '----------基本設計----------',
+        'kihon_w': '最大巻上げ荷重[kN]',
+        'kihon_l': '揚程[m]',
+        '区切り2': '----------ワイヤロープ設計----------',
+        'rope_design_rope': 'ワイヤロープ選択',
+        'rope_design_break': '破断荷重[kN]',
+        'rope_dw': 'ワイヤロープ径[mm]',
+        'rope_sin': 'シンブルの呼び[mm]',
+        '区切り3': '----------ドラム設計----------',
+        'drum_Dd': 'ドラム直径[mm]',
+        'drum_p': 'ドラムの溝ピッチ[mm]',
+        'drum_l0': 'ドラム長さ[mm]',
+        'makisuu': 'ワイヤロープ巻き数',
+        'drum_lw1':'ドラムに巻き付ける長さ[m]',
+        'drum_lw2': 'スプライスに要する長さ[m]',
+        'drum_lw': 'シンブルに巻き付ける長さ[m]',
+        'total_W': 'ワイヤロープを加味した巻き上げ荷重[kN]',
+        'drum_td': 'ドラムの肉厚[mm]',
+        'drum_Df': '爪側のフランジ直径[mm]',
+        'drum_tf': '爪側フランジの厚さ[mm]',
+        'drum_df': 'ワイヤロープとめ金具直径[mm]',
+        'drum_dbolt': 'ドラム取付ボルトの径[mm]',
+        'drum_d1bolt': '座の外径[mm]',
+        'drum_b': '座の厚さ[mm]',
+        'drum_lbolt': 'ボルトのねじ込み深さ[mm]',
+        'drum_n': 'ドラム取付ボルトの数[-]',
+        'drum_Ddbolt': 'ボルト穴ピッチ円直径[mm]',
+        'drum_d': 'リーマボルトの径[mm]',
+        'drum_Dfgear': '歯車側のフランジ直径[mm]',
+        'handle_Lh': 'ハンドルの長さ[mm]',
+        '区切り4': '----------減速比、歯車設計----------',
+        'reduction ratio_i': '減速比[-]',
+        'gear_zb': 'B歯車の歯数[-]',
+        'gear_zd': 'D歯車の歯数[-]',
+        'gear_T1': 'ハンドル軸に作用するトルク[N・mm]',
+        'gear_T2': '中間軸に作用するトルク[N・mm]',
+        'gear_m': 'モジュール[mm]',
+        'gear_t': '円ピッチ[mm]',
+        'gear_da': 'A歯車のピッチ円直径[mm]',
+        'gear_db': 'B歯車のピッチ円直径[mm]',
+        'gear_dc': 'C歯車のピッチ円直径[mm]',
+        'gear_dd': 'D歯車のピッチ円直径[mm]',
+        'gear_dKA': 'A歯車の歯先円直径[mm]',
+        'gear_dKB': 'B歯車の歯先円直径[mm]',
+        'gear_dKC': 'C歯車の歯先円直径[mm]',
+        'gear_dKD': 'D歯車の歯先円直径[mm]',
+        'gear_h': '全歯たけ[mm]',
+        'gear_hk': '歯末のたけ[mm]',
+        'gear_hf': '歯元のたけ[mm]',
+        'gear_b': '歯幅[mm]',
+        'gear_C': 'すきま[mm]',
+        '区切り5': '----------つめ車設計----------',
+        'claw_z': 'つめ車の歯数[-]',
+        'claw_Pc': 'つめ車の円ピッチ[mm]',
+        'claw_DR': 'つめ車の歯先円直径[mm]',
+        'claw_h': 'つめ車の歯の高さ[mm]',
+        'claw_t0': 'つめ車の歯元の厚さ[mm]',
+        'claw_b': '角すみを考慮しないつめ車の歯幅[mm]',
+        'claw_T': 'リムの厚さ[mm]',
+        'claw_R': '角すみのＲ[mm]',
+        'claw_p': '摩擦角[°]',
+        'claw_totalb': 'つめ車の本来の歯幅[mm]',
+        'claw_P': 'つめ軸に作用するトルク[mm]',
+        'clae_lp': '幅[mm]',
+        'claw_d': 'つめ軸の軸径[mm]',
+        'claw_d’': 'フレームとの取り付け部の直径[mm]',
+        'claw_dp': 'つめの座の外径[mm]',
+        'claw_C': 'つめ軸とつめ車の隙間[mm]',
+        'claw_l': 'つめの長さ[mm]',
+        'claw_A': '柱部の中央の面積[mm^2]',
+        'claw_I': '断面の最小二次モーメント[mm^4]',
+        'claw_k': '最小断面二次半径[mm]',
+        'claw_lambda': '細長比[-]',
+        'claw_buckling': '爪の座屈強さ[N]',
+        '区切り6': '----------ブレーキ設計----------',
+        'brake_DB': 'ブレーキドラムの外径[mm]',
+        'brake_Q0': '制動力[kN]',
+        'brake_T1': 'ブレーキ張り側の張力[kN]',
+        'brake_T2': 'ブレーキゆるみ側の張力[kN]',
+        'brake_b': 'ブレーキレバーの幅[mm]',
+        'brake_b1': 'ブレーキレバーの板厚[mm]',
+        'brake_p1': '張り側の圧力[N/cm^2]',
+        'brakelever_d': '調整金具取付ピン直径[mm]',
+        'brakelever_l1': '控えボルトからT2の作用点までの距離[mm]',
+        'brakelever_l': 'ブレーキレバーの長さ[mm]',
+        'brakelever_b': 'ブレーキレバーの幅[mm]', 
+        'brakelever_b1': 'ブレーキレバーの板厚[mm]',
+        'brake_d': 'リベットの直径[mm]',
+        'brake_l': 'リベットの長さ[mm]',
+        'brake_n': 'リベットの本数[-]',
+        'brake_p': 'リベットのピッチ[mm]',
+        'brake_kouritu': '帯幅効率[-]',
+        'brakebelt_b': 'ブレーキ帯の帯幅[mm]',
+        'brake_e1': 'マージンe1[mm]',
+        'brake_e2': 'マージンe2[mm]',
+        'brake_d2': '調節ボルトの外径[mm]',
+        'brake_d3': '調節金具の径d3[mm]',
+        'brake_t0': '調節ボルトの板厚[mm]',
+        'brakekanagu_n': '調節金具のねじ山数[-]',
+        'brake_t2': '調節金具のねじ部の長さ[mm]',
+        'brakekanagu_b': '調節金具の幅[mm]',
+        'brake_t1': '調節金具の厚さ[mm]',
+        'brake_itaatu': 'ブレーキレバーの板厚[mm]',
+        'brake_C': '調節金具の間の距離[mm]',
+        'brake_l1': '帯幅中心から反力R0の作用点までの距離[mm]',
+        'brake_l2': '帯幅の中心からブラケットの座の厚さの中心までの距離[mm]',
+        'brake_R0': 'T1の反力としてブラケット自由端に作用する力[N]',
+        'brake_lb1': 'ブレーキ帯取付ピンからブラケットの座の上端までの距離[mm]',
+        'brake_lb2': 'ブラケット取付ボルトから座の上端までの距離[mm]',
+        'brake_W1': 'ブレーキ帯取付ピンのねじ部に作用する力[N]',
+        'brake_W2': 'ブラケット取付ボルトに作用する力[N]',
+        'brakebracket-bolt_d': '取付ボルトの谷の径[mm]',
+        'brakebracket-bolt_n': 'ねじ山の数[mm]',
+        'brakebracket-bolt_l': '有効締め付け長さ[mm]',
+        'brakebracket-pin_d': 'ブレーキ帯取付ピンの外径（太いほう）[mm]',
+        'brakebracket-pin_d1': 'ブレーキ帯取付ピンのおねじの谷径（細いほう）[mm]',
+        'shaft_S0': '四角形状の辺長さ[mm]',
+        'shaft_ds1': 'ハンドル軸の直径[mm]',
+        'shaft_ds2': '中間軸の直径[mm]'
+      };
+      let msg = '保存された値一覧:\n';
+      let found = false;
+      // 表示順を揃えるために明示的な配列で順番を定義
+      const orderedKeys = [
+        '区切り1','kihon_w','kihon_l','区切り2','rope_design_rope','rope_design_break','rope_dw','rope_sin',
+        '区切り3','drum_Dd','drum_p','drum_l0','makisuu','drum_lw1','drum_lw2','drum_lw','total_W',
+        'drum_td','drum_Df','drum_tf','drum_df','drum_dbolt','drum_d1bolt','drum_b','drum_lbolt',
+        'drum_n','drum_Ddbolt','drum_d','drum_Dfgear','区切り4', 'handle_Lh', 'reduction ratio_i',
+        'gear_zb', 'gear_zd', 'gear_T1', 'gear_T2', 'gear_m', 'gear_t', 'gear_da', 'gear_db', 'gear_dc',
+        'gear_dd', 'gear_dKA', 'gear_dKB', 'gear_dKC', 'gear_dKD', 'gear_h', 'gear_hk', 'gear_hf',
+        'gear_b','gear_C','区切り5','claw_z','claw_Pc','claw_DR','claw_h','claw_t0','claw_b','claw_T',
+        'claw_R','claw_p','claw_totalb','claw_P','clae_lp','claw_d','claw_d’','claw_dp','claw_C',
+        'claw_l','claw_A','claw_I','claw_k','claw_lambda','claw_buckling','区切り6','brake_DB','brake_Q0',
+        'brake_T1','brake_T2','brake_b','brake_b1','brake_p1','brakelever_d','brakelever_l1',
+        'brakelever_l','brakelever_b','brakelever_b1', 'brake_d', 'brake_l', 'brake_n', 'brake_p',
+        'brake_kouritu', 'brakebelt_b', 'brake_e1', 'brake_e2', 'brake_d2', 'brake_d3', 'brake_t0',
+        'brakekanagu_n', 'brake_t2', 'brakekanagu_b', 'brake_t1', 'brake_itaatu', 'brake_C',
+        'brake_l1', 'brake_l2', 'brake_R0', 'brake_lb1', 'brake_lb2', 'brake_W1', 'brake_W2',
+        'brakebracket-bolt_d','brakebracket-bolt_n','brakebracket-bolt_l','brakebracket-pin_d','brakebracket-pin_d1'
+      ];
+      for (const key of orderedKeys) {
+        const val = localStorage.getItem(key);
+        if (keyUnitMap[key]) {
+          // 形式: 名前 数値 [単位]
+          const unitLabel = keyUnitMap[key];
+          if (val !== null) {
+            // ラベルから日本語部分と単位部分を分ける
+            const match = unitLabel.match(/^(.*?)\[(.*?)\]$/);
+            if (match) {
+              const name = match[1];
+              const unit = match[2];
+              msg += name + ' ' + val + ' [' + unit + ']\n';
+            } else {
+              msg += unitLabel + ' ' + val + '\n';
+            }
+          } else {
+            // 値がない場合はラベルだけ表示（区切りなど）
+            msg += unitLabel + '\n';
+          }
+          found = true;
+        }
+      }
+      if (!found) {
+        msg = '保存された値がありません';
+      }
+      // alert()の代わりにコンソール出力とDOMに表示
+      console.log(msg);
+      const newWindow = window.open();
+      newWindow.document.write('<pre style="font-family:monospace; margin:20px; font-size:14px;">' + msg.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
+      newWindow.document.close();
+    }
+
+
+    function onSelect() {
+      alert('選択ボタンが押されました');
+    }
+
+
+    function onClose() {
+      window.close();
+    }
+
+
+    function onDecision() {
+      const radios = document.getElementsByName('choice');
+      let selected = null;
+      for (const r of radios) {
+        if (r.checked) selected = r.value;
+      }
+      if (!selected) {
+        alert('項目を選択してください');
+        return;
+      }
+      alert('選択された項目: ' + selected);
+      if (selected === "1") {
+        window.location.href = "kihon.html";
+        return;
+      }
+      if (selected === "2") {
+        window.location.href = "rope_design2 - 統合.html";
+        return;
+      }
+      if (selected === "3") {
+        window.location.href = "drum_design_select.html";
+        return;
+      }
+      if (selected === "4") {
+        window.location.href = "reduction ratio_design.html";
+        return;
+      }
+      if (selected === "5") {
+        window.location.href = "gear_design.html";
+        return;
+      }
+      if (selected === "6") {
+        window.location.href = "claw_design_select.html";
+        return;
+      }
+      if (selected === "7") {
+        window.location.href = "brake_design_select.html";
+        return;
+      }
+      if (selected === "8") {
+        window.location.href = "shaft_design_select.html";
+        return;
+      }
+      // ここで各設計画面への遷移やデータチェック処理を追加
+    }
+  </script>
+</body>
+</html>

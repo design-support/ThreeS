@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラム設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="label">「ドラムの材質はFC250を使用」</div>
+    <div class="input-row">
+      <label for="Dd">ドラム直径<span class="font">DD</span>[mm]</label>
+      <input id="Dd" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Dd')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="p">ドラムの溝ピッチ<span class="font">p</span>[mm]</label>
+      <input id="p" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('p')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="l0">ドラム長さ<span class="font">l0</span>[mm]</label>
+      <input id="l0" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l0')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const DdVal = document.getElementById('Dd').value;
+      const pVal = document.getElementById('p').value;
+      const l0Val = document.getElementById('l0').value;
+      if (DdVal === null || DdVal.toString().trim() === '' || pVal === null || pVal.toString().trim() === '' || l0Val === null || l0Val.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        return;
+      }
+
+      // 入力値を数値に変換してチェック
+      const Dd = parseFloat(DdVal);
+      const p = parseFloat(pVal);
+      const l0 = parseFloat(l0Val);
+      if (isNaN(Dd) || isNaN(p) || isNaN(l0)) {
+        alert('ドラム直径、ドラム溝ピッチ、ドラム長さには有効な数値を入力してください');
+        return;
+      }
+      
+      // localStorage からワイヤロープ径 dw を取得して数値化（ここでチェックする）
+      const ropeDwStr = localStorage.getItem('rope_dw');
+      const dw = ropeDwStr !== null ? parseFloat(ropeDwStr) : NaN;
+      if (isNaN(dw)) {
+        alert('ワイヤロープ径が設定されていません。先にワイヤロープの選定を行ってください。');
+        return;
+      }
+
+      // localStorage から基準値 kihon_l を取得（ここでチェックする）
+      const kihonLStr = localStorage.getItem('kihon_l');
+      const kihon_l = kihonLStr !== null ? parseFloat(kihonLStr) : NaN;
+      if (isNaN(kihon_l)) {
+        alert('基準値 (kihon_l) が設定されていません。先に基本設計で値を入力してください。');
+        return;
+      }
+      
+
+  // rope_design_rope に応じて ropeteisuu を決定
+  const ropeChoice = localStorage.getItem('rope_design_rope');
+  let ropeteisuu = null;
+  // rope_design_rope の値に応じた係数を設定します（必要に応じて調整してください）
+  if (ropeChoice === '6x19') ropeteisuu = 22.0;
+  else if (ropeChoice === '6x24') ropeteisuu = 20.0;
+  else if (ropeChoice === '6x37') ropeteisuu = 16.2;
+  else ropeteisuu = 16.2; // デフォルト
+
+  // ropeteisuu を保存
+  localStorage.setItem('ropeteisuu', ropeteisuu);
+
+  // Ddanswer を計算して保存（要求: Ddanswer = dw * ropeteisuu）
+  // 小数が出た場合は切り上げて整数にする
+  const Ddanswer = Math.ceil(dw * ropeteisuu);
+  localStorage.setItem('Ddanswer', Ddanswer);
+
+  // 入力したドラム直径と計算した Ddanswer を比較し、入力が小さい場合は警告して中断
+  if (Dd < Ddanswer) {
+    alert('ドラム直径が小さいです。設計をやり直してください');
+    return;
+  }
+
+  if (Dd > Ddanswer+10) {
+    alert('ドラム直径が大きいです。設計をやり直してください。');
+    return;
+  }
+
+
+  // ドラム溝ピッチ p のチェック
+  const pdanswer = dw+2 ;
+  if (p < pdanswer-1) {
+    alert('ドラムの溝ピッチが小さいです。設計をやり直してください。 ');
+    return;
+  }
+
+  if (p > pdanswer+1) {
+    alert('ドラムの溝ピッチが大きいです。設計をやり直してください。');
+    return;
+  }
+    
+
+// 巻数（巻き数）を計算：基準長さ kihon_l をドラム円周 (Math.PI * Dd) で割って求める
+// 端数は切り上げ、+2 を余裕分として追加
+const makisuuanswer = Math.ceil(kihon_l *1000/ (Math.PI * Dd)) + 2;
+localStorage.setItem('makisuu', makisuuanswer);
+
+const l0answer =makisuuanswer*p+120;
+
+      if (l0 < l0answer-10) {
+        alert('ドラム長さが小さいです。計算をやり直してください');
+        return;
+      }
+      if (l0 > l0answer+10) {
+        alert('ドラム長さが大きいです。計算をやり直してください');
+        return;
+      }
+
+  // 値をlocalStorageに保存
+  localStorage.setItem('drum_Dd', Dd);
+  localStorage.setItem('drum_p', p);
+  localStorage.setItem('makisuu', makisuuanswer);
+  // ドラム長さを数値で保存
+  localStorage.setItem('drum_l0', l0);
+      alert('値が保存されました');
+      window.location.href = 'drum_design2.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+    function showHint(type) {
+      const dwVal = parseFloat(localStorage.getItem('rope_dw'));
+      const kihonVal = parseFloat(localStorage.getItem('kihon_l'));
+
+      if (type === 'Dd') {
+        const msg = '教科書 P.13 式（3.1）を参照してください。 ワイヤロープ径' +  (dwVal + ' [mm]で設計しています。');
+        alert(msg);
+      } else if (type === 'p') {
+        const msg = '教科書 P.16 式（3.4）を参照してください。 ワイヤロープ径: ' + ( dwVal + ' [mm]で設計しています。');
+        alert(msg);
+      } else if (type === 'l0') {
+        const msg = '教科書 P.16 式（3.4）を参照してください。 揚程: ' + (kihonVal + ' [m]で設計しています。止金具取付の余裕として120ほど足してください。');
+        alert(msg);
+      } else {
+        alert('ヒントがありません');
+      }
+    }
+  </script>
+</body>
+</html>

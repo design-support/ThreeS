@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラム設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="input-row">
+      <label for="n">ドラム取付ボルトの数<span class="font">n</span></label>
+      <input id="n" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('n')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="Dd">ボルト穴ピッチの直径<span class="font">Dd</span>[mm]</label>
+      <input id="Dd" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Dd')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d">リーマボルトの直径<span class="font">d</span>[mm]</label>
+      <input id="d" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="Df">歯車側のフランジ直径<span class="font">Df</span>[mm]</label>
+      <input id="Df" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Df')">ヒント</button>
+    </div>
+   
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+   
+    function onDecide() {
+      console.log('onDecide called');
+      try {
+        // デバッグログ: フォーム入力値の収集結果
+        console.log('inputs:', {
+          nVal: document.getElementById('n')?.value,
+          DdboltVal: document.getElementById('Dd')?.value,
+          dVal: document.getElementById('d')?.value,
+          DfVal: document.getElementById('Df')?.value
+        });
+      const nVal = document.getElementById('n').value;
+      const DdboltVal = document.getElementById('Dd').value;
+      const dVal = document.getElementById('d').value;
+      const DfVal = document.getElementById('Df').value;
+      // 必須チェック：未入力があればエラー
+      if (nVal === null || nVal.toString().trim() === '' || DdboltVal === null || DdboltVal.toString().trim() === '' || dVal === null || dVal.toString().trim() === '' || DfVal === null || DfVal.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        const firstEl = document.getElementById('n');
+        if (firstEl) firstEl.focus();
+        return;
+      }
+
+    
+
+      const n = parseFloat(nVal);
+      const Ddbolt = parseFloat(DdboltVal);
+      const d = parseFloat(dVal);
+      const Df = parseFloat(DfVal);
+
+
+ // localStorage からドラム直径 Dd を取得して数値化（ここでチェックする）
+      const drumDdStr = localStorage.getItem('drum_Dd');
+      const Dd = drumDdStr !== null ? parseFloat(drumDdStr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラム直径が設定されていません。先にドラム直径の選定を行ってください。');
+        return;
+      }
+      
+
+      const WStr = localStorage.getItem('total_W');
+      const W = WStr !== null ? parseFloat(WStr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。前の設計からやり直してください');
+        return;
+      }
+
+const Ddboltanswer=(Dd+60);
+
+ if (Ddbolt < Ddboltanswer-10) {
+    alert('ボルト穴ピッチの直径が小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (Ddbolt > Ddboltanswer+20) {
+    alert('ボルト穴ピッチの直径が大きいです。設計をやり直してください。');
+    return;
+  }
+
+const danswer =  Math.sqrt((8* 1000 * W*Dd*0.5) / (n * Math.PI * 40*(Dd+60)));
+
+ // danswer の許容範囲チェック: 6.646未満または19.294以上でエラー
+      if (typeof danswer === 'number' && (!isFinite(danswer) || danswer < 5.197 || danswer >= 13.834)) {
+        alert('停止: 算出された リーマボルトの径 が許容範囲外です（' + (isFinite(danswer) ? danswer.toFixed(2) : String(danswer)) + '）。設計を見直してください。');
+        return;
+      }
+
+//谷の径がボルトの直径になるようにする
+ let boltanswer = null;
+      if (danswer >= 5.197 && danswer <= 6.646) {
+      boltanswer = 8;
+      } else if (danswer > 6.646 && danswer <= 8.375) {
+      boltanswer = 10;
+      } else if (danswer > 8.375 && danswer <= 10.105) {
+      boltanswer = 12;
+      } else if (danswer > 10.105 && danswer <= 13.834) {
+      boltanswer = 16;  }
+
+      // boltanswer が決まらない場合はエラー
+      if (boltanswer === null) {
+        alert('設計に適合するボルト径が見つかりません。計算を見直してください。');
+        return;
+      }
+      
+
+
+ if (d < boltanswer) {
+    alert('リーマボルトの径が小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (d > boltanswer) {
+    alert('リーマボルトの径が大きいです。設計をやり直してください。');
+    return;
+  }
+
+
+    const Dfanswer = (Dd+120);
+
+     if (Df < Dfanswer-10) {
+    alert('歯車側フランジの直径が小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (Df > Dfanswer+20) {
+    alert('歯車側フランジの直径が大きいです。設計をやり直してください。');
+    return;
+  }
+
+
+
+
+      // 値をlocalStorageに保存
+      localStorage.setItem('drum_n', n);
+      localStorage.setItem('drum_Ddbolt', Ddbolt);
+      localStorage.setItem('drum_d', d);
+      localStorage.setItem('drum_Dfgear', Df);
+      alert('値が保存されました');
+      window.location.href = 'Choice.html';
+      } catch (e) {
+        // 例外の詳細をできるだけ表示する（スタック優先）
+        const errMsg = e && e.stack ? e.stack : (e && e.message ? e.message : String(e));
+        alert('エラーが発生しました: ' + errMsg);
+        console.error('onDecide error:', e);
+      }
+    }
+
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+  
+   
+    function showHint(type) {
+      // localStorage から必要な値を安全に取得
+  const drumDdStr = localStorage.getItem('drum_Dd');
+  const DdVal = drumDdStr !== null ? parseFloat(drumDdStr) : null;
+      const WStr = localStorage.getItem('total_W');
+      const W = WStr !== null ? parseFloat(WStr) : null;
+
+      if (type === 'n') {
+        const msg = '図面に書くことを考え、6本を推奨します。';
+        alert(msg);
+      } else if (type === 'Dd') {
+        const msg = 'ボルトがドラムに干渉しないようにドラム直径にドラム直径25%ほどを足してください。おおよその値で構いませんドラム直径は'+DdVal+'[mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'd') {
+        const msg = '教科書 P.21式(31・5)を参照してください。 トルクは荷重×半径で計算し、荷重は'+W+'[kN]で設計しています。材質は軟鋼を使用し許容せん断応力は40[N/mm^2]として計算します。';
+        alert(msg);
+  } else if (type === 'Df') {
+  const msg = 'リーマボルトの頭の直径はボルトの直径の倍くらいになるので、ドラム直径にドラム直径50%ほど足してください。おおよその値で構いません。 ';
+  alert(msg);
+  }
+
+      
+    }
+  </script>
+</body>
+</html>

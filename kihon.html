@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>基本設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+    .btn { font-size: 18px; padding: 6px 24px; }
+    .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="input-row">
+      <label for="w">最大巻上げ荷重<span class="font">W</span>[kN]</label>
+      <input id="w" type="number" />
+    </div>
+    <div class="input-row">
+      <label for="l">揚程<span class="font">L</span>[m]</label>
+      <input id="l" type="number" />
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const w = parseFloat(document.getElementById('w').value);
+      const l = parseFloat(document.getElementById('l').value);
+      if (isNaN(w) || isNaN(l)) {
+        alert('両方の値を入力してください');
+        return;
+      }
+      // 値をlocalStorageに保存
+      localStorage.setItem('kihon_w', w);
+      localStorage.setItem('kihon_l', l);
+      alert('値が保存されました');
+      window.location.href = 'Choice.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+  </script>
+</body>
+</html>

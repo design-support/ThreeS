@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラム設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="label">「止金具の材質はSF440Aを使用」</div>
+    <div class="input-row">
+      <label for="df">ワイヤロープ止金具の直径<span class="font">df</span>[mm]</label>
+      <select id="df">
+        <option value="">-- 選択してください --</option>
+        <option value="13">13</option>
+        <option value="16">16</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="22">22</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="28">28</option>
+        <option value="30">30</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('df')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b">座の厚さ<span class="font">b</span>[mm]</label>
+      <input id="b" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="lbolt">ボルトのねじ込み深さ<span class="font">l</span>[mm]</label>
+      <input id="lbolt" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lbolt')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const dfVal = document.getElementById('df').value;
+      const bVal = document.getElementById('b').value;
+      const lboltVal = document.getElementById('lbolt').value;
+      if (dfVal === null || dfVal.toString().trim() === '' || bVal === null || bVal.toString().trim() === '' || lboltVal === null || lboltVal.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        return;
+      }
+
+      // 入力値を数値に変換してチェック
+      const df = parseFloat(dfVal);
+      const b = parseFloat(bVal);
+      const lbolt = parseFloat(lboltVal);
+      if (isNaN(df) || isNaN(b) || isNaN(lbolt)) {
+        alert('ワイヤロープ止金具の直径、座の厚さ、ボルトのねじ込み深さ、には有効な数値を入力してください');
+        return;
+      }
+      
+      
+      
+      const Wstr = localStorage.getItem('total_W');
+      const W = Wstr !== null ? parseFloat(Wstr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。');
+        return;
+      }
+
+      
+      const dfanswer = Math.sqrt((4 * 1000 * W) / (Math.PI * 56));
+
+      // dfanswer の許容範囲チェック: 12未満または30以上でエラー
+      if (typeof dfanswer === 'number' && (!isFinite(dfanswer) || dfanswer < 12 || dfanswer >= 30)) {
+        alert('停止: 算出された dfanswer が許容範囲外です（' + (isFinite(dfanswer) ? dfanswer.toFixed(2) : String(dfanswer)) + '）。設計を見直してください。');
+        return;
+      }
+
+      //止金具の直径
+      let dfanswer2 = null;
+      if (dfanswer >=12 && dfanswer <= 12.9) 
+         dfanswer2= 13;
+         else if (dfanswer >= 13 && dfanswer <= 15.9) 
+        dfanswer2 = 16;
+      else if (dfanswer >= 16 && dfanswer <= 18.9) 
+        dfanswer2 = 19;
+       else if (dfanswer >= 19 && dfanswer <= 19.9) 
+        dfanswer2 = 20;
+       else if (dfanswer >= 20 && dfanswer <= 21.9) 
+       dfanswer2 = 22;
+       else if (dfanswer >= 22 && dfanswer <= 23.9) 
+        dfanswer2 = 24;
+       else if (dfanswer >= 24 && dfanswer <= 24.9) 
+        dfanswer2 = 25;
+       else if (dfanswer >= 25 && dfanswer <=27.9 ) 
+        dfanswer2 = 28;
+       else if (dfanswer >= 28 && dfanswer <= 29.9) 
+        dfanswer2 = 30;
+      
+
+         if (df < dfanswer2) {
+       alert('ワイヤロープ止金具の直径が小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (df > dfanswer2) {
+      alert('ワイヤロープ止金具の直径大きいです。設計をやり直してください。');
+      return;
+      }
+
+
+      //ボルトの径
+      let boltanswer = null;
+      if (dfanswer >= 10.16 && dfanswer <= 13.835) {
+      boltanswer = 16;
+      } else if (dfanswer > 13.835 && dfanswer <= 17.294) {
+      boltanswer = 20;
+      } else if (dfanswer > 17.294 && dfanswer <= 20.752) {
+      boltanswer = 24;
+      } else if (dfanswer > 20.752 && dfanswer <= 26.211) {
+      boltanswer = 30;  
+      } else if (dfanswer > 26.211 && dfanswer <= 31.67) {
+      boltanswer = 36; 
+      }
+
+        //ボルトの穴の径（boltanswer によって決まる）
+        let d2answer = null;
+        if (boltanswer === 16) {
+          d2answer = 17;
+        } else if (boltanswer === 20) {
+          d2answer = 21;
+        } else if (boltanswer === 24) {
+          d2answer = 25;
+        } else if (boltanswer === 30) {
+          d2answer = 31;
+        } else if (boltanswer === 36) {
+          d2answer = 37;
+        }
+
+        //座の外径（boltanswer によって決まる）
+       let d1answer = null;
+       if (boltanswer === 16) {
+         d1answer = 30;
+       } else if (boltanswer === 20) {
+         d1answer = 37;
+       } else if (boltanswer === 24) {
+         d1answer = 44;
+       } else if (boltanswer === 30) {
+         d1answer = 56;
+       } else if (boltanswer === 36) {
+         d1answer = 66;
+       }
+
+        //座の厚さ
+        const banswer=((1000*W)/((d1answer - d2answer)*70));
+
+        if (b < banswer) {
+       alert('座の厚さが小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (b > banswer+1) {
+      alert('座の厚さが大きいです。設計をやり直してください。');
+      return;
+      }
+        //標準数の丸め方がわからないため＋１mmで許容範囲とする
+
+
+       
+       const tdStr = localStorage.getItem('drum_td');
+       const td = tdStr !== null ? parseFloat(tdStr) : NaN;
+        if (!isFinite(td)) {
+        alert('内部エラー: ドラム td が設定されていません。先にドラム寸法を入力してください。');
+        return;}
+
+       const lboltanswer = boltanswer*1.5+td;
+       
+
+       if (lbolt< lboltanswer) {
+       alert('ボルトのねじ込み深さが小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (lbolt > lboltanswer+10) {
+      alert('ボルトのねじ込み深さが大きいです。設計をやり直してください。');
+      return;
+      }
+
+         
+
+
+     
+      
+
+
+      // 値をlocalStorageに保存
+      localStorage.setItem('drum_df', df);
+      localStorage.setItem('drum_dbolt', boltanswer);
+      localStorage.setItem('drum_d1bolt', d1answer);
+      localStorage.setItem('drum_b', b);
+      localStorage.setItem('drum_lbplt', lbolt);
+      alert('値が保存されました');
+      window.location.href = 'drum_design5.html';
+      } 
+    
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+
+
+
+    function showHint(type) {
+       const Wstr = localStorage.getItem('total_W');
+      const W = Wstr !== null ? parseFloat(Wstr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。');
+        return;
+      }
+
+      const pStr = localStorage.getItem('drum_p');
+      const p = pStr !== null ? parseFloat(pStr) : NaN;
+      if (isNaN(p)) {
+        alert('ドラムの溝ピッチが設定されていません。先に値を入力してください。');
+        return;
+      }
+
+      const Ddstr = localStorage.getItem('drum_Dd');
+      const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラムの直径が設定されていません。');
+        return;
+      }
+
+      const ropeDwStr = localStorage.getItem('rope_dw');
+      const dw = ropeDwStr !== null ? parseFloat(ropeDwStr) : NaN;
+      if (isNaN(dw)) {
+        alert('ワイヤロープ径が設定されていません。先にワイヤロープの選定を行ってください。');
+        return;
+      }
+
+      if (type === 'df') {
+        const msg = '教科書 P.20 式（3・13）を参照してください。 ワイヤロープを加味した巻き上げ荷重は' +  W + ' [kN]、材質はSF440Aを使用し許容せん断応力は56[N/mm^2]で設計しています。';
+        alert(msg);
+      } else if (type === 'b' ) {
+        const msg = '教科書 P.20 式（3・14）を参照してください。 ワイヤロープを加味した巻き上げ荷重は' +  W + ' [kN]、許容引張応力は70[N/mm^2]で設計しています。ボルトの選定の際は製図の教科書の表を用いて第1選択から選んでください。';
+        alert(msg);
+      } else if (type === 'lbolt') {
+        const msg = '教科書 P.20 3・7表を参照してください。 dの値には選択した取付ボルトの径が入ります';
+        alert(msg);
+      } else {
+        alert('ヒントがありません');
+      }
+    }
+  </script>
+</body>
+</html>

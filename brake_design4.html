@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>調節金具設計</title>
+  
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+ <div class="label">「調節金具、ボルトの材質はSF440A 取付ピンの材質はS20Cを使用」</div>
+    <div class="input-row">
+      <label for="d2">調節ボルトの外径<span class="font">d2</span>[mm]</label>
+      <select id="d2">
+        <option value="">-- 選択してください --</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="16">16</option>
+        <option value="20">20</option>
+        <option value="24">24</option>
+        <option value="30">30</option>
+        </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d3">調節金具の寸法<span class="font">d3</span>[mm]</label>
+      <select id="d3">
+        <option value="">-- 選択してください --</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="16">16</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d3')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="t0">調節ボルトの厚さ<span class="font">t0</span>[mm]</label>
+      <input id="t0" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('t0')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="n">調節金具のねじ山数<span class="font">n</span>[-]</label>
+      <input id="n" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('n')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="t2">調節金具のねじ部の長さ<span class="font">t2</span>[mm]</label>
+      <input id="t2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('t2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b">調節金具の幅<span class="font">b</span>[mm]</label>
+      <input id="b" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="t1">調節金具の厚さ<span class="font">t1</span>[mm]</label>
+      <input id="t1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('t1')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="itaatu">ブレーキレバーの板厚<span class="font">t3</span>[mm]</label>
+      <input id="itaatu" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('itaatu')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="C">調節金具の間の距離<span class="font">C</span>[mm]</label>
+      <input id="C" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('C')">ヒント</button>
+    </div>
+    
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const d2 = parseFloat(document.getElementById('d2').value);
+      const d3 = parseFloat(document.getElementById('d3').value);
+      const t0 = parseFloat(document.getElementById('t0').value);
+      const n = parseFloat(document.getElementById('n').value);
+      const t2 = parseFloat(document.getElementById('t2').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const t1 = parseFloat(document.getElementById('t1').value);
+      const itaatu = parseFloat(document.getElementById('itaatu').value);
+      const C = parseFloat(document.getElementById('C').value);
+      if (isNaN(d2) || isNaN(d3) || isNaN(t0) || isNaN(n) || isNaN(t2) || isNaN(b) || isNaN(t1)|| isNaN(itaatu)|| isNaN(C)) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      
+
+    const dstr = localStorage.getItem('brakelever_d');
+        const d = dstr !== null ? parseFloat(dstr) : NaN;
+        if (isNaN(d)) {
+          alert('調節金具取付ピンの直径が設定されていません。');
+          return;
+        }
+
+        const T2str = localStorage.getItem('brake_T2');
+        const T2 = T2str !== null ? parseFloat(T2str) : NaN;
+        if (isNaN(T2)) {
+          alert('ブレーキ緩み側の張力が設定されていません。');
+          return;
+        }
+
+        
+          
+
+   
+
+    if (d*1.8 > d2) {
+        alert('調節ボルトの外径が小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (d*2.0 < d2) {
+        alert('調節ボルトの外径が大きいです。計算をやり直してください');
+        return;
+      }
+
+
+      const d3answer0 = Math.sqrt((4*T2*1000)/(Math.PI*60));
+
+let d3answer = null;
+if (d3answer0 <= 4.916 && d3answer0 >= 0) {
+  d3answer = 6;
+} else if (d3answer0 <= 6.646 && d3answer0 >= 4.917) 
+  d3answer = 8;
+ else if (d3answer0 <= 8.375 && d3answer0 >= 6.647) 
+  d3answer = 10;
+ else if (d3answer0 <= 10.105 && d3answer0 >= 8.376) 
+  d3answer = 12;
+  else if (d3answer0 <= 70 && d3answer0 >= 10.106) 
+  d3answer = 16;
+
+      if (d3 > d3answer) {
+        alert('調節ボルトの寸法d3が大きいです。計算をやり直してください');
+        return;
+      }
+
+      if (d3 < d3answer) {
+        alert('調節ボルトの寸法d3が小さいです。計算をやり直してください');
+        return;
+      }
+
+
+
+      const t0answer = (T2*1000)/((d2-d)*60);
+
+     
+
+      if (t0 < t0answer) {
+        alert('調節ボルトの厚さが小さいです。計算をやり直してください');
+        return;
+      }
+
+       if (t0 < d3) {
+        alert('調節ボルトの厚さが小さいです。調節金具の径d3より大きくなるように設計をやり直してください');
+        return;
+      }
+
+       if (t0 > d3) {
+        alert('調節ボルトの厚さが大きいです。設計をやり直してください');
+        return;
+      }
+
+
+      let D1answer = null;
+if (d3 == 6 ) {
+  D1answer = 4.917;
+} else if (d3 == 8 ) {
+  D1answer = 6.647;
+} else if (d3 == 10 ) {
+  D1answer = 8.376;
+} else if (d3 == 12 ) {
+  D1answer = 10.106;
+} else if (d3 == 16 ) {
+  D1answer = 13.835;
+}
+  
+
+      const nanswer = Math.ceil((4*T2*1000)/(Math.PI*((d3**2)-(D1answer**2))*15));
+
+      
+      if (n > nanswer) {
+        alert('ねじ山の数が多いです。計算をやり直してください');
+        return;
+      }
+      if (n < nanswer) {
+        alert('ねじ山の数が少ないです。計算をやり直してください');
+        return;
+      }
+      const t2answer0 = n*1.5;
+
+      let t2answer = null;
+if (t2answer0 <= 10 && t2answer0 >= 8.01) {
+  t2answer = 10;
+} else if (t2answer0 <= 12.5 && t2answer0 >= 10.1) 
+  t2answer = 12.5;
+ else if (t2answer0 <= 16 && t2answer0 >= 12.6) 
+  t2answer = 16;
+ else if (t2answer0 <= 20 && t2answer0 >= 16.1) 
+  t2answer = 20;
+  else if (t2answer0 <=8.0  && t2answer0 >= 6.31) 
+  t2answer = 8;
+
+      if (t2 > t2answer) {
+        alert('調節金具のねじ部の長さが大きいです。計算をやり直してください');
+        return;
+      }
+      if (t2 < t2answer) {
+        alert('調節金具のねじ部の長さが小さいです。計算をやり直してください');
+        return;
+      }
+
+
+  const banswer = 2*d3;
+
+      if (b > banswer) {
+        alert('調節金具の幅が大きいです。計算をやり直してください');
+        return;
+      }
+      if (b < banswer) {
+        alert('調節金具の幅が小さいです。計算をやり直してください');
+        return;
+      }
+
+  const d4=d;
+
+      const t1answer1 =Math.round((3*T2*1000*(b+d4))/(2*(b**2)*60));
+
+      const t1answer2 = (T2*1000)/(2*(b-d4)*60);
+
+      if (t1answer1 > t1answer2) {
+        t1answer = t1answer1;
+      } else {
+        t1answer = t1answer2;
+      }
+
+      if (t1 > t1answer+2) {
+        alert('調節金具の厚さが大きいです。計算をやり直してください');
+        return;
+      }
+      if (t1 < t1answer) {
+        alert('調節金具の厚さが小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (itaatu < d3) {
+        alert('ブレーキレバーの板厚が小さいです。調節金具のめねじの谷の径より大きくなるように設計をやり直してください');
+        return;
+      }
+
+       if (itaatu > 30) {
+        alert('ブレーキレバーの板厚が小さいです。調節金具のめねじの谷の径より大きくなるように設計をやり直してください');
+        return;
+      }
+
+       if (C > 40) {
+        alert('すきまが大きすぎます。設計をやり直してください。');
+        return;
+      }
+
+      if (C < itaatu+0.1) {
+        alert('すきまが小さすぎます。ブレーキレバーの板厚が入ることを考慮し設計をやり直してください。');
+        return;
+      }
+
+
+
+
+
+
+
+
+      
+
+
+      
+
+
+
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brake_d2', d2);
+      localStorage.setItem('brake_d3', d3);
+      localStorage.setItem('brake_t0', t0);
+      localStorage.setItem('brakekanagu_n', n);
+      localStorage.setItem('brake_t2', t2);
+      localStorage.setItem('brakekanagu_b', b);
+      localStorage.setItem('brake_t1', t1);
+      localStorage.setItem('brake_itaatu', itaatu);
+      localStorage.setItem('brake_C', C);
+
+      alert('値が保存されました');
+      window.location.href = 'brake_design5.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+   
+   
+    function showHint(type) {
+
+       const dstr = localStorage.getItem('brakelever_d');
+        const d = dstr !== null ? parseFloat(dstr) : NaN;
+        if (isNaN(d)) {
+          alert('調節金具取付ピンの直径が設定されていません。');
+          return;
+        }
+
+        const T2str = localStorage.getItem('brake_T2');
+        const T2 = T2str !== null ? parseFloat(T2str) : NaN;
+        if (isNaN(T2)) {
+          alert('ブレーキ緩み側の張力が設定されていません。');
+          return;
+        }
+     
+      if(type === 'd2') {
+        alert('教科書 P.62  式（7・19)を参照してください。調節金具取付ピンは'+d+'[mm]で設計しています。');
+      } else if(type === 'd3') {
+        alert('教科書 P.62  式（7・20)、P.150 付表3を参照してください。おねじの外径の値と等しくなります。おねじの谷の径を求めた後付表3から選定してください。許容引張応力は60[N/mm^2]、ブレーキゆるみ側の張力は'+T2+'[kN]で設計しています。単位に注意してください。');
+        } else if(type === 't0') {
+        alert('教科書 P.63  式（7・21)を参照してください。許容引張応力は60[N/mm^2]、ブレーキゆるみ側の張力は'+T2+'[kN]で設計しています。単位に注意してください。調節金具の径d3より大きくなるようにしてください。');
+        }else if(type === 'n') {
+        alert('教科書 P.63 式（7・22）を参照してください。めねじの径はd3の値と同じであるので付表3からめねじの内径を求められます。ブレーキゆるみ側の張力は'+T2+'[kN]で設計しています。単位に注意してください。接触面圧力の許容限度は大きめのとって15[N/mm^2]としています。');
+      } else if(type === 't2') {
+        alert('教科書 P.63 式（7・23）を参照してください。ピッチは1.5[mm]としてください。');
+      } else if(type === 'b') {
+        alert('教科書 P.65を参照してください。');
+      } else if(type === 't1') {
+        alert('教科書 P.64 式（7・26）を参照してください。許容引張応力は60[N/mm^2]、ブレーキゆるみ側の張力は'+T2+'[kN]で設計しています。単位に注意してください。d4の値は調節金具取付ピンの直径と同じです。');
+      } 
+      else if(type === 'itaatu') {
+        alert('調節金具の径d3より大きい値を選定してください。');
+      } else if(type === 'C') {
+        alert('ブレーキレバーの板厚が入ることを考慮しそれより大きい値で設計してください。');
+      } 
+    }
+  </script>
+</body>
+</html>

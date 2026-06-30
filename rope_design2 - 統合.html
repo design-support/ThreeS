@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ワイヤロープの径</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .dw-font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="input-row">
+      <label for="break">破断荷重<span class="q-font">Q</span>[kN]</label>
+      <input id="break" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('break')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="dw">ワイヤロープ径<span class="dw-font">dw</span>[mm]</label>
+      <select id="dw">
+        <option value="">-- 選択してください --</option>
+        <option value="11.2">11.2</option>
+        <option value="12">12</option>
+        <option value="12.5">12.5</option>
+        <option value="14">14</option>
+        <option value="16">16</option>
+        <option value="18">18</option>
+        <option value="20">20</option>
+        <option value="22.4">22.4</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('dw')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="rope">ワイヤロープ選択</label>
+      <select id="rope" onchange="onRopeChange()">
+        <option value="">--選択してください--</option>
+        <option value="6x19">裸普通ZよりA種(6×19)</option>
+        <option value="6x24">裸普通ZよりA種(6×24)</option>
+        <option value="6x37">裸普通ZよりA種(6×37)</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('rope')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="sin">シンブルの呼び[mm]</label>
+      <input id="sin" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('sin')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const breakLoad = parseFloat(document.getElementById('break').value);
+      const rope = document.getElementById('rope').value;
+      const dw = parseFloat(document.getElementById('dw').value);
+      const sin = parseFloat(document.getElementById('sin').value);
+      if (isNaN(dw) || isNaN(sin)) {
+        alert('ワイヤロープ径とシンブルの呼び、両方の値を入力してください');
+        return;
+    }
+
+
+      
+      if (isNaN(breakLoad)) {
+        alert('破断荷重に有効な数値を入力してください');
+        return;
+      }
+      const w = parseFloat(localStorage.getItem('kihon_w'));
+      if (isNaN(w)) {
+        alert('基準となる巻き上げ荷重が設定されていません。先に基準値を入力してください');
+        return;
+      }
+
+      const expectedBreak = w * 6;
+      if (breakLoad > expectedBreak) {
+        alert('破断荷重が大きいです。計算をやり直してください');
+        return;
+      }
+      if (breakLoad < expectedBreak) {
+        alert('破断荷重が小さいです。計算をやり直してください');
+        return;
+      }
+
+       
+      if (!rope || rope.trim() === '') {
+        alert('ワイヤロープを選択してください');
+        return;
+      }
+      
+
+  
+  // 必要に応じて計算処理を追加
+
+      // rope_design_breakの値を参照してropekeianswerを判定
+      const breakValue = parseFloat(localStorage.getItem('rope_design_break'));
+      let ropekeianswer = null;
+      if (breakValue >= 53.2 && breakValue <= 66.6) 
+        ropekeianswer = 11.2;
+         else if (breakValue >= 66.7 && breakValue <= 76.5) 
+        ropekeianswer = 12;
+      else if (breakValue >= 76.6 && breakValue <= 83.0) 
+        ropekeianswer = 12.5;
+       else if (breakValue >= 83.1 && breakValue <= 104) 
+        ropekeianswer = 14;
+       else if (breakValue >= 104.1 && breakValue <= 136) 
+        ropekeianswer = 16;
+       else if (breakValue >= 136.1 && breakValue <= 172) 
+        ropekeianswer = 18;
+       else if (breakValue >= 172.1 && breakValue <= 212) 
+        ropekeianswer = 20;
+       else if (breakValue >= 212.1 && breakValue <= 266) 
+        ropekeianswer = 22.4;
+     
+         if (dw > ropekeianswer) {
+        alert('ロープ径が大きいです。計算をやり直してください');
+        return;
+      }
+      if (dw < ropekeianswer) {
+        alert('ロープ径が小さいです。計算をやり直してください');
+        return;
+      }
+
+      let thimbleanswer = null;
+      if (ropekeianswer >= 11.2 && ropekeianswer <= 12.5) 
+        thimbleanswer = 12;
+         else if (ropekeianswer >= 12.6 && ropekeianswer <= 14) 
+        thimbleanswer = 14;
+         else if (ropekeianswer >= 14.1 && ropekeianswer <= 16) 
+        thimbleanswer = 16;
+         else if (ropekeianswer >= 16.1 && ropekeianswer <= 18) 
+        thimbleanswer = 18;
+         else if (ropekeianswer >= 18.1 && ropekeianswer <= 20) 
+        thimbleanswer = 20;
+         else if (ropekeianswer >= 20.1 && ropekeianswer <= 22.4) 
+        thimbleanswer = 22;
+
+      if (sin > thimbleanswer) {
+        alert('シンブルが大きいです。計算をやり直してください');
+        return;
+      }
+       if (sin < thimbleanswer) {
+        alert('シンブルが小さいです。計算をやり直してください');
+        return;
+      }
+
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('rope_design_break', breakLoad);
+      localStorage.setItem('rope_design_rope', rope);
+      localStorage.setItem('rope_dw', dw);
+      localStorage.setItem('rope_sin', sin);
+      alert('値が保存されました');
+      window.location.href = 'drum_design1.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+    function showHint(type) {
+      if(type === 'dw') {
+        alert('教科書 P.9 表2.7 を参照してください。裸普通ZよりA種を選んでいます。');
+      } else if(type === 'sin') {
+        alert('教科書 P.10 表2.8 を参照してください。適用するワイヤーロープ径 d から求められます。');
+      }
+      if (type === 'rope') {
+        alert('裸普通ZよりA種のロープを選択しています。教科書の表を参照してください。');
+      } else if (type === 'break') {
+        const w = localStorage.getItem('kihon_w');
+        alert('教科書P.3、式（２・１）を使用してください。巻き上げ荷重は ' + w + ' kN です。破断荷重の目安はこれに基づきます。');
+      }
+    }
+  </script>
+</body>
+</html>

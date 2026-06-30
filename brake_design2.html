@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ブレーキレバー設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+ .font { font-family: 'Times New Roman', serif; } 
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="label">「ブレーキレバーの材質はFC250を使用」</div>
+    <div class="input-row">
+      <label for="d">調整金具取付ピンの直径<span class="font">d</span>[mm]</label>
+        <select id="d">
+        <option value="">-- 選択してください --</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="14">14</option>
+        <option value="16">16</option>
+       
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="l1">控えボルトからT2の作用点までの距離<span class="font">l1</span>[mm]</label>
+      <input id="l1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="l">ブレーキレバーの有効長さ<span class="font">l</span>[mm]</label>
+      <input id="l" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b">ブレーキレバーの幅<span class="font">b</span>[mm]</label>
+      <input id="b" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b1">ブレーキレバーの板厚(仮決め)<span class="font">b1</span>[mm]</label>
+      <input id="b1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b1')">ヒント</button>
+    </div>
+   
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+
+    function onDecide() {
+       const d = parseFloat(document.getElementById('d').value);
+      const l1 = parseFloat(document.getElementById('l1').value);
+      const l = parseFloat(document.getElementById('l').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const b1 = parseFloat(document.getElementById('b1').value);
+      if (isNaN(d) || isNaN(l1) || isNaN(l) || isNaN(b) || isNaN(b1)) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      
+
+    const T2str = localStorage.getItem('brake_T2');
+        const T2 = T2str !== null ? parseFloat(T2str) : NaN;
+        if (isNaN(T2)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+        
+
+      
+    const danswer = Math.sqrt((2*1000*T2)/(Math.PI*45));
+      
+    if (d > danswer + 5) {
+        alert('調整金具取付ピンの直径が大きいです。' + danswer.toFixed(2) + '計算をやり直してください');
+        return;
+      }
+
+      if (d < danswer) {
+        alert('調整金具取付ピンの直径が小さいです。計算をやり直してください');
+        return;
+      }
+
+
+      if (l1 > 100) {
+        alert('控えボルトからT2の作用点までの距離が大きいです。計算をやり直してください');
+        return;
+      }
+      if (l1 < 30) {
+        alert('控えボルトからT2の作用点までの距離が小さいです。計算をやり直してください');
+        return;
+      }
+
+
+      const lanswer = T2*1000*l1/196;
+
+      if (l > lanswer+200) {
+        alert('ブレーキレバーの長さが大きいです。計算をやり直してください');
+        return;
+      }
+      if (l < lanswer) {
+        alert('ブレーキレバーの長さが小さいです。計算をやり直してください');
+        return;
+      }
+
+
+       if (b > 100) {
+        alert('ブレーキレバーの幅が大きいです。計算をやり直してください');
+        return;
+      }
+      if (b < 30) {
+        alert('ブレーキレバーの幅が小さいです。計算をやり直してください');
+        return;
+      }
+
+
+      const b1answer = 6*196*l*b/(((b**3)-(d**3))*60);
+      if (b1 > b1answer+0.3) {
+        alert('ブレーキレバーの板厚が大きいです。計算をやり直してください');
+        return;
+      }
+      if (b1 < b1answer-0.3) {
+        alert('ブレーキレバーのb1が小さいです。計算をやり直してください');
+        return;
+      }
+
+      
+
+
+
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brakelever_d', d);
+      localStorage.setItem('brakelever_l1', l1);
+      localStorage.setItem('brakelever_l', l);
+      localStorage.setItem('brakelever_b', b);
+      localStorage.setItem('brakelever_b1', b1);
+     
+
+      alert('値が保存されました');
+      window.location.href = 'brake_design3.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+    function showHint(type) {
+
+      const T2str = localStorage.getItem('brake_T2');
+        const T2 = T2str !== null ? parseFloat(T2str) : NaN;
+        if (isNaN(T2)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+      if(type === 'd') {
+        alert('教科書 P.52 式（7・5） 表7.7 を参照してください。');
+      } else if(type === 'l1') {
+        alert('教科書 P.52  図7.5 を参照してください。50㎜程を推奨しています。');
+      } else if(type === 'l') {
+        alert('教科書 P.52 式（7・6）を参照してください。ブレーキ張り側の張力は'+T2+'[kN]で設計しています。単位に注意してください。');
+      } else if(type === 'b') {
+        alert('40mmほどを推奨しています。ブレーキレバー取付ピンの直径より大きくなるようにしてください。');
+      } else if(type === 'b1') {
+        alert('教科書 P.53 式（7・9） を参照してください。材質はSS400を使用し、許容曲げ応力は60[N/mm^2]で設計しています。ここでは厚さの仮決めのみ行い、本決定はP.66  図7.13のねじの関係を見て、仮決めの値より大きくなるように決定します。 ');
+      } 
+    }
+  </script>
+</body>
+</html>

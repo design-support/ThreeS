@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ブレーキブラケット設計</title>
+  
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+ <div class="label">「ブラケットの材質はFC200を使用」</div>
+    <div class="input-row">
+      <label for="l1">帯幅中心から反力R0の作用点までの距離<span class="font">l1</span>[mm]</label>
+      <input id="l1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="l2">帯幅の中心からブラケットの座の厚さの中心までの距離<span class="font">l2</span>[mm]</label>
+      <input id="l2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l2')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="R0">T1の反力としてブラケット自由端に作用する力<span class="font">R0</span>[N]</label>
+      <input id="R0" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('R0')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="lb1">ブレーキ帯取付ピンからブラケットの座の上端までの距離<span class="font">lb1</span>[mm]</label>
+      <input id="lb1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lb1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="lb2">ブラケット取付ボルトから座の上端までの距離<span class="font">lb2</span>[mm]</label>
+      <input id="lb2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lb2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="W1">ブレーキ帯取付ピンのねじ部に作用する力<span class="font">W1</span>[N]</label>
+      <input id="W1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('W1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="W2">ブラケット取付ボルトに作用する力<span class="font">W2</span>[N]</label>
+      <input id="W2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('W2')">ヒント</button>
+    </div>
+    
+    
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const l2 = parseFloat(document.getElementById('l2').value);
+      const l1 = parseFloat(document.getElementById('l1').value);
+      const R0 = parseFloat(document.getElementById('R0').value);
+      const lb1 = parseFloat(document.getElementById('lb1').value);
+      const lb2 = parseFloat(document.getElementById('lb2').value);
+      const W1 = parseFloat(document.getElementById('W1').value);
+      const W2 = parseFloat(document.getElementById('W2').value);
+      
+      if (isNaN(l2) || isNaN(l1) || isNaN(R0) || isNaN(lb1) || isNaN(lb2) || isNaN(W1) || isNaN(W2)) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      
+const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+   
+        
+          
+
+   
+
+    if (l1 < 40) {
+        alert('帯幅中心から反力R0の作用点までの距離が小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (l1 > 80) {
+        alert('帯幅中心から反力R0の作用点までの距離が大きいです。計算をやり直してください');
+        return;
+      }
+
+       if (l2 < 40) {
+        alert('帯幅の中心からブラケットの座の厚さの中心までの距離が小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (l2 > 80) {
+        alert('帯幅の中心からブラケットの座の厚さの中心までの距離が大きいです。計算をやり直してください');
+        return;
+      }
+
+      const R0answer = Math.round((T1*1000*l2**2*(3*l1+l2*2))/(2*(l1+l2)**3));
+
+      if (R0 > R0answer+10) {
+        alert('T1の反力としてブラケット自由端に作用する力が大きいです。計算をやり直してください');
+        return;
+      }
+      if (R0 < R0answer-10) {
+        alert('T1の反力としてブラケット自由端に作用する力が小さいです。計算をやり直してください');
+        return;
+      }
+
+if (lb1 < 10) {
+        alert('ブレーキ帯取付ピンからブラケットの座の上端までの距離が小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (lb1 > 30) {
+        alert('ブレーキ帯取付ピンからブラケットの座の上端までの距離が大きいです。計算をやり直してください');
+        return;
+      }
+
+       if (lb2 < 100) {
+        alert('ブラケット取付ボルトから座の上端までの距離が小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (lb2 > 200) {
+        alert('ブラケット取付ボルトから座の上端までの距離が大きいです。計算をやり直してください');
+        return;
+      }
+
+      const W1answer = Math.round((R0*(l1+l2)*lb1)/((lb1**2)+(lb2**2)));
+
+      if (W1 > W1answer+5) {
+        alert('ブレーキ帯取付ピンのねじ部に作用する力が大きいです。計算をやり直してください');
+        return;
+      }
+
+      if (W1 < W1answer-5) {
+        alert('ブレーキ帯取付ピンのねじ部に作用する力が小さいです。計算をやり直してください');
+        return;
+      }
+
+      const W2answer = Math.round((R0*(l1+l2)*lb2)/((lb1**2)+(lb2**2)));
+
+      if (W2 > W2answer+5) {
+        alert('ブラケット取付ボルトに作用する力が大きいです。計算をやり直してください');
+        return;
+      }
+
+      if (W2 < W2answer-5) {
+        alert('ブラケット取付ボルトに作用する力が小さいです。計算をやり直してください');
+        return;
+      }
+
+
+
+      
+
+
+
+
+
+
+
+      
+
+
+      
+
+
+
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brake_l1', l1);
+      localStorage.setItem('brake_l2', l2);
+      localStorage.setItem('brake_R0', R0);
+      localStorage.setItem('brake_lb1', lb1);
+      localStorage.setItem('brake_lb2', lb2);
+      localStorage.setItem('brake_W1', W1);
+      localStorage.setItem('brake_W2', W2);
+
+      alert('値が保存されました');
+      window.location.href = 'brake_design6.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+   
+   
+    function showHint(type) {
+const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+       
+      if(type === 'l1') {
+        alert('教科書 P.67  図7・16、P.71 図7・19を参照してください。長さlは(l1+l2)で求めることができます。40~80[mm]の範囲で設計してください。計算がうまくいかないときはこの値を修正してください。');
+      } else if(type === 'l2') {
+        alert('教科書 P.67  図7・16、P.71 図7・19を参照してください。長さlは(l1+l2)で求めることができます。40~80[mm]の範囲で設計してください。計算がうまくいかないときはこの値を修正してください');
+        } else if(type === 'R0') {
+        alert('教科書 P.66  式（7・27)を参照してください。ブレーキ張り側の張力は'+T1+'[kN]で設計しています。単位に注意してください。');
+        }else if(type === 'lb1') {
+        alert('教科書 P.67  図7・16、P.71 図7・19を参照してください。長さlは(l1+l2)で求めることができます。10~30[mm]の範囲で設計してください。計算がうまくいかないときはこの値を修正してください。');
+      } else if(type === 'lb2') {
+        alert('教科書 P.67  図7・16、P.71 図7・19を参照してください。長さlは(l1+l2)で求めることができます。100~200[mm]の範囲で設計してください。計算がうまくいかないときはこの値を修正してください。');
+      } else if(type === 'W1') {
+        alert('教科書 P.63 式（7・29）、（7・30）を参照してください。長さlは(l1+l2)で求めることができます。');
+      } else if(type === 'W2') {
+        alert('教科書 P.63 式（7・23）を参照してください。長さlは(l1+l2)で求めることができます。');
+      } 
+     
+    }
+  </script>
+</body>
+</html>

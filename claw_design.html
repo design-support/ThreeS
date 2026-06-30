@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>つめ車設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="label">「つめ車の材質はFC250を使用」</div>
+    <div class="input-row">
+      <label for="z">  つめ車の歯数<span class="font">z</span></label>
+      <input id="z" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('z')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="Pc">つめ車の円ピッチ<span class="font">Pc</span>[mm]</label>
+      <input id="Pc" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Pc')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="DR">つめ車の歯先円直径<span class="font">DR</span>[mm]</label>
+      <input id="DR" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('DR')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="h">つめ車の歯の高さ<span class="font">h</span>[mm]</label>
+      <input id="h" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('h')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="t0">つめ車の歯元の厚さ<span class="font">t0</span>[mm]</label>
+      <input id="t0" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('t0')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b">つめ車の歯幅<span class="font">b</span>[mm]</label>
+      <input id="b" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      try {
+        console.log('onDecide start: drum_Dd=', localStorage.getItem('drum_Dd'), ', total_W=', localStorage.getItem('total_W'));
+        
+        const zVal = document.getElementById('z').value;
+        const PcVal = document.getElementById('Pc').value;
+        const DRVal = document.getElementById('DR').value;
+        const hVal = document.getElementById('h').value;
+        const t0Val = document.getElementById('t0').value;
+        const bVal = document.getElementById('b').value;
+        if (zVal === null || zVal.toString().trim() === '' || PcVal === null || PcVal.toString().trim() === ''|| DRVal === null || DRVal.toString().trim() === ''
+        || hVal === null || hVal.toString().trim() === ''|| t0Val === null || t0Val.toString().trim() === ''|| bVal === null || bVal.toString().trim() === '') {
+          alert('すべての項目を入力してください');
+          return;
+        }
+
+        // 入力値を数値に変換してチェック
+        const z = parseFloat(zVal);
+        const Pc = parseFloat(PcVal);
+        const DR = parseFloat(DRVal);
+        const h = parseFloat(hVal);
+        const t0 = parseFloat(t0Val);
+        const b = parseFloat(bVal);
+        if (isNaN(z) || isNaN(Pc) || isNaN(DR) || isNaN(h) || isNaN(t0) || isNaN(b)) {
+          alert('有効な数値を入力してください');
+          return;
+        }
+        
+        
+         const Ddstr = localStorage.getItem('drum_Dd');
+        const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+        if (isNaN(Dd)) {
+          alert('ドラムの直径が設定されていません。先にドラム直径の選定を行ってください。');
+          return;
+        }
+
+        const WStr = localStorage.getItem('total_W');
+        const W = WStr !== null ? parseFloat(WStr) : NaN;
+        if (isNaN(W)) {
+          alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。前の設計からやり直してください');
+          return;
+        }
+        
+        const Pcanswer = Math.round(Math.cbrt(6*Math.PI*Dd*W*1000*0.25/(0.7*0.7*29*20)));
+
+        if (Pc < Pcanswer) {
+         alert('爪車の円ピッチが小さいです。設計をやり直してください');
+         return;
+         }
+
+        if (Pc > Pcanswer) {
+        alert('爪車の円ピッチが大きいです。設計をやり直してください。');
+        return;
+        }
+        if ((Pc/Math.PI)>18) {
+        alert('爪車の円ピッチが大きいです。設計をやり直してください。');
+        return;
+        }
+        if ((Pc/Math.PI)<10) {
+        alert('爪車の円ピッチが小さいです。設計をやり直してください。');
+        return;
+        }
+
+        
+
+          const DRanswer = Math.round(Pc*z/(Math.PI));  
+          
+          if (DR < DRanswer) {
+         alert('つめ車の歯先円直径が小さいです設計をやり直してください');
+         return;
+         }
+
+        if (DR > DRanswer) {
+        alert('つめ車の歯先円直径が大きいです。設計をやり直してください。');
+        return;
+        }
+
+         const hanswer = Math.round(Pc*0.25);  
+          
+          if (h < hanswer) {
+         alert('つめ車の歯の高さが小さいです設計をやり直してください');
+         return;
+         }
+
+        if (h > hanswer) {
+        alert('つめ車の歯の高さが大きいです。設計をやり直してください。');
+        return;
+        }
+       
+        const t0_raw = 0.7*Pc;
+        const t0answer = Math.round(t0_raw * 10) / 10; // 小数点1位まで
+          
+          if (t0 < t0answer) {
+         alert('つめ車の歯元の厚さが小さいです設計をやり直してください');
+         return;
+         }
+
+        if (t0 > t0answer) {
+        alert('つめ車の歯元の厚さが大きいです。設計をやり直してください。');
+        return;
+        }
+        
+         const banswer = Pc;  
+          
+          if (b < banswer) {
+         alert('つめ車の歯元の厚さが小さいです設計をやり直してください');
+         return;
+         }
+
+        if (b > banswer) {
+        alert('つめ車の歯元の厚さが大きいです。設計をやり直してください。');
+        return;
+        }
+
+        
+
+       
+        // 値をlocalStorageに保存
+        localStorage.setItem('claw_z', z);
+        localStorage.setItem('claw_Pc', Pc);
+        localStorage.setItem('claw_DR', DR);
+        localStorage.setItem('claw_h', h);
+        localStorage.setItem('claw_t0', t0);
+        localStorage.setItem('claw_b', b);
+        alert('値が保存されました');
+        window.location.href = 'claw_design2.html';
+      } catch (e) {
+        alert('エラー: ' + (e.message || e));
+        console.error('onDecide error:', e);
+      }
+    } 
+    
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+
+
+
+    function showHint(type) {
+
+       const Ddstr = localStorage.getItem('drum_Dd');
+      const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラムの直径が設定されていません。');
+        return;
+      }
+
+     const WStr = localStorage.getItem('total_W');
+      const W = WStr !== null ? parseFloat(WStr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。前の設計からやり直してください');
+        return;
+      }
+     
+
+      if (type === 'z') {
+        const msg = '値を仮決めしたあと、つめ車の円ピッチの値が妥当になるよう歯数を調整してください。';
+        alert(msg);
+      } else if (type === 'Pc') {
+        const msg = '教科書 P.39 式（6.5）を参照してください。 巻き上げ荷重は'+W+'[KN]、ドラム直径は'+Dd+'[mm]、材質は鋳鉄を使用するため歯幅係数は1.0、許容曲げ応力は29[N/mm^2]で設計しています。単位に注意してください。';
+        alert(msg);
+      } else if (type === 'DR') {
+        const msg = '教科書 P.39 式（6.3）を参照してください。';
+        alert(msg);
+      } else  if (type === 'h') {
+         const msg = '教科書 P.39 式（6.6）を参照してください。';
+        alert(msg);
+      } else if (type === 't0') {
+         const msg = '教科書 P.39 式（6.7）を参照してください。';
+        alert(msg);
+      } else if (type === 'b') {
+         const msg = '教科書 P.39 式（6.8）を参照してください。材質は鋳鉄を使用するため歯幅係数は1.0で設計しています。';
+        alert(msg);
+       } 
+    }
+  </script>
+</body>
+</html>

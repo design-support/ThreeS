@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>つめ車設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="label">「つめ車の材質はFC250を使用」</div>
+    <div class="input-row">
+       <label for="T">リムの厚さ<span class="font">T</span>[mm]</label>
+      <input id="T" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('T')">ヒント</button>
+    </div>
+    <div class="input-row"> 
+      <label for="R">角すみの<span class="font">Ｒ</span>[mm]</label>
+      <input id="R" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('R')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="p">摩擦角[°]</label>
+      <input id="p" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('p')">ヒント</button>
+    </div>
+      
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const TVal = document.getElementById('T').value;
+      const RVal = document.getElementById('R').value;
+      const pVal = document.getElementById('p').value;
+      if (TVal === null || TVal.toString().trim() === '' || RVal === null || RVal.toString().trim() === '' || pVal === null || pVal.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        return;
+      }
+
+      // 入力値を数値に変換してチェック
+      const T = parseFloat(TVal);
+      const R = parseFloat(RVal);
+      const p = parseFloat(pVal);
+      if (isNaN(T) || isNaN(R) || isNaN(p)) {
+        alert('有効な数値を入力してください');
+        return;
+      }
+      
+      
+      
+      const Pcstr = localStorage.getItem('claw_Pc');
+      const Pc = Pcstr !== null ? parseFloat(Pcstr) : NaN;
+      if (isNaN(Pc)) {
+        alert('爪車の円ピッチが設定されていません。');
+        return;
+      }
+
+     
+      
+      const Tanswer =Math.round(Pc*0.75);
+
+       if (T < Tanswer) {
+       alert('リムの厚さが小さいです。設計をやり直してください');
+       return;
+       }
+
+     
+      if (T > Tanswer) {
+      alert('リムの厚さが大きいです。設計をやり直してください。');
+      return;
+      }
+
+
+
+      
+       const tfstr = localStorage.getItem('drum_tf');
+      const tf = tfstr !== null ? parseFloat(tfstr) : NaN;
+      if (isNaN(tf)) {
+        alert('爪側フランジの直径が設定されていません。');
+        return;
+      }
+
+      
+
+       const R0answer = (T/tf);
+
+       
+      let Ranswer = null;
+      if (R0answer <1.5) {
+      Ranswer = Math.round(T/3);
+      } else if (R0answer >=1.5) {
+      Ranswer = Math.round(T/2);
+      }
+
+        if (R < Ranswer) {
+       alert('角すみのRが小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (R > Ranswer) {
+      alert('角すみのRが大きいです。設計をやり直してください。');
+      return;
+      }
+      
+        const p0answer = Math.atan(0.2) * 180 / Math.PI;  // ラジアン → 度数法
+        let panswer = p0answer;
+        // 小数があれば、その値より大きい最小の整数に変換
+        if (p0answer % 1 !== 0) {
+          panswer = Math.ceil(p0answer);
+        }
+          
+          if (p < panswer) {
+        alert('摩擦角が小さいです設計をやり直してください');
+        return;
+        }
+        if (p > panswer) {
+        alert('摩擦角が大きいです'+panswer+'設計をやり直してください');
+        return;
+        }
+
+
+        const bstr = localStorage.getItem('claw_b');
+      const b = bstr !== null ? parseFloat(bstr) : NaN;
+      if (isNaN(b)) {
+        alert('爪車の歯幅が設定されていません。');
+        return;
+      }
+
+      const b0=(b+R)
+
+      // 値をlocalStorageに保存
+      localStorage.setItem('claw_T', T);
+      localStorage.setItem('claw_R', R);
+      localStorage.setItem('claw_p', p);
+      localStorage.setItem('claw_totalb', b0);
+      alert('値が保存されました');
+      window.location.href = 'claw_desig3.html';
+      
+      }
+    
+    
+    
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+
+
+
+    function showHint(type) {
+
+       const Pcstr = localStorage.getItem('claw_Pc');
+      const Pc = Pcstr !== null ? parseFloat(Pcstr) : NaN;
+      if (isNaN(Pc)) {
+        alert('爪車の円ピッチが設定されていません。');
+        return;
+      }
+
+
+      const tfstr = localStorage.getItem('drum_tf');
+      const tf = tfstr !== null ? parseFloat(tfstr) : NaN;
+      if (isNaN(tf)) {
+        alert('爪側フランジの直径が設定されていません。');
+        return;
+      }
+
+      if (type === 'T') {
+        const msg = '教科書 P.39 6.4表を参照してください。 材質は鋳鉄を採用し、爪車の円ピッチは' +Pc+ ' [mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'R') {
+        const msg = '教科書 P.40 6.3表を参照してください。 爪側フランジの厚さは'+tf+'[mm]で設計しています。爪車の歯幅に角すみのRを足すことで本来の歯幅となります。';
+        alert(msg);
+      } else if (type === 'p') {
+        const msg = '教科書 P.38 6.1表を参照してください。 摩擦角pはtanp=μから求めることが出来ます。摩擦角μは6.1表から決定します。材質は鋳鉄/軟鋼を採用します。';
+        alert(msg);
+      } else {
+        alert('ヒントがありません');
+      }
+    }
+  </script>
+</body>
+</html>

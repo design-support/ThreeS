@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>減速比設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }</style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="input-row">
+      <label for="Lh">クランクハンドルの長さ<span class="font">Lh</span>[mm]</label>
+      <input id="Lh" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Lh')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="i">減速比<span class="font">i</span></label>
+      <input id="i" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('i')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="zb">B歯車の歯数<span class="font">zb</span></label>
+      <input id="zb" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('zb')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="zd">D歯車の歯数<span class="font">zd</span></label>
+      <input id="zd" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('zd')">ヒント</button>
+    </div>
+   
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+   
+    function onDecide() {
+      console.log('onDecide called');
+      try {
+        // デバッグログ: フォーム入力値の収集結果
+        console.log('inputs:', {
+          iVal: document.getElementById('i')?.value,
+          LhVal: document.getElementById('Lh')?.value,
+        zbVal: document.getElementById('zb')?.value,
+          zdVal: document.getElementById('zd')?.value
+        });
+      const iVal = document.getElementById('i').value;
+      const LhVal = document.getElementById('Lh').value;
+      const zbVal = document.getElementById('zb').value;
+      const zdVal = document.getElementById('zd').value;
+      // 必須チェック：未入力があればエラー
+      if (iVal === null || iVal.toString().trim() === '' || LhVal === null || LhVal.toString().trim() === '' || zbVal === null || zbVal.toString().trim() === '' || zdVal === null || zdVal.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        const firstEl = document.getElementById('n');
+        if (firstEl) firstEl.focus();
+        return;
+      }
+
+    
+
+      const i = parseFloat(iVal);
+      const Lh = parseFloat(LhVal);
+      const zb = parseFloat(zbVal);
+      const zd = parseFloat(zdVal);
+      // 入力の有効性チェック：許容範囲を満たすか
+      if (!isFinite(zb) || zb < 62 || zb > 72) {
+        alert('B歯車の歯数が許容範囲を超えています。設計をやり直してください');
+        const el = document.getElementById('zb'); if (el) el.focus();
+        return;
+      }
+      if (!isFinite(zd) || zd < 92 || zd > 102) {
+        alert('D歯車の歯数が許容範囲を超えています。設計をやり直してください。');
+        const el2 = document.getElementById('zd'); if (el2) el2.focus();
+        return;
+      }
+      
+      const drumDdStr = localStorage.getItem('drum_Dd');
+      const Dd = drumDdStr !== null ? parseFloat(drumDdStr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラム直径が設定されていません。先にドラム直径の選定を行ってください。');
+        return;
+      }
+      
+
+      const WStr = localStorage.getItem('total_W');
+      const W = WStr !== null ? parseFloat(WStr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。前の設計からやり直してください');
+        return;
+      }
+
+const ianswer = (1000*W*Dd)/(4*Lh*147*0.85);
+
+
+ if (i < ianswer-0.1) {
+    alert('減速比が小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (i > ianswer + 0.1) {
+    alert('減速比が大きいです。設計をやり直してください。');
+    return;
+  }
+
+  
+    // helper: gcd and lcm utilities　歯数の最小公倍数を求める
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      if (a === 0) return b;
+      if (b === 0) return a;
+      while (b !== 0) {
+        const t = a % b;
+        a = b;
+        b = t;
+      }
+      return a;
+    }
+    function lcm(a, b) {
+      a = Math.trunc(a);
+      b = Math.trunc(b);
+      if (a === 0 || b === 0) return 0;
+      return Math.abs(a * b) / gcd(a, b);
+    }
+
+    // Compute LCMs concisely using truncation (Java int cast equivalent)
+    const zb1lcm = lcm(Math.trunc(zb), 14); // zB_gear1_out_b (0) -> zb1answetr
+    const zb2lcm  = lcm(Math.trunc(zb + 1), 14); // zB_gear1_out_c (+) -> zb2answer
+    const zb3lcm  = lcm(Math.trunc(zb - 1), 14); // zB_gear1_out_a (-) -> zb3answer
+
+    // 今のあたいが最小公倍数が最大になる値か判定（zb）
+    const maxZbLcm = Math.max(zb1lcm, zb2lcm, zb3lcm);
+    if (zb1lcm < maxZbLcm) {
+      let maxName = 'zb1lcm';
+      if (maxZbLcm === zb2lcm) maxName = 'zb2lcm';
+      else if (maxZbLcm === zb3lcm) maxName = 'zb3lcm';
+      alert('もっと大きな最小公倍数をとれるものがあります。B歯車のむだ歯を設計しなおしてみましょう。');
+    return;
+    }
+
+
+    // 同様にzdでも行う
+    const zd1lcm = lcm(Math.trunc(zd), 14); // zD_gear1_out_b (0) -> zd1lcm
+    const zd2lcm = lcm(Math.trunc(zd + 1), 14); // zD_gear1_out_c (+) -> zd2lcm
+    const zd3lcm = lcm(Math.trunc(zd - 1), 14); // zD_gear1_out_a (-) -> zd3lcm
+    const maxZdLcm = Math.max(zd1lcm, zd2lcm, zd3lcm);
+    if (zd1lcm < maxZdLcm) {
+      let maxName = 'zd1lcm';
+      if (maxZdLcm === zd2lcm) maxName = 'zd2lcm';
+      else if (maxZdLcm === zd3lcm) maxName = 'zd3lcm';
+      alert('もっと大きな最小公倍数をとれるものがあります。D歯車のむだ歯を設計しなおしてみましょう。');
+    return;
+    }
+
+    if ((zb*zd)/(14*14) < ianswer-0.1) {
+    alert('歯数を用いて計算した減速比設計した減速比より小さいです。歯数の設計をやり直してください ');
+    return;
+  }
+
+  if ((zb*zd)/(14*14) > ianswer + 10) {
+    alert('歯数を用いて計算した減速比設計した減速比より大きいです。歯数の設計をやり直してください。');
+    return;
+  }
+
+    
+
+
+      // 値をlocalStorageに保存
+      localStorage.setItem('reduction ratio_i', i);
+      localStorage.setItem('handle_Lh', Lh);
+      localStorage.setItem('gear_zb', zb);
+      localStorage.setItem('gear_zd', zd);
+      alert('値が保存されました');
+      window.location.href = 'Choice.html';
+      } catch (e) {
+        // 例外の詳細をできるだけ表示する（スタック優先）
+        const errMsg = e && e.stack ? e.stack : (e && e.message ? e.message : String(e));
+        alert('エラーが発生しました: ' + errMsg);
+        console.error('onDecide error:', e);
+      }
+    }
+
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+  
+   
+    function showHint(type) {
+      // localStorage から必要な値を安全に取得
+  const drumDdStr = localStorage.getItem('drum_Dd');
+  const DdVal = drumDdStr !== null ? parseFloat(drumDdStr) : null;
+      const WStr = localStorage.getItem('total_W');
+      const W = WStr !== null ? parseFloat(WStr) : null;
+
+      if (type === 'i') {
+        const msg = '教科書 P.23式（4・1）を参照してください。人力の作用力は147[N]、ドラム直径は'+ DdVal +'[mm]、ワイヤロープを加味した巻き上げ荷重は'+W+'[kN]で設計しています。';
+        alert(msg);
+      } else if (type === 'Lh') {
+        const msg = '教科書P.148付表1を参照してください。R80系列を使用します。';
+        alert(msg);
+      } else if (type === 'zb') {
+        const msg = '計算しやすくするため教科書とは異なる順序で設計しています。A歯車の歯数を14とし、B歯車とA歯車の比率は1：7に近くなるようにします。A、B歯車の歯数の最小公倍数が大きくなるように設計してください。またB歯車の歯数とA歯車の歯数が互いに素になるようにすることで摩耗を均一化させることが出来ます。無駄歯を考慮することで調整してください。 ';
+        alert(msg);
+      } else if (type === 'zd') {
+        const msg = '教科書 P.29式（5・1）を参照してください。A歯車の歯数を14とし、減速比とB歯車を求めることで計算できるようになります。C、D歯車の歯数の最小公倍数が大きくなるように設計してください。またD歯車の歯数とC歯車の歯数が互いに素になるようにすることで摩耗を均一化させることが出来ます。無駄歯を考慮することで調整してください。 ';
+        alert(msg);
+      }
+
+      
+    }
+  </script>
+</body>
+</html>

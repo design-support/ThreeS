@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラム設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="input-row">
+      <label for="lw1">ドラムに巻き付ける長さ<span class="font">LW1</span>[m]</label>
+      <input id="lw1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lw1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="lw2">スプライスに要する長さ<span class="font">LW2</span>[m]</label>
+      <input id="lw2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lw2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="lw3">シンブルに巻き付ける長さ<span class="font">LW3</span>[m]</label>
+      <input id="lw3" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lw3')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="W">巻き上げ荷重<span class="font">W</span>[kN]</label>
+      <input id="W" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('W')">ヒント</button>
+    </div>
+   
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+   
+    function onDecide() {
+      console.log('onDecide called');
+      try {
+        // デバッグログ: フォーム入力値の収集結果
+        console.log('inputs:', {
+          lw1Val: document.getElementById('lw1')?.value,
+          lw2Val: document.getElementById('lw2')?.value,
+          lw3Val: document.getElementById('lw3')?.value,
+          WVal: document.getElementById('W')?.value
+        });
+      const lw1Val = document.getElementById('lw1').value;
+      const lw2Val = document.getElementById('lw2').value;
+      const lw3Val = document.getElementById('lw3').value;
+      const WVal = document.getElementById('W').value;
+      // 簡易必須チェック：どれか一つでも未入力なら汎用メッセージを表示
+      if (lw1Val === null || lw1Val.toString().trim() === '' || lw2Val === null || lw2Val.toString().trim() === '' || lw3Val === null || lw3Val.toString().trim() === '' || WVal === null || WVal.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        const firstEl = document.getElementById('lw1');
+        if (firstEl) firstEl.focus();
+        return;
+      }
+
+      const lw1 = parseFloat(lw1Val);
+      const lw2 = parseFloat(lw2Val);
+      const lw3 = parseFloat(lw3Val);
+      const W = parseFloat(WVal);
+
+
+ // localStorage からドラム直径 Dd を取得して数値化（ここでチェックする）
+      const drumDdStr = localStorage.getItem('drum_Dd');
+      const Dd = drumDdStr !== null ? parseFloat(drumDdStr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラム直径が設定されていません。先にドラム直径の選定を行ってください。');
+        return;
+      }
+
+const nStr = localStorage.getItem('makisuu');
+      const n = nStr !== null ? parseFloat(nStr) : NaN;
+
+ const lw1answer = (Math.PI*Dd* 0.001*n);
+ 
+       if (lw1 < lw1answer-1) {
+    alert('ドラムに巻き付ける長さが小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (lw1 > lw1answer+1) {
+    alert('ドラムに巻き付ける長さが大きいです。設計をやり直してください。');
+    return;
+  }
+
+
+      const ropedwStr = localStorage.getItem('rope_dw');
+      const dw = ropedwStr !== null ? parseFloat(ropedwStr) : NaN;
+      if (isNaN(dw)) {
+        alert('ワイヤロープ径が設定されていません。先にワイヤロープ径の選定を行ってください。');
+        return;
+      }
+
+const lw2answer = (dw*0.001*40);
+
+ if (lw2 < lw2answer-0.01) {
+    alert('スプライスに要する長さが小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (lw2 > lw2answer+0.01) {
+    alert('スプライスに要する長さが大きいです。設計をやり直してください。');
+    return;
+  }
+
+const sinStr = localStorage.getItem('rope_sin');
+const sin = sinStr !== null ? parseFloat(sinStr) : NaN;
+
+let sinbleL = null;
+if (sin === 12) {
+  sinbleL = 86;
+} else if (sin === 14) {
+  sinbleL = 96;
+} else if (sin === 16) {
+  sinbleL = 110;
+} else if (sin === 18) {
+  sinbleL = 118;
+} else if (sin === 20) {
+  sinbleL = 134;
+} else if (sin === 22) {
+  sinbleL = 149;
+}
+
+const lw3answer = (sinbleL * 0.001 * Math.PI);
+
+if (lw3 < lw3answer-0.05) {
+    alert('シンブルに巻き付ける長さが小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (lw3 > lw3answer+0.05) {
+    alert('シンブルに巻き付ける長さが大きいです。設計をやり直してください。');
+    return;
+  }
+
+       const ropetotalL = (lw1answer + 2*(lw2answer + lw3answer));
+localStorage.setItem('rope_total', ropetotalL);
+
+       const kihonW = localStorage.getItem('kihon_w');
+       
+      let rope19situryou = null;
+      if (dw === 11.2) {
+        rope19situryou = 0.457;
+      } else if (dw === 12) {
+        rope19situryou = 0.524;
+      } else if (dw === 12.5) {
+        rope19situryou = 0.569;
+      } else if (dw === 14) {
+        rope19situryou = 0.713;
+      } else if (dw === 16) {
+        rope19situryou = 0.932;
+      } else if (dw === 18) {
+        rope19situryou = 1.18;
+      } else if (dw === 20) {
+        rope19situryou = 1.46;
+      } else if (dw === 22.4) {
+        rope19situryou = 1.83;
+      }
+
+        let rope24situryou = null;
+      if (dw === 11.2) {
+        rope24situryou = 0.416;
+      } else if (dw === 12) {
+        rope24situryou = 0.478;
+      } else if (dw === 12.5) {
+        rope24situryou = 0.519;
+      } else if (dw === 14) {
+        rope24situryou = 0.651;
+      } else if (dw === 16) {
+        rope24situryou = 0.850;
+      } else if (dw === 18) {
+        rope24situryou = 1.08;
+      } else if (dw === 20) {
+        rope24situryou = 1.33;
+      } else if (dw === 22.4) {
+        rope24situryou = 1.67;
+      }
+
+        let rope37situryou = null;
+      if (dw === 11.2) {
+        rope37situryou = 0.452;
+      } else if (dw === 12) {
+        rope37situryou = 0.517;
+      } else if (dw === 12.5) {
+        rope37situryou = 0.561;
+      } else if (dw === 14) {
+        rope37situryou = 0.704;
+      } else if (dw === 16) {
+        rope37situryou = 0.920;
+      } else if (dw === 18) {
+        rope37situryou = 1.16;
+      } else if (dw === 20) {
+        rope37situryou = 1.44;
+      } else if (dw === 22.4) {
+        rope37situryou = 1.80;
+      }
+
+        const ropedesign = localStorage.getItem('rope_design_rope');
+
+        let ropesituryou = null;
+        if (ropedesign === "6x19") {
+          ropesituryou = rope19situryou;
+        } else if (ropedesign === "6x24") {
+          ropesituryou = rope24situryou;
+        } else if (ropedesign === "6x37") {
+          ropesituryou = rope37situryou;
+        }
+
+
+const kihon_w = localStorage.getItem('kihon_w');
+const kihonWnum = kihon_w !== null ? parseFloat(kihon_w) : 0;
+
+  const Wanswer = (ropetotalL * ropesituryou * 9.81*0.001 + kihonWnum);
+
+  if (W < Wanswer-0.05) {
+    alert('巻き上げ荷重が小さいです。'+ropetotalL+'設計をやり直してください'+Wanswer+' ');
+    return;
+  }
+
+  if (W > Wanswer+0.05) {
+    alert('巻き上げ荷重が大きいです。設計をやり直してください。');
+    return;
+  }
+
+
+
+      // 値をlocalStorageに保存
+      localStorage.setItem('drum_lw1', lw1);
+      localStorage.setItem('drum_lw2', lw2);
+      localStorage.setItem('drum_lw3', lw3);
+      localStorage.setItem('total_W', W);
+      alert('値が保存されました');
+      window.location.href = 'drum_design3.html';
+      } catch (e) {
+        // 例外の詳細をできるだけ表示する（スタック優先）
+        const errMsg = e && e.stack ? e.stack : (e && e.message ? e.message : String(e));
+        alert('エラーが発生しました: ' + errMsg);
+        console.error('onDecide error:', e);
+      }
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+   
+   
+   
+    function showHint(type) {
+      // localStorage から必要な値を安全に取得
+  const drumDdStr = localStorage.getItem('drum_Dd');
+  const DdVal = drumDdStr !== null ? parseFloat(drumDdStr) : null;
+      const nStr = localStorage.getItem('makisuu');
+      const nVal = nStr !== null ? parseFloat(nStr) : null;
+      const dwVal = parseFloat(localStorage.getItem('rope_dw'));
+      const sinStr = localStorage.getItem('rope_sin');
+      const ropeSel = localStorage.getItem('rope_design_rope');
+      
+
+      if (type === 'lw1') {
+        const msg = '教科書 P.17 式（3・9）を参照してください。 ドラム直径' + DdVal + ' [mm]、巻き数'+nVal+'で設計しています。単位に注意してください。';
+        alert(msg);
+      } else if (type === 'lw2') {
+        const msg = '教科書 P.17 式（3・10）を参照してください。 ワイヤロープ径: ' + dwVal + '[mm]で設計しています。単位に注意してください。';
+        alert(msg);
+      } else if (type === 'lw3') {
+        const msg = '教科書 P.17を参照してください。 シンブルの呼びは'+sinStr+'で設計しています。おおよその値で構いませんが大きめにとってください';
+        alert(msg);
+  } else if (type === 'W') {
+  const msg = '教科書 P.17 式（3・12）を参照してください。ワイヤロープの単位質量はp7~9表を参照してください。ワイヤロープ径: ' + dwVal + '[mm]、 ワイヤロープ: '+ (ropeSel || '未選択') +'を選択しています。 ';
+  alert(msg);
+  }
+
+      
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラム設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="input-row">
+      <label for="td">ドラムの肉厚<span class="font">td</span>[mm]</label>
+      <input id="td" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('td')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="Df">爪側のフランジ直径<span class="font">Df</span>[mm]</label>
+      <input id="Df" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Df')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="tf">爪側のフランジ長さ<span class="font">tf</span>[mm]</label>
+      <input id="tf" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('tf')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const tdVal = document.getElementById('td').value;
+      const DfVal = document.getElementById('Df').value;
+      const tfVal = document.getElementById('tf').value;
+      if (tdVal === null || tdVal.toString().trim() === '' || DfVal === null || DfVal.toString().trim() === '' || tfVal === null || tfVal.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        return;
+      }
+
+      // 入力値を数値に変換してチェック
+      const td = parseFloat(tdVal);
+      const Df = parseFloat(DfVal);
+      const tf = parseFloat(tfVal);
+      if (isNaN(td) || isNaN(Df) || isNaN(tf)) {
+        alert('ドラムの肉厚、爪側のフランジ直径、爪側のフランジ厚さ、には有効な数値を入力してください');
+        return;
+      }
+      
+      
+      // localStorage のキー名に余分な空白や綴りミスがあったため正しいキーで取得
+      const Wstr = localStorage.getItem('total_W');
+      const W = Wstr !== null ? parseFloat(Wstr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。');
+        return;
+      }
+
+     
+      const pStr = localStorage.getItem('drum_p');
+      const p = pStr !== null ? parseFloat(pStr) : NaN;
+      if (isNaN(p)) {
+        alert('ドラムの溝ピッチが設定されていません。先に値を入力してください。');
+        return;
+      }
+      
+      const tdanswer = (1000*W/(50*p));
+
+      if (td < tdanswer) {
+       alert('ドラムの肉厚が小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (td > tdanswer+5) {
+      alert('ドラムの肉厚が大きいです。設計をやり直してください。');
+      return;
+      }
+
+
+
+       // ドラム直径の key は 'drum_Dd' だと他ファイルで使っている想定
+       const Ddstr = localStorage.getItem('drum_Dd');
+      const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラムの直径が設定されていません。');
+        return;
+      }
+
+      const ropeDwStr = localStorage.getItem('rope_dw');
+      const dw = ropeDwStr !== null ? parseFloat(ropeDwStr) : NaN;
+      if (isNaN(dw)) {
+        alert('ワイヤロープ径が設定されていません。先にワイヤロープの選定を行ってください。');
+        return;
+      }
+
+       const Dfanswer = (260+3.5*dw*2);
+
+       if (Df < Dfanswer*0.85) {
+       alert('爪側のフランジ直径が小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (Df > Dfanswer*1.34) {
+      alert('爪側のフランジ直径が大きいです。設計をやり直してください。');
+      return;
+      }
+
+
+       const tfanswer = (1.5*dw);  
+       
+        if (tf < tfanswer) {
+       alert('爪側のフランジ厚さが小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (tf > tfanswer*1.33+1) {
+      alert('爪側のフランジ厚さが大きいです。設計をやり直してください。');
+      return;
+      }
+      //標準数の丸め方がわからないため＋１mmで許容範囲とする
+
+
+      // 値をlocalStorageに保存
+      localStorage.setItem('drum_td', td);
+      localStorage.setItem('drum_Df', Df);
+      localStorage.setItem('drum_tf', tf);
+      alert('値が保存されました');
+      window.location.href = 'drum_design4.html';
+      } 
+    
+    function onBack() {
+      window.location.href = 'choice.html';
+    }
+
+
+
+    function showHint(type) {
+       const Wstr = localStorage.getItem('total_W');
+      const W = Wstr !== null ? parseFloat(Wstr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。');
+        return;
+      }
+
+      const pStr = localStorage.getItem('drum_p');
+      const p = pStr !== null ? parseFloat(pStr) : NaN;
+      if (isNaN(p)) {
+        alert('ドラムの溝ピッチが設定されていません。先に値を入力してください。');
+        return;
+      }
+
+      const Ddstr = localStorage.getItem('drum_Dd');
+      const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラムの直径が設定されていません。');
+        return;
+      }
+
+      const ropeDwStr = localStorage.getItem('rope_dw');
+      const dw = ropeDwStr !== null ? parseFloat(ropeDwStr) : NaN;
+      if (isNaN(dw)) {
+        alert('ワイヤロープ径が設定されていません。先にワイヤロープの選定を行ってください。');
+        return;
+      }
+
+      if (type === 'td') {
+        const msg = '教科書 P.16 式（3.5）を参照してください。 材質は鋳鉄FC200で1重巻きを採用し、ワイヤロープを加味した巻き上げ荷重は' +  W + ' [kN]、巻き溝ピッチは'+p+'[mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'Df') {
+        const msg = '教科書 P.16 式（3.7）を参照してください。 ドラム直径は'+Dd+'[mm]、ワイヤロープ径は'+dw+'[mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'tf') {
+        const msg = '教科書 P.16 式（3.8）を参照してください。 ワイヤロープ径は'+dw+'[mm]で設計しています。';
+        alert(msg);
+      } else {
+        alert('ヒントがありません');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>軸設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="label">「軸の材質はS20C-Dを使用」</div>
+     <div class="input-row">
+      <label for="S0">四角形状の辺長さ<span class="font">S₀<data value=""></data></span>[mm]</label>
+      <select id="S0">
+        <option value="">-- 選択してください --</option>
+        <option value="12">12</option>
+        <option value="14">14</option>
+        <option value="17">17</option>
+        <option value="19">19</option>
+        <option value="22">22</option>
+        <option value="27">27</option>
+        <option value="30">30</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('S0')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="ds1">ハンドル軸の直径<span class="font">ds1<data value=""></data></span>[mm]</label>
+      <select id="ds1">
+        <option value="">-- 選択してください --</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="28">28</option>
+        <option value="30">30</option>
+        <option value="32">32</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="38">38</option>
+        <option value="40">40</option>
+        <option value="42">42</option>
+        <option value="45">45</option>
+        <option value="48">48</option>
+        <option value="50">50</option>
+        <option value="55">55</option>
+        <option value="60">60</option>
+        <option value="65">65</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('ds1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="ds2">中間軸の直径<span class="font">ds2</span>[mm]</label>
+      <select id="ds2">
+        <option value="">-- 選択してください --</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="28">28</option>
+        <option value="30">30</option>
+        <option value="32">32</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="38">38</option>
+        <option value="40">40</option>
+        <option value="42">42</option>
+        <option value="45">45</option>
+        <option value="48">48</option>
+        <option value="50">50</option>
+        <option value="55">55</option>
+        <option value="60">60</option>
+        <option value="65">65</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('ds2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b_x_h1">キーの呼び寸法　 （ハンドル軸）<span class="font">b×h</span>[mm]</label>
+      <select id="b_x_h1">
+        <option value="">-- 選択してください --</option>
+        <option value="6×6">6×6</option>
+        <option value="8×7">8×7</option>
+        <option value="10×8">10×8</option>
+        <option value="12×8">12×8</option>
+        <option value="14×9">14×9</option>
+        <option value="15×10">15×10</option>
+        <option value="16×10">16×10</option>
+        <option value="18×11">18×11</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b_x_h1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b_x_h2">キーの呼び寸法　 （中間軸）<span class="font">b×h</span>[mm]</label>
+      <select id="b_x_h2">
+        <option value="">-- 選択してください --</option>
+        <option value="6×6">6×6</option>
+        <option value="8×7">8×7</option>
+        <option value="10×8">10×8</option>
+        <option value="12×8">12×8</option>
+        <option value="14×9">14×9</option>
+        <option value="15×10">15×10</option>
+        <option value="16×10">16×10</option>
+        <option value="18×11">18×11</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b_x_h2')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+  <script>
+
+    
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const S0Val = document.getElementById('S0').value;
+      const ds1Val = document.getElementById('ds1').value;
+      const ds2Val = document.getElementById('ds2').value;
+      const bxh1Val = document.getElementById('b_x_h1').value;
+      const bxh2Val = document.getElementById('b_x_h2').value;
+      if (S0Val === null || S0Val.toString().trim() === '' || ds1Val === null || ds1Val.toString().trim() === '' || ds2Val === null || ds2Val.toString().trim() === ''|| bxh1Val === null || bxh1Val.toString().trim() === '' || bxh2Val === null || bxh2Val.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        return;
+      }
+
+      // 入力値を数値に変換してチェック
+      const S0 = parseFloat(S0Val);
+      const ds1 = parseFloat(ds1Val);
+      const ds2 = parseFloat(ds2Val);
+      const bxh1 = bxh1Val;
+      const bxh2 = bxh2Val;
+      if (isNaN(S0) || isNaN(ds1) || isNaN(ds2)) {
+        alert('有効な数値を入力してください');
+        return;
+      }
+
+      const Lhstr = localStorage.getItem('handle_Lh');
+      const Lh = Lhstr !== null ? parseFloat(Lhstr) : NaN;
+      if (isNaN(Lh)) {
+        alert('ハンドルの長さが設定されていません。');
+        return;
+      }
+
+
+      const T1answer = 2 * 147 * Lh;
+      const rawS0answer = Math.cbrt(T1answer / (0.2082 * 60));
+      let S0answer = null;
+      if (rawS0answer >= 12 && rawS0answer < 14) {
+        S0answer = 14;
+      } else if (rawS0answer >= 14 && rawS0answer < 17) {
+        S0answer = 17;
+      } else if (rawS0answer >= 17 && rawS0answer < 19) {
+        S0answer = 19;
+      } else if (rawS0answer >= 19 && rawS0answer < 22) {
+        S0answer = 22;
+      } else if (rawS0answer >= 22 && rawS0answer < 27) {
+        S0answer = 27;
+      } else if (rawS0answer >= 27 && rawS0answer < 30) {
+        S0answer = 30;
+      } else {
+        alert('計算結果に対応する四角形状の辺長さが設定されていません。');
+        return;
+      }
+      if (S0 < S0answer) {
+        alert('四角形状の辺長さが小さいです。設計をやり直してください。');
+        return;
+      }
+
+      let e = null;
+      if (S0 === 12) {
+        e = 16.5;
+      } else if (S0 === 14) {
+        e = 19.2;
+      } else if (S0 === 17) {
+        e = 23;
+      } else if (S0 === 19) {
+        e = 26;
+      } else if (S0 === 22) {
+        e = 29.5;
+      } else if (S0 === 27) {
+        e = 36.5;
+      } else if (S0 === 30) {
+        e = 40;
+      } else {
+        alert('選択した S0 に対応する値がありません。');
+        return;
+      }
+
+      const rawDs1answer = e;
+      let ds1answer = null;
+      if (rawDs1answer === 16.5) {
+        ds1answer = 17;
+      } else if (rawDs1answer === 19.2) {
+        ds1answer = 20;
+      } else if (rawDs1answer === 23) {
+        ds1answer = 23;
+      } else if (rawDs1answer === 26) {
+        ds1answer = 26;
+      } else if (rawDs1answer === 29.5) {
+        ds1answer = 30;
+      } else if (rawDs1answer === 36.5) {
+        ds1answer = 38;
+      } else if (rawDs1answer === 40) {
+        ds1answer = 40;
+      }
+
+      if (ds1answer === null) {
+        alert('S0 に対応するハンドル軸径が設定されていません。');
+        return;
+      }
+
+      if (ds1 < ds1answer) {
+        alert('ハンドル軸の直径が小さいです。設計をやり直してください。');
+        return;
+      }
+
+      const zbStr = localStorage.getItem('gear_zb');
+      const zb = zbStr !== null ? parseFloat(zbStr) : NaN;
+
+      if (isNaN(zb)) {
+        alert('B歯車の歯数が設定されていません。');
+        return;
+      }
+
+      const T2answer = 2 * 147 * Lh * (zb / 14);
+      const rawDs2answer = Math.cbrt(5 * T2answer / 60);
+      let ds2answer = null;
+
+      if (rawDs2answer <= 17) {
+        ds2answer = 17;
+      } else if (rawDs2answer <= 18) {
+        ds2answer = 18;
+      } else if (rawDs2answer <= 19) {
+        ds2answer = 19;
+      } else if (rawDs2answer <= 20) {
+        ds2answer = 20;
+      } else if (rawDs2answer <= 22) {
+        ds2answer = 22;
+      } else if (rawDs2answer <= 23) {
+        ds2answer = 23;
+      } else if (rawDs2answer <= 24) {
+        ds2answer = 24;
+      } else if (rawDs2answer <= 25) {
+        ds2answer = 25;
+      } else if (rawDs2answer <= 26) {
+        ds2answer = 26;
+      } else if (rawDs2answer <= 28) {
+        ds2answer = 28;
+      } else if (rawDs2answer <= 30) {
+        ds2answer = 30;
+      } else if (rawDs2answer <= 32) {
+        ds2answer = 32;
+      } else if (rawDs2answer <= 35) {
+        ds2answer = 35;
+      } else if (rawDs2answer <= 36) {
+        ds2answer = 36;
+      } else if (rawDs2answer <= 38) {
+        ds2answer = 38;
+      } else if (rawDs2answer <= 40) {
+        ds2answer = 40;
+      } else if (rawDs2answer <= 42) {
+        ds2answer = 42;
+      } else if (rawDs2answer <= 45) {
+        ds2answer = 45;
+      } else if (rawDs2answer <= 48) {
+        ds2answer = 48;
+      } else if (rawDs2answer <= 50) {
+        ds2answer = 50;
+      } else if (rawDs2answer <= 55) {
+        ds2answer = 55;
+      } else if (rawDs2answer <= 60) {
+        ds2answer = 60;
+      } else if (rawDs2answer <= 65) {
+        ds2answer = 65;
+      } else {
+        alert('計算結果に対応する中間軸の直径が設定されていません。');
+        return;
+      }
+      if (ds2 < ds2answer) {
+        alert('中間軸の直径が小さいです。設計をやり直してください。');
+        return;
+      }
+
+       let b_x_h1answer = null;
+      if (ds1 >= 17 && ds1 < 22) {
+        b_x_h1answer = "6×6";
+      } else if (ds1 >=22  && ds1 < 30) {
+        b_x_h1answer = "8×7";
+      } else if (ds1 >=30 && ds1 < 38) {
+        b_x_h1answer = "10×8";
+      } else if (ds1 >=38 && ds1 < 44) {
+        b_x_h1answer = "12×8";
+      } else if (ds1 >=44 && ds1 < 50) {
+        b_x_h1answer = "14×9";  
+      } else if (ds1 >=50  && ds1 < 58) {
+        b_x_h1answer = "16×10";
+      } else if (ds1 >=50  && ds1 < 55) {
+        b_x_h1answer = "15×10";
+      } else if (ds1 >= 58 && ds1 < 65) {
+        b_x_h1answer = "18×11";
+      } else {
+        alert('計算結果に対応するハンドル軸の直径が設定されていません。');
+        return;
+      }
+      if (bxh1 !== b_x_h1answer) {
+        alert('ハンドル軸のキーの呼び寸法が正しくありません。');
+        return;
+      }
+
+      let b_x_h2answer = null;
+      if (ds2 >= 17 && ds2 < 22) {
+        b_x_h2answer = "6×6";
+      } else if (ds2 >=22  && ds2 < 30) {
+        b_x_h2answer = "8×7";
+      } else if (ds2 >=30 && ds2 < 38) {
+        b_x_h2answer = "10×8";
+      } else if (ds2 >=38 && ds2 < 44) {
+        b_x_h2answer = "12×8";
+      } else if (ds2 >=44 && ds2 < 50) {
+        b_x_h2answer = "14×9";  
+      } else if (ds2 >=50  && ds2 < 58) {
+        b_x_h2answer = "16×10";
+      } else if (ds2 >=50  && ds2 < 55) {
+        b_x_h2answer = "15×10";
+      } else if (ds2 >= 58 && ds2 < 65) {
+        b_x_h2answer = "18×11";
+      } else {
+        alert('計算結果に対応するハンドル軸の直径が設定されていません。');
+        return;
+      }
+      if (bxh2 !== b_x_h2answer) {
+        alert('中間軸のキーの呼び寸法が正しくありません。');
+        return;
+      }
+
+      localStorage.setItem('shaft_S0', S0);
+      localStorage.setItem('shaft_ds1', ds1);
+      localStorage.setItem('shaft_ds2', ds2);
+      localStorage.setItem('shaft_b_x_h1', bxh1);
+      localStorage.setItem('shaft_b_x_h2', bxh2);
+      alert('値が保存されました。');
+      window.location.href = 'Choice.html';
+    }
+
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+
+    function showHint(type) {
+      if (type === 'S0') {
+        const msg = '教科書 P.85 式 (8.1) を参照し、8.3表 から計算を上回る値を選択してください。';
+        alert(msg);
+      } else if (type === 'ds1') {
+        const msg = '教科書 P.86 8.2表 , 8.3表 を参照し、表から計算を上回る値を選択してください。';
+        alert(msg);
+      } else if (type === 'ds2') {
+        const msg = '教科書 P.90 式 (8.2) を参照し、8.2表 から計算を上回る値を選択してください。';
+        alert(msg);
+      } else if (type === 'b_x_h1') {
+        const msg = '製図の教科書（≠手巻きウィンチテキスト）P.184の表4-17より、ハンドル軸の軸径に適合する呼びのキーを選定してください。';
+        alert(msg);
+      } else if (type === 'b_x_h2') {
+        const msg = '製図の教科書（≠手巻きウィンチテキスト）P.184の表4-17より、中間軸の軸径に適合する呼びのキーを選定してください。';
+        alert(msg);
+      }
+      }
+
+  </script>
+</body>
+</html>

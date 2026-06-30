@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ブレーキ輪設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; text-align: center }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+ .font { font-family: 'Times New Roman', serif; } 
+ </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="label">「ブレーキ輪の材質はFC250を使用」</div>
+    <div class="input-row">
+      <label for="DB">ブレーキ輪の直径<span class="font">D</span>[mm]</label>
+      <select id="DB">
+        <option value="">-- 選択してください --</option>
+        <option value="250">250</option>
+        <option value="300">300</option>
+        <option value="350">350</option>
+        <option value="400">400</option>
+        <option value="450">450</option>
+        <option value="500">500</option>
+       
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('DB')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="Q0">制動力<span class="font">Q0</span>[kN]</label>
+      <input id="Q0" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Q0')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="T1">張り側の張力<span class="font">T1</span>[kN]</label>
+      <input id="T1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('T1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="T2">ゆるみ側の張力<span class="font">T2</span>[kN]</label>
+      <input id="T2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('T2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b">ブレーキライニングの幅<span class="font">b</span>[mm]</label>
+      <input id="b" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="Thick">ブレーキライニングの厚さ[mm]</label>
+      <input id="Thick" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Thick')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="p1">張り側の圧力<span class="font">p1</span>[N/cm^2]</label>
+      <input id="p1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('p1')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const DB = parseFloat(document.getElementById('DB').value);
+      const Q0 = parseFloat(document.getElementById('Q0').value);
+      const T1 = parseFloat(document.getElementById('T1').value);
+      const T2 = parseFloat(document.getElementById('T2').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const Thick = parseFloat(document.getElementById('Thick').value);
+      const p1 = parseFloat(document.getElementById('p1').value);
+      if (isNaN(DB) || isNaN(Q0) || isNaN(T1) || isNaN(T2) || isNaN(b) || isNaN(Thick) || isNaN(p1)) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      if (b < 25 || b > 316) {
+        alert('ブレーキライニングの幅が範囲外です。25mm以上316mm以下にしてください。');
+        return;
+      }
+
+    const Wstr = localStorage.getItem('total_W');
+        const W = Wstr !== null ? parseFloat(Wstr) : NaN;
+        if (isNaN(W)) {
+          alert('巻き上げ荷重が設定されていません。');
+          return;
+        }
+
+        const Ddstr = localStorage.getItem('drum_Dd');
+        const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+        if (isNaN(Dd)) {
+          alert('ドラムの直径が設定されていません。');
+          return;
+        }
+
+        const Dfstr = localStorage.getItem('drum_Dfgear');
+        const Df = Dfstr !== null ? parseFloat(Dfstr) : NaN;
+        if (isNaN(Df)) {
+          alert('ドラム側のフランジ直径が設定されていません。');
+          return;
+        }
+
+         if (DB < Df) {
+        alert('ブレーキ輪の直径が小さいです。設計をやり直してください');
+        return;
+      }
+
+
+      
+    const Q0answer=W*Dd/DB;
+      if (Q0 > Q0answer+0.01) {
+        alert('制動力が大きいです。計算をやり直してください');
+        return;
+      }
+      if (Q0 < Q0answer-0.01) {
+        alert('制動力が小さいです。計算をやり直してください');
+        return;
+      }
+
+      const T1answer = 6.1*Q0/(6.1-1);
+
+      if (T1 > T1answer+0.01) {
+        alert('張り側の張力が大きいです。計算をやり直してください');
+        return;
+      }
+      if (T1 < T1answer-0.01) {
+        alert('張り側の張力が小さいです。計算をやり直してください');
+        return;
+      }
+
+      const T2answer = Q0/(6.1-1);
+      if (T2 > T2answer+0.01) {
+        alert('ゆるみ側の張力が大きいです。計算をやり直してください');
+        return;
+      }
+      if (T2 < T2answer-0.01) {
+        alert('ゆるみ側の張力が小さいです。計算をやり直してください');
+        return;
+      }
+
+      let Thickanswer = null;
+if (b <= 63 && b >= 25) {
+  Thickanswer = 5;
+} else if (b <= 100 && b >= 71) {
+  Thickanswer = 8;
+} else if (b <= 180 && b >= 112) {
+  Thickanswer = 10;
+} else if (b <= 315 && b >= 200) {
+  Thickanswer = 16;
+}
+  
+      if (Thick > Thickanswer) {
+        alert('ブレーキライニングの厚さが大きいです。計算をやり直してください');
+        return;
+      }
+      if (Thick < Thickanswer) {
+        alert('ブレーキライニングの厚さが小さいです。計算をやり直してください');
+        return;
+      }
+       
+      const p1answer = T1*1000*100/(b*DB/2);
+
+      if (p1 > p1answer+0.1) {
+        alert('張り側の圧力が大きいです。'+p1answer+'計算をやり直してください');
+        return;
+      }
+      if (p1 < p1answer-0.1) {
+        alert('張り側の圧力が小さいです。計算をやり直してください');
+        return;
+      }
+      if (p1 >1000) {
+        alert('張り側の圧力がおおきいです。許容ブレーキ圧力を超えてしまうためブレーキライニングの幅を変えるなどして調整してください。');
+        return;
+      }
+
+
+
+
+
+
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brake_DB', DB);
+      localStorage.setItem('brake_Q0', Q0);
+      localStorage.setItem('brake_T1', T1);
+      localStorage.setItem('brake_T2', T2);
+      localStorage.setItem('brake_b', b);
+      localStorage.setItem('brake_Thick', Thick);
+      localStorage.setItem('brake_p1', p1);
+
+      alert('値が保存されました');
+      window.location.href = 'brake_design2.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+    function showHint(type) {
+
+      const Wstr = localStorage.getItem('total_W');
+        const W = Wstr !== null ? parseFloat(Wstr) : NaN;
+        if (isNaN(W)) {
+          alert('巻き上げ荷重が設定されていません。');
+          return;
+        }
+
+        const Ddstr = localStorage.getItem('drum_Dd');
+        const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+        if (isNaN(Dd)) {
+          alert('ドラムの直径が設定されていません。');
+          return;
+        }
+
+      if(type === 'DB') {
+        alert('教科書 P.47 表7.1 を参照してください。バランスを考えドラムフランジよりも大きい値を選択してください。');
+      } else if(type === 'Q0') {
+        alert('教科書 P.49 式（7・1）を参照してください。 巻き上げ荷重は'+W+'[kN]、ドラム直径は'+Dd+'[mm]としています。');
+      } else if(type === 'T1') {
+        alert('教科書 P.49 式（7・2）表7.4、7.5を参照してください。今回ブレーキライニングはウーブン系、ロール形のものを使用しているため摩擦係数をμ=0.43とし、帯の巻きかけ中心角は240°とします。');
+      } else if(type === 'T2') {
+        alert('教科書 P.49 式（7・3）表7.4、7.5を参照してください。今回ブレーキライニングはウーブン系、ロール形のものを使用しているため摩擦係数をμ=0.43とし、帯の巻きかけ中心角は240°とします。');
+      } else if(type === 'b') {
+        alert('教科書 P.50 表7.6 を参照してください。表の幅から値を仮定し、その後の張側の圧力計算で許容圧力を超えていれば調整してください。');
+      } else if(type === 'Thick') {
+        alert('教科書 P.50 表7.6 を参照してください。厚さは最小の整数を使用します');
+      } else if(type === 'p1') {
+        alert('教科書 P.49 式（7・4）を参照してください。この値が表7.4の許容圧力を超えないようにブレーキライニングの幅を調整してください。');
+      }
+    }
+  </script>
+</body>
+</html>

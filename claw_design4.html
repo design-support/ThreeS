@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>つめ設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+ </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="label">「つめの材質はSF440Aを使用」</div>
+    <div class="input-row">
+      <label for="dp">つめの座の外径<span class="font">dp</span>[mm]</label>
+      <input id="dp" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('dp')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="C">つめ軸とつめ車のすき<span class="font">C</span>[mm]</label>
+      <input id="C" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('C')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="l">つめの長さ<span class="font">l</span>[mm]</label>
+      <input id="l" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      try {
+        const dpVal = document.getElementById('dp').value;
+        const CVal = document.getElementById('C').value;
+        const lVal = document.getElementById('l').value;
+        if (dpVal === null || dpVal.toString().trim() === '' || CVal === null || CVal.toString().trim() === '' || lVal === null || lVal.toString().trim() === '') {
+          alert('すべての項目を入力してください');
+          return;
+        }
+
+        // 入力値を数値に変換してチェック
+        const dp = parseFloat(dpVal);
+        const C = parseFloat(CVal);
+        const l = parseFloat(lVal);
+        if (isNaN(dp) || isNaN(C) || isNaN(l)) {
+          alert('有効な数値を入力してください');
+          return;
+        }
+        
+        
+        
+        const dstr = localStorage.getItem('claw_d');
+        const d = dstr !== null ? parseFloat(dstr) : NaN;
+        if (isNaN(d)) {
+          alert('つめ軸の軸径が設定されていません。');
+          return;
+        }
+
+       
+        
+        
+
+         if (dp <1.8*d ) {
+         alert('つめの座の外径が小さいです。設計をやり直してください');
+         return;
+         }
+
+       
+        if (dp > 2*d) {
+        alert('つめの座の外径が大きいです。設計をやり直してください。');
+        return;
+        }
+
+        //A,I,k,λの値を自動計算
+        const bstr = localStorage.getItem('claw_b');
+        const b = bstr !== null ? parseFloat(bstr) : NaN;
+        if (isNaN(b)) {
+          alert('つめ車の歯幅が設定されていません。');
+          return;
+        }
+
+       
+
+        const A = b*b/2;
+
+        const I = b*b*b*b/(12*8).toFixed(2);
+
+        const k = Math.sqrt(I/A).toFixed(2);
+
+        const lambda = l / k.toFixed(2);
+
+
+
+        
+         
+
+        // 値をlocalStorageに保存
+        localStorage.setItem('claw_dp', dp);
+        localStorage.setItem('claw_C', C);
+        localStorage.setItem('claw_l', l);
+        localStorage.setItem('claw_lambda', lambda);
+        localStorage.setItem('claw_I', I);
+        localStorage.setItem('claw_k', k);
+        localStorage.setItem('claw_A', A);
+        
+        
+        alert('値が保存されました。A、I、k、λの値を自動計算しました。');
+        window.location.href = 'choice.html';
+      } catch (e) {
+        const errMsg = e && e.stack ? e.stack : (e && e.message ? e.message : String(e));
+        alert('エラーが発生しました: ' + errMsg);
+        console.error('onDecide error:', e);
+      }
+    } 
+    
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+
+
+
+    function showHint(type) {
+
+             const dstr = localStorage.getItem('claw_d');
+      const d = dstr !== null ? parseFloat(dstr) : NaN;
+      if (isNaN(d)) {
+        alert('つめ軸の軸径が設定されていません。');
+        return;
+      }
+
+       
+
+      if (type === 'dp') {
+        const msg = '教科書 P.42 式（6・11）を参照してください。 つめ軸の軸径は' +d+ ' [mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'C') {
+        const msg = '教科書 P.42 図6・5を参照してください。30mm程度で設計し、必要なら後から修正するとよいです';
+        alert(msg);
+      } else if (type === 'l') {
+        const msg = '教科書 P.42 図6・5を参照してください。つめ車半径とすきま、つめ軸の半径から三平方の定理で求められます。大体の大きさで構いません。つめ軸の軸径は' +d+ ' [mm]で設計しています。';
+        alert(msg);
+      } else {
+        alert('ヒントがありません');
+      }
+    }
+  </script>
+</body>
+</html>

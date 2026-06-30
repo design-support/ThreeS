@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>歯車設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="label">「歯車の材質はFC250を使用」</div>
+    <div class="input-row">
+      <label for="T1">ハンドル軸に作用するトルク<span class="font">T1</span>[N・mm]</label>
+      <input id="T1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('T1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="T2">中間軸に作用するトルク<span class="font">T2</span>[N・mm]</label>
+      <input id="T2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('T2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="m">モジュール<span class="font">m</span>[mm]</label>
+      <input id="m" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('m')">ヒント</button>
+    </div>
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+      const T1Val = document.getElementById('T1').value;
+      const T2Val = document.getElementById('T2').value;
+      const mVal = document.getElementById('m').value;
+      if (T1Val === null || T1Val.toString().trim() === '' || T2Val === null || T2Val.toString().trim() === '' || mVal === null || mVal.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        return;
+      }
+
+      // 入力値を数値に変換してチェック
+      const T1 = parseFloat(T1Val);
+      const T2 = parseFloat(T2Val);
+      const m = parseFloat(mVal);
+      if (isNaN(T1) || isNaN(T2) || isNaN(m)) {
+        alert('有効な数値を入力してください');
+        return;
+      }
+      
+      // localStorage のキー名に余分な空白や綴りミスがあったため正しいキーで取得
+      const Lhstr = localStorage.getItem('handle_Lh');
+      const Lh = Lhstr !== null ? parseFloat(Lhstr) : NaN;
+      if (isNaN(Lh)) {
+        alert('クランクハンドルの長さが設定されていません。');
+        return;
+      }
+      
+
+      const zbStr = localStorage.getItem('gear_zb');
+      const zb = zbStr !== null ? parseFloat(zbStr) : NaN;
+      if (isNaN(zb)) {
+        alert('B歯車の歯数が設定されていません。先に値を入力してください。');
+        return;
+      }
+
+      const zdStr = localStorage.getItem('gear_zd');
+      const zd = zdStr !== null ? parseFloat(zdStr) : NaN;
+      if (isNaN(zd)) {
+        alert('D歯車の歯数が設定されていません。先に値を入力してください。');
+        return;
+      }
+      
+      const T1answer = (2*147*Lh);
+
+      if (T1 < T1answer) {
+       alert('ハンドル軸に作用するトルクが小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (T1 > T1answer+50) {
+      alert('ハンドル軸に作用するトルクが大きいです。設計をやり直してください。');
+      return;
+      }
+
+      
+
+        const T2answer = (2*147*Lh*(zb/14));  
+        
+        if (T2 < T2answer) {
+       alert('中間軸に作用するトルクが小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (T2 > T2answer+50) {
+      alert('中間軸に作用するトルクが大きいです。設計をやり直してください。');
+      return;
+      }
+
+      
+      const m1answer = (Math.cbrt((2*T2answer)/(14*8*Math.PI*0.088*67.3)));
+
+       let manswer = null;
+      if (m1answer >= 4 && m1answer <5) {
+      manswer = 5;
+      } else if (m1answer >=5  && m1answer < 6) {
+      manswer = 6;
+      } else if (m1answer >= 6 && m1answer < 8) {
+      manswer = 8;
+      } else if (m1answer >= 8 && m1answer < 10) {
+      manswer = 10;
+      } else if (m1answer >= 10 && m1answer < 12) {
+      manswer = 12;  }
+
+      if (m < manswer) {
+      alert('モジュールが小さいです。設計をやり直してください ');
+      return;
+      }
+
+      if (m > manswer) {
+      alert('モジュールが大きいです。設計をやり直してください。');
+      return;
+      }
+
+     
+      const F=(0.91*1.84*14*m*8*m*(2*zd/(14+zd)));
+
+      const Fc=(2*T2)/(m*14);
+
+      if (F < Fc) {
+      alert('歯面強さからの伝達力が歯車に作用する力より小さいです。モジュールの設計をやり直してください ');
+      return;
+      }
+
+      const Ddstr = localStorage.getItem('drum_Dd');
+      const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラムの直径が設定されていません。');
+        return;
+      }
+      
+      const dwstr = localStorage.getItem('rope_dw');
+      const dw = Ddstr !== null ? parseFloat(dwstr) : NaN;
+      if (isNaN(dw)) {
+        alert('ワイヤロープ径が設定されていません。');
+        return;
+      }
+
+      const t=(Math.PI*m);
+      const da=(14*m);
+      const db=(zb*m);
+      const dc=(14*m);
+      const dd=(zd*m);
+      const dKA=((14+2)*m);
+      const dKB=(zb+2)*m;
+      const dKC=(14+2)*m;
+      const dKD=(zd+2)*m;
+      const h=(2.25*m);
+      const hK=m;
+      const hf=(1.25*m);
+
+      //標準数を加味して歯幅b=8*mを補正
+      let b = null;
+      if (manswer=5) {
+      b = 40;
+      } else if (manswer=6) {
+      b = 50;
+      } else if (manswer=8) {
+      b = 67;
+      } else if (manswer=10) {
+      b = 80;
+      } else if (manswer=12) {
+      b = 100;
+      }
+
+      const C=((dc+dd)/2)-((dKB+Dd+dw)/2);
+
+      if (F <= 0) {
+      alert('ドラムと歯車の隙間がないです設計をやり直してください。');
+      return;
+      }
+
+
+     
+      // 値をlocalStorageに保存
+      localStorage.setItem('gear_T1', T1);
+      localStorage.setItem('gear_T2', T2);
+      localStorage.setItem('gear_m', m);
+      localStorage.setItem('gear_t', t);
+      localStorage.setItem('gear_da', da);
+      localStorage.setItem('gear_db', db);
+      localStorage.setItem('gear_dc', dc);
+      localStorage.setItem('gear_dd', dd);
+      localStorage.setItem('gear_dKA', dKA);
+      localStorage.setItem('gear_dKB', dKB);
+      localStorage.setItem('gear_dKC', dKC);
+      localStorage.setItem('gear_dKD', dKD);
+      localStorage.setItem('gear_h', h);
+      localStorage.setItem('gear_hK', hK);
+      localStorage.setItem('gear_hf', hf);
+      localStorage.setItem('gear_b', b);
+      localStorage.setItem('gear_C', C);
+      alert('値が保存されました。歯車の値をいくつか自動計算しました。');
+      window.location.href = 'Choice.html';
+      } 
+    
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+
+
+
+    function showHint(type) {
+
+       const Lhstr = localStorage.getItem('handle_Lh');
+      const Lh = Lhstr !== null ? parseFloat(Lhstr) : NaN;
+      if (isNaN(Lh)) {
+        alert('クランクハンドルの長さが設定されていません。');
+        return;
+      }
+
+       const zbStr = localStorage.getItem('gear_zb');
+      const zb = zbStr !== null ? parseFloat(zbStr) : NaN;
+      if (isNaN(zb)) {
+        alert('B歯車の歯数が設定されていません。先に値を入力してください。');
+        return;
+      }
+
+      const zdStr = localStorage.getItem('gear_zd');
+      const zd = zdStr !== null ? parseFloat(zdStr) : NaN;
+      if (isNaN(zd)) {
+        alert('D歯車の歯数が設定されていません。先に値を入力してください。');
+        return;
+      }
+
+      if (type === 'T1') {
+        const msg = '教科書 P.32 式（5.3）を参照してください。 クランクハンドル長さは'+Lh+'[mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'T2') {
+        const msg = '教科書 P.32 式（5.4）を参照してください。 A歯車の歯数は14、B歯車の歯数は'+zb+'で設計しています。';
+        alert(msg);
+      } else if (type === 'm') {
+        const msg = '教科書 P.33 式（5.8）を参照してください。 C歯車の歯数は14、材質はFC250を使用しているため許容繰り返し曲げ応力は100[N/mm^2]、平歯車なので歯幅係数は8で設計しています。';
+        alert(msg);
+      } else {
+        alert('ヒントがありません');
+      }
+    }
+  </script>
+</body>
+</html>

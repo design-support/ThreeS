@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>つめ設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+ .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+     <div class="label">「つめの材質はSF440Aを使用」</div>
+    <div class="input-row">
+      <label for="claw_buckling">爪の座屈強さ<span class="font">σ</span>[N/mm^2]</label>
+      <input id="claw_buckling" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('claw_buckling')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="claw_max">爪の最大許容荷重<span class="font">P</span>[N]</label>
+      <input id="claw_max" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('claw_max')">ヒント</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="onCalc()">保存</button>
+      <button class="btn" onclick="onBack()">戻る</button>
+    </div>
+  </div>
+  <script>
+    function onRopeChange() {
+      // 選択肢が変更されたときの処理
+      // 必要に応じて実装
+    }
+
+    function showHint(type) {
+
+      const lstr = localStorage.getItem('claw_l');
+      const l = lstr !== null ? parseFloat(lstr) : NaN;
+      if (isNaN(l)) {
+        alert('つめの長さが設定されていません。');
+        return;
+      }
+
+      const kstr = localStorage.getItem('claw_k');
+      const k = kstr !== null ? parseFloat(kstr) : NaN;
+      if (isNaN(k)) {
+        alert('最小断面二次半径が設定されていません。');
+        return;
+      }
+
+      const Astr = localStorage.getItem('claw_A');
+      const A = Astr !== null ? parseFloat(Astr) : NaN;
+      if (isNaN(A)) {
+        alert('断面積が設定されていません。');
+        return;
+      }
+
+      if (type === 'claw_buckling') {
+        alert('教科書P.43 式（6・14）、6・5表、を参照してください。材質は軟鋼を使用し、爪の長さは'+l+'[mm]、最小断面二次半径は'+k+'[mm]で設計しています。');
+      }
+      if (type === 'claw_max') {
+        alert('教科書P.43 6・6表 、P.45 を参照してください。断面積は'+A+'[mm^2]で設計しています。');
+      }
+    }
+
+
+
+    function onCalc() {
+      const clawBucklingVal = document.getElementById('claw_buckling').value;
+      if (clawBucklingVal === null || clawBucklingVal.toString().trim() === '') {
+        alert('爪の座屈強さを入力してください');
+        return;
+      }
+
+      const clawMaxVal = document.getElementById('claw_max').value;
+      if (clawMaxVal === null || clawMaxVal.toString().trim() === '') {
+        alert('爪の最大許容荷重を入力してください');
+        return;
+      }
+      
+      const lstr = localStorage.getItem('claw_l');
+      const l = lstr !== null ? parseFloat(lstr) : NaN;
+      if (isNaN(l)) {
+        alert('つめの長さが設定されていません。');
+        return;
+      }
+
+      const kstr = localStorage.getItem('claw_k');
+      const k = kstr !== null ? parseFloat(kstr) : NaN;
+      if (isNaN(k)) {
+        alert('最小断面二次半径が設定されていません。');
+        return;
+      }
+
+      const clawBucklinganswer = 330/(1+(4/7500)*(l/k)**2);
+
+      if (clawBucklingVal > clawBucklinganswer+1) {
+        alert('爪の座屈強さが大きいです。計算をやり直してください');
+        return;
+      }
+      if (clawBucklingVal < clawBucklinganswer-1) {
+        alert('爪の座屈強さが小さいです。計算をやり直してください');
+        return;
+      }
+
+      const pstr = localStorage.getItem('claw_p');
+      const p = pstr !== null ? parseFloat(pstr) : NaN;
+      if (isNaN(p)) {
+        alert('つめ軸に作用するトルクが設定されていません。');
+        return;
+      }
+
+      const Astr = localStorage.getItem('claw_A');
+      const A = Astr !== null ? parseFloat(Astr) : NaN;
+      if (isNaN(A)) {
+        alert('断面積が設定されていません。');
+        return;
+      }
+
+
+       if (clawMaxVal< p*1.2) {
+        alert('教科書P.43 式（6・13）より安全ではありません。材質を硬鋼に変更することでP.43、6.5表より座屈強さを大きくすることが出来ます。この時安全率は３になります。つめ車の半径を大きくすることでも対応できます。');
+        return;
+      }
+
+      // 正しい場合、値をlocalStorageに保存
+      localStorage.setItem('claw_buckling', clawBucklingVal);
+  alert('値が保存されました');
+  window.location.href = 'choice.html';
+  // 必要に応じて計算処理を追加
+    }
+
+    function onBack() {
+      window.location.href = 'choice.html';
+    }
+  </script>
+</body>
+</html>

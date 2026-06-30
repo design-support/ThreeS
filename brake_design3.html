@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ブレーキ帯設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+ </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="label">「リベットの材質はsv330を使用」</div>
+    <div class="input-row">
+      <label for="d">リベットの直径<span class="font">d</span>[mm]</label>
+      <select id="d">
+        <option value="">-- 選択してください --</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="16">16</option>
+        <option value="40">20</option>
+        <option value="24">24</option>
+        <option value="30">30</option>
+        <option value="36">36</option>
+       
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="l">リベットの長さ<span class="font">l</span>[mm]</label>
+      <input id="l" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="n">リベットの本数<span class="font">n</span>[-]</label>
+      <input id="n" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('n')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="p">リベットのピッチ<span class="font">p</span>[mm]</label>
+      <input id="p" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('p')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="kouritu">帯幅の効率<span class="font">η</span>[-]</label>
+      <input id="kouritu" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('kouritu')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b">ブレーキ帯の帯幅<span class="font">b</span>[mm]</label>
+      <input id="b" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="e1">マージン<span class="font">e1</span>[mm]</label>
+      <input id="e1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('e1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="e2">マージン<span class="font">e2</span>[mm]</label>
+      <input id="e2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('e2')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="utikata">リベットの打ち方</label>
+      <select id="utikata">
+        <option value="">-- 選択してください --</option>
+        <option value="手打ち">手打ち</option>
+        <option value="機械打ち">機械打ち</option>
+       
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('utikata')">ヒント</button>
+    </div>
+    
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const d = parseFloat(document.getElementById('d').value);
+      const l = parseFloat(document.getElementById('l').value);
+      const n = parseFloat(document.getElementById('n').value);
+      const p = parseFloat(document.getElementById('p').value);
+      const kouritu = parseFloat(document.getElementById('kouritu').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const e1 = parseFloat(document.getElementById('e1').value);
+      const e2 = parseFloat(document.getElementById('e2').value);
+      const utikata = document.getElementById('utikata').value;
+      if (isNaN(d) || isNaN(l) || isNaN(n) || isNaN(p) || isNaN(kouritu) || isNaN(b) || isNaN(e1)|| isNaN(e2)|| isNaN(utikata)) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      
+
+    const DBstr = localStorage.getItem('brake_DB');
+        const DB = DBstr !== null ? parseFloat(DBstr) : NaN;
+        if (isNaN(DB)) {
+          alert('ブレーキ輪の直径が設定されていません。');
+          return;
+        }
+
+        const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+        
+          let b1 = null;
+            if (DB == 250 ) {
+            b1 = 2;
+            } else if (DB == 300) {
+            b1 = 3;
+            }else if (DB == 350) {
+            b1 = 3;
+            }else if (DB == 400) {
+            b1 = 4;
+            }else if (DB == 450) {
+            b1 = 4;
+            }else if (DB == 500) {
+            b1 = 5;
+            }
+
+    const danswer = (Math.sqrt(50*b1))-4;
+
+    if (d > danswer+7) {
+        alert('リベットの直径が大きいです。計算をやり直してください');
+        return;
+      }
+
+      if (d+0.6 < danswer) {
+        alert('リベットの直径が小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (l > b1*3+1.6*d) {
+        alert('リベットの長さが大きいです。計算をやり直してください');
+        return;
+      }
+
+      if (l < b1*3+(1.3)*d) {
+        alert('リベットの長さが小さいです。計算をやり直してください');
+        return;
+      }
+
+      
+      
+    const nanswer=2*T1/(Math.PI*(d**2)*88);
+      if (n > nanswer+2) {
+        alert('リベットの本数が多いです。計算をやり直してください');
+        return;
+      }
+      if (n < nanswer) {
+        alert('リベットの本数が少ないです。計算をやり直してください');
+        return;
+      }
+      if (n == 1) {
+        alert('リベット1本では張力が均等に作用しません。計算をやり直してください');
+        return;
+      }
+
+
+
+      if (p > 6*d) {
+        alert('リベットのピッチが大きいです。計算をやり直してください');
+        return;
+      }
+      if (p < 2.5*d) {
+        alert('リベットのピッチが小さいです。計算をやり直してください');
+        return;
+      }
+
+
+
+       let d1 = null;
+          if (d == 10) {
+          d1 = 11;
+          }else if (d == 12) {
+          d1 = 13;
+          }else if (d == 16) {
+          d1 = 17;
+          }else if (d == 20) {
+          d1 = 21.5;
+          }else if (d == 24) {
+          d1 = 25.5;
+          }else if (d == 30) {
+          d1 = 32;
+          }else if (d == 36) {
+          d1 = 38;
+          }
+
+      const kourituanswer = (p-d1)/p;
+
+      if (kouritu > kourituanswer+0.002) {
+        alert('帯幅の効率が大きいです。計算をやり直してください');
+        return;
+      }
+      if (kouritu < kourituanswer-0.002) {
+        alert('帯幅の効率が小さいです。計算をやり直してください');
+        return;
+      }
+
+      const banswer = T1*1000/(b1*54*kouritu);
+      if (b > banswer+10) {
+        alert('ブレーキ帯の帯幅が大きいです。計算をやり直してください');
+        return;
+      }
+      if (b < banswer) {
+        alert('ブレーキ帯の帯幅が小さいです。計算をやり直してください');
+        return;
+      }
+
+      const b2str = localStorage.getItem('brake_b');
+        const b2 = b2str !== null ? parseFloat(b2str) : NaN;
+        if (isNaN(b2)) {
+          alert('ブレーキライニングの幅が設定されていません。');
+          return;
+        }
+
+        if (b < b2) {
+        alert('ブレーキ帯の帯幅がブレーキライニングの幅より小さいです。計算をやり直してください');
+        return;
+      }
+
+      if (e1 > 2.5*d) {
+        alert('マージンe1が大きいです。計算をやり直してください');
+        return;
+      }
+      if (e1 < 2*d) {
+        alert('マージンe1が小さいです。計算をやり直してください');
+        return;
+      }
+         
+      
+
+      if (e2 < 2*d) {
+        alert('マージンe2が小さいです。計算をやり直してください');
+        return;
+      }
+      if (e2 > 4*d) {
+        alert('マージンe2が大きいです。計算をやり直してください');
+        return;
+      }
+     
+
+      if (5 > 235/(2*T1*1000/(Math.PI*(d1**2)*n)) && 235/(2*T1*1000/(Math.PI*(d1**2)*n)) > 4.75 && utikata ==="手打ち") {
+        alert('リベットが手打ちだと安全率が条件を満たせないため、機械打ちにしてください。');
+        return;
+      }
+
+      if (4.5 > 235/(2*T1*1000/(Math.PI*(d1**2)*n))){
+      alert('安全率が条件を満たせないです。ブレーキ輪直径を見直すことでT1の値を下げることが出来ます。');
+        return;
+      }
+      
+
+
+
+
+      
+
+
+
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brake_d', d);
+      localStorage.setItem('brake_l', l);
+      localStorage.setItem('brake_n', n);
+      localStorage.setItem('brake_p', p);
+      localStorage.setItem('brake_kouritu', kouritu);
+      localStorage.setItem('brakebelt_b', b);
+      localStorage.setItem('brake_e1', e1);
+      localStorage.setItem('brake_e2', e2);
+
+      alert('値が保存されました');
+      window.location.href = 'brake_design4.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+    function showHint(type) {
+
+      const DBstr = localStorage.getItem('brake_DB');
+        const DB = DBstr !== null ? parseFloat(DBstr) : NaN;
+        if (isNaN(DB)) {
+          alert('ブレーキ輪の直径が設定されていません。');
+          return;
+        }
+
+        let b1 = null;
+            if (DB == 250 ) {
+            b1 = 2;
+            } else if (DB == 300) {
+            b1 = 3;
+            }else if (DB == 350) {
+            b1 = 3;
+            }else if (DB == 400) {
+            b1 = 4;
+            }else if (DB == 450) {
+            b1 = 4;
+            }else if (DB == 500) {
+            b1 = 5;
+            }
+
+        const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+        const b2str = localStorage.getItem('brake_b');
+        const b2 = b2str !== null ? parseFloat(b2str) : NaN;
+        if (isNaN(b2)) {
+          alert('ブレーキライニングの幅が設定されていません。');
+          return;
+        }
+
+      if(type === 'd') {
+        alert('教科書 P.56  式（7・10） 表7.13 を参照してください。ブレーキ帯の板厚は'+b1+'[mm]で設計しています。');
+      } else if(type === 'l') {
+        alert('教科書 P.57 式（7・11）表7.13を参照してください。 ');
+      } else if(type === 'n') {
+        alert('教科書 P.57 式（7・12）を参照してください。材質はSU330を使用するため許容せん断応力は88[N/mm^2]、ブレーキ張り側の張力は'+T1+'[kN]で設計しています。単位に注意して設計してください。リベットは張力を均等にするために2本以上使用してください。');
+      } else if(type === 'p') {
+        alert('教科書 P.57 式（7・13）を参照してください。');
+      } else if(type === 'kouritu') {
+        alert('教科書 P.57   式（7・16）を参照してください。ブレーキ帯の板厚は'+b1+'[mm]で設計しています。');
+      } else if(type === 'b') {
+        alert('教科書 P.57 式（7・17）表7.8(c)、表7.9を参照してください。材質は鋼であるので安全率は5、院長強さは270[N/mm^2]で計算します。単位に注意して設計してください。ブレーキライニングの幅' + b2 + 'より大きくなるようにしてください。');
+      } 
+      else if(type === 'e1') {
+        alert('教科書 P.57 式（7・14）を参照してください。');
+      } else if(type === 'e2') {
+        alert('教科書 P.57 式（7・15）、p.61を参照してください。p.61の式の値が式（7・15）の値より大きくなるようにしてください。');
+      } else if(type === 'utikata') {
+        alert('教科書 P.60 61を参照してください。基本は手打ちですが、安全率を満たせない場合は機械打ちにしてください。ブレーキ張り側の張力は'+T1+'[kN]で設計しています。単位に注意して設計してください。');
+      }
+    }
+  </script>
+</body>
+</html>

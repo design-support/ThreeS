@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ブレーキブラケット取付ボルト設計</title>
+  
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+ <div class="label">「ブラケット取付ボルトの材質はS20Cを使用」</div>
+    <div class="input-row">
+      <label for="d">取付ボルトの谷の径<span class="font">d</span>[mm]</label>
+      <select id="d">
+        <option value="">-- 選択してください --</option>
+        <option value="12">12</option>
+        <option value="16">16</option>
+        <option value="20">20</option>
+        <option value="24">24</option>
+        <option value="30">30</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="n">ねじ山の数<span class="font">n</span>[-]</label>
+      <input id="n" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('n')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="l">有効締め付け長さ<span class="font">l</span>[mm]</label>
+      <input id="l" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l')">ヒント</button>
+    </div>
+    
+    
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const d = parseFloat(document.getElementById('d').value);
+      const n = parseFloat(document.getElementById('n').value);
+     const l = parseFloat(document.getElementById('l').value);  
+    
+      if (isNaN(d) || isNaN(n) || isNaN(l)) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      
+      
+const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+   
+        const W2str = localStorage.getItem('brake_W2');
+        const W2 = W2str !== null ? parseFloat(W2str) : NaN;
+        if (isNaN(W2)) {
+          alert('ブラケット取付ボルトに作用する力が設定されていません。');
+          return;
+        }
+          
+
+   
+
+    
+      const danswer1 = Math.sqrt((T1*1000*4)/(Math.PI*50));
+
+      const danswer2 = Math.sqrt((W2*4)/(Math.PI*60));
+
+      const danswer0 = Math.max(danswer1, danswer2);
+
+      let danswer = null;
+if (danswer0 <= 10.105 && danswer0 >= 0) {
+  danswer = 12;
+} else if (danswer0 <= 13.834 && danswer0 >= 10.106) 
+  danswer = 16;
+ else if (danswer0 <= 17.293 && danswer0 >= 13.835) 
+  danswer = 20;
+ else if (danswer0 <= 20.751 && danswer0 >= 17.294) 
+  danswer = 24;
+  else if (danswer0 <= 26.210 && danswer0 >= 20.752) 
+  danswer = 30;
+
+      if (d > danswer) {
+        alert('取付ボルトの谷の径が大きいです。+' + danswer1 + '+' + danswer2 + '計算をやり直してください');
+        return;
+      }
+      if (d < danswer) {
+        alert('取付ボルトの谷の径が小さいです。計算をやり直してください');
+        return;
+      }
+
+       let d1 = null;
+if (danswer == 12) {
+  d1 = 10.106;
+} else if (danswer == 16) 
+  d1 = 12.376;
+ else if (danswer ==20) 
+  d1 = 17.294;
+ else if (danswer == 24) 
+  d1 = 20.752;
+  else if (danswer == 30) 
+  d1 = 26.211;
+
+
+      const nanswer = Math.ceil((W2*4)/(Math.PI*(danswer**2-d1**2)*14.7));
+
+      if (n > nanswer) {
+        alert('ねじ山の数が大きいです。計算をやり直してください');
+        return;
+      }
+
+      if (n < nanswer) {
+        alert('ねじ山の数が小さいです。計算をやり直してください');
+        return;
+      }
+
+const lanswer = n*2.5;
+
+   
+
+
+if (l > lanswer+5) {
+        alert('有効締め付け長さが大きいです。計算をやり直してください');
+        return;
+      }
+
+      if (l < lanswer) {
+        alert('有効締め付け長さが小さいです。計算をやり直してください');
+        return;
+      }
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brakebracket-bolt_d', d);
+      localStorage.setItem('brakebracket-bolt_n', n);
+      localStorage.setItem('brakebracket-bolt_l', l);
+      
+      alert('値が保存されました');
+      window.location.href = 'brake_design7.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+   
+   
+    function showHint(type) {
+
+      const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+   
+        const W2str = localStorage.getItem('brake_W2');
+        const W2 = W2str !== null ? parseFloat(W2str) : NaN;
+        if (isNaN(W2)) {
+          alert('ブラケット取付ボルトに作用する力が設定されていません。');
+          return;
+        }
+       
+      if(type === 'd') {
+        alert('教科書 P.67  式（7・31)（7・32)を参照してください。値が大きいほうを使用し付表３から選定します。を参照してください。ブレーキ張り側の張力は'+T1+'[kN]、ブラケット取付ボルトに作用する力は'+W2+'[kN]で設計しています。単位に注意してください。許容せん断応力は50[N/mm^2]、許容引張応力は60[N/mm^2]としています。');
+      } else if(type === 'n') {
+        alert('教科書 P.63 式（7・22）を参照してください。めねじの内径は付表3から求められます。ブレーキゆるみ側の張力は'+T1+'[kN]で設計しています。単位に注意してください。接触面圧力の許容限度は14.7[N/mm^2]としています。');
+        } else if(type === 'l') {
+        alert('教科書 P.63 式（7・23）を参照してください。ねじのピッチは2.5mmとしています。');
+        }
+     
+    }
+  </script>
+</body>
+</html>

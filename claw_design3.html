@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>つめ軸設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 420px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+ .font { font-family: 'Times New Roman', serif; }
+ </style>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+    <div class="label">「爪軸の材質はS50Cを使用」</div>
+    <div class="input-row">
+      <label for="P">爪軸に作用するトルク<span class="font">P</span>[N]</label>
+      <input id="P" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('P')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="lp">幅<span class="font">lp</span>[mm]</label>
+      <input id="lp" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lp')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d">つめ軸の軸径<span class="font">d</span>[mm]</label>
+      <input id="d" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d2">フレームとの取り付け部の直径[mm]</label>
+      <input id="d2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+    </div>
+   
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+
+
+  <script>
+
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+   
+    function onDecide() {
+      console.log('onDecide called');
+      try {
+        // デバッグログ: フォーム入力値の収集結果
+        console.log('inputs:', {
+          PVal: document.getElementById('P')?.value,
+          lpVal: document.getElementById('lp')?.value,
+          dVal: document.getElementById('d')?.value,
+          d2Val: document.getElementById('d2')?.value
+        });
+      const PVal = document.getElementById('P').value;
+      const lpVal = document.getElementById('lp').value;
+      const dVal = document.getElementById('d').value;
+      const d2Val = document.getElementById('d2').value;
+      // 必須チェック：未入力があればエラー
+      if (PVal === null || PVal.toString().trim() === '' || lpVal === null || lpVal.toString().trim() === '' || dVal === null || dVal.toString().trim() === '' || d2Val === null || d2Val.toString().trim() === '') {
+        alert('すべての項目を入力してください');
+        const firstEl = document.getElementById('P');
+        if (firstEl) firstEl.focus();
+        return;
+      }
+
+    
+
+      const P = parseFloat(PVal);
+      const lp = parseFloat(lpVal);
+      const d = parseFloat(dVal);
+      const d2 = parseFloat(d2Val);
+
+
+ 
+      const drumDdStr = localStorage.getItem('drum_Dd');
+      const Dd = drumDdStr !== null ? parseFloat(drumDdStr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラム直径が設定されていません。先にドラム直径の選定を行ってください。');
+        return;
+      }
+      
+
+      const WStr = localStorage.getItem('total_W');
+      const W = WStr !== null ? parseFloat(WStr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。前の設計からやり直してください');
+        return;
+      }
+
+      const DRstr = localStorage.getItem('claw_DR');
+      const DR = DRstr !== null ? parseFloat(DRstr) : NaN;
+      if (isNaN(DR)) {
+        alert('つめ車の歯先円直径が設定されていません。前の設計からやり直してください');
+        return;
+      }
+
+const Panswer=Math.round(Dd*W*1000/DR);
+
+       if (P < Panswer) {
+    alert('爪軸に作用するトルクが小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (P > Panswer+10) {
+    alert('爪軸に作用するトルクが大きいです。設計をやり直してください。');
+    return;
+  }
+
+ 
+
+const d0answer =  Math.cbrt((32*P*lp) / (2* Math.PI * 100));
+ let danswer = d0answer;
+        // 小数があれば、その値より大きい最小の整数に変換
+        if (d0answer % 1 !== 0) {
+          danswer = Math.ceil(d0answer);
+        }
+
+  if (d < danswer) {
+    alert('つめ軸の軸径が小さいです。設計をやり直してください ');
+    return;
+  }
+
+   if (d > danswer) {
+    alert('つめ軸の軸径が大きいです。設計をやり直してください。');
+    return;
+  }
+
+
+
+    const d2answer = Math.sqrt((4*Panswer) / (Math.PI*80));
+
+     if (d2 < d2answer) {
+    alert('フレームとの取り付け部の直径が小さいです。設計をやり直してください ');
+    return;
+  }
+
+  if (d2 > d2answer+10) {
+    alert('フレームとの取り付け部の直径が大きい'+Panswer+'です。'+d2answer+'設計をやり直してください。');
+    return;
+  }
+
+  
+
+
+      // 値をlocalStorageに保存
+      localStorage.setItem('claw_P', P);
+      localStorage.setItem('claw_lp', lp);
+      localStorage.setItem('claw_d', d);
+      localStorage.setItem('claw_d2', d2);
+      alert('値が保存されました');
+      window.location.href = 'claw_design4.html';
+      } catch (e) {
+        // 例外の詳細をできるだけ表示する（スタック優先）
+        const errMsg = e && e.stack ? e.stack : (e && e.message ? e.message : String(e));
+        alert('エラーが発生しました: ' + errMsg);
+        console.error('onDecide error:', e);
+      }
+    }
+
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+  
+   
+    function showHint(type) {
+      const drumDdStr = localStorage.getItem('drum_Dd');
+      const Dd = drumDdStr !== null ? parseFloat(drumDdStr) : NaN;
+      if (isNaN(Dd)) {
+        alert('ドラム直径が設定されていません。先にドラム直径の選定を行ってください。');
+        return;
+      }
+      
+
+      const DRstr = localStorage.getItem('claw_DR');
+      const DR = DRstr !== null ? parseFloat(DRstr) : NaN;
+      if (isNaN(DR)) {
+        alert('つめ車の歯先円直径が設定されていません。前の設計からやり直してください');
+        return;
+      }
+
+       const bstr = localStorage.getItem('claw_b');
+      const b = bstr !== null ? parseFloat(bstr) : NaN;
+      if (isNaN(b)) {
+        alert('つめ車の歯幅が設定されていません。前の設計からやり直してください');
+        return;
+      }
+
+      const WStr = localStorage.getItem('total_W');
+      const W = WStr !== null ? parseFloat(WStr) : NaN;
+      if (isNaN(W)) {
+        alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。前の設計からやり直してください');
+        return;
+      }
+
+      if (type === 'p') {
+        const msg = '教科書 P.42式(6・9)を参照してください。巻き上げ荷重は'+W+'[kN]、ドラム直径'+Dd+'、つめ車の歯先円直径は'+DR+'[mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'lp') {
+        const msg = '教科書 P.42 図6・4を参照してください。つめ車の歯幅より少し大きくなるように設計します。つめ車の歯幅は'+b+'[mm]で設計しています。';
+        alert(msg);
+      } else if (type === 'd') {
+        const msg = '教科書 P.42式(6・10)を参照してください。 トルクは荷重×半径で計算し、荷重は'+W+'[kN]で設計しています。材質はS50Cを使用し許容曲げ応力は100[N/mm^2]として計算します。';
+        alert(msg);
+  } else if (type === 'd2') {
+  const msg = '教科書 P.20式(3・13)をと同じ方法で計算します。p.44の計算式を参考にしてください 。材質はS50Cを使用し許容せん断応力は80[N/mm^2]として計算します。';
+  alert(msg);
+  }
+
+      
+    }
+  </script>
+</body>
+</html>

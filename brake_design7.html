@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ブレーキ帯取付ピン設計</title>
+  
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+ <div class="label">「ブレーキ帯取付ピンの材質はS20Cを使用」</div>
+    <div class="input-row">
+      <label for="d">ブレーキ帯取付ピン（太いほう）の外径<span class="font">d</span>[mm]</label>
+      <select id="d">
+        <option value="">-- 選択してください --</option>
+        <option value="7.1">7.1</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11.2">11.2</option>
+        <option value="12.5">12.5</option>
+        <option value="14">14</option>
+        <option value="16">16</option>
+         <option value="18">18</option>
+        <option value="20">20</option>
+        <option value="22.4">22.4</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d1">ブレーキ帯取付ピン（細いほう）のおねじの谷径<span class="font">d1</span>[mm]</label>
+      <select id="d1">
+        <option value="">-- 選択してください --</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="16">16</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d1')">ヒント</button>
+    </div>
+     
+    
+    
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const d = parseFloat(document.getElementById('d').value);
+      const d1 = parseFloat(document.getElementById('d1').value);
+     
+      
+      if (isNaN(d) || isNaN(d1) ) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      
+const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+        const W1str = localStorage.getItem('brake_W1');
+        const W1 = W1str !== null ? parseFloat(W1str) : NaN;
+        if (isNaN(W1)) {
+          alert('ブレーキ帯取付ピンのねじ部に作用する力が設定されていません。');
+          return;
+        }
+   
+        
+
+      const danswer0 = Math.sqrt((T1*1000*2)/(Math.PI*50));
+
+      if (d > 22.4) {
+        alert('ブレーキ帯取付ピン（太いほう）のおねじの外径が大きすぎます。付表1のR20系列から選定し7.1～22.4の範囲で設計をやり直してください');
+        return;
+      }
+      if (d < 6.3) {
+        alert('ブレーキ帯取付ピン（太いほう）のおねじの外径が小さすぎます。付表1のR20系列から選定し7.1～22.4の範囲で設計をやり直してください');
+        return;
+      }
+
+      let danswer = null;
+       if (danswer0 <= 7.1 && danswer0 >= 6.3) {
+      danswer = 7.1;
+      } else if (danswer0 <= 8 && danswer0 >= 7.101) 
+      danswer = 8;
+      else if (danswer0 <= 9.0 && danswer0 >= 8.01) 
+      danswer = 9.0;
+      else if (danswer0 <= 10 && danswer0 >= 9.01) 
+      danswer = 10;
+      else if (danswer0 <= 11.2 && danswer0 >= 10.01) 
+      danswer = 11.2;
+      else if (danswer0 <= 12.5 && danswer0 >= 11.201)
+      danswer = 12.5;
+      else if (danswer0 <= 14 && danswer0 >= 12.501)
+      danswer = 14;
+      else if (danswer0 <= 16 && danswer0 >= 14.01) 
+      danswer = 16;
+      else if (danswer0 <= 18 && danswer0 >= 16.01)
+      danswer = 18;
+      else if (danswer0 <= 20 && danswer0 >= 18.01)
+      danswer = 20;
+      else if (danswer0 <= 22.4 && danswer0 >= 20.01)
+      danswer = 22.4;
+
+  if (d > danswer) {
+        alert('ブレーキ帯取付ピン（太いほう）のおねじの外径が大きいです。付表1のR20系列から選定し7.1～22.4の範囲で設計をやり直してください');
+        return;
+      }
+      if (d < danswer) {
+        alert('ブレーキ帯取付ピン（太いほう）のおねじの外径が小さいです。付表1のR20系列から選定し7.1～22.4の範囲で設計をやり直してください');
+        return;
+      }
+
+
+      const d1answer0 = Math.sqrt((W1*4)/(Math.PI*60));
+
+      let d1answer = null;
+      if (d1answer0 <= 3.687 && d1answer0 >= 0) 
+  d1answer = 4;
+else if (d1answer0 <= 4.133 && d1answer0 >= 3.688) 
+  d1answer = 5;
+else if (d1answer0 <= 4.916 && d1answer0 >= 4.134) 
+  d1answer = 6; 
+else if (d1answer0 <= 6.646 && d1answer0 >= 4.917) 
+  d1answer = 8;
+ else if (d1answer0 <= 8.375 && d1answer0 >= 6.647) 
+  d1answer = 10;
+ else if (d1answer0 <= 10.105 && d1answer0 >= 8.376) 
+  d1answer = 12;
+  else if (d1answer0 <= 70 && d1answer0 >= 10.106) 
+  d1answer = 16;
+
+
+      if (d1 > danswer) {
+        alert('ブレーキ帯取付ピン（細いほう）のおねじの谷径が大きすぎます。ピンの外径より小さくなるように設計をやり直してください');
+        return;
+      }
+      if (d1 < 0.5*danswer) {
+        alert('ブレーキ帯取付ピン（細いほう）のおねじの谷径が小さすぎます。ピンの外径の半分以上になるように設計をやり直してください');
+        return;
+      }
+
+      if (d1 > d1answer+6) {
+        alert('ブレーキ帯取付ピン（細いほう）のおねじの谷径が大きいです。設計をやり直してください');
+        return;
+      }
+      if (d1 < d1answer) {
+        alert('ブレーキ帯取付ピン（細いほう）のおねじの谷径が小さいです。設計をやり直してください');
+        return;
+      }
+
+
+
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brakebracket-pin_d', d);
+      localStorage.setItem('brakebracket-pin_d1', d1);
+      
+
+      alert('値が保存されました');
+      window.location.href = 'brake_design8.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+   
+   
+    function showHint(type) {
+const T1str = localStorage.getItem('brake_T1');
+        const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+        const W1str = localStorage.getItem('brake_W1');
+        const W1 = W1str !== null ? parseFloat(W1str) : NaN;
+        if (isNaN(W1)) {
+          alert('ブレーキ帯取付ピンのねじ部に作用する力が設定されていません。');
+          return;
+        }
+       
+      if(type === 'd') {
+        alert('教科書 P.68  式（7・33）を参照してください。付表1のR20系列より選定してください。許容せん断応力は50[N/mm²]、ブレーキ張り側の張力T1は' + T1 + '[N]で設計しています。');
+      } else if(type === 'd1') {
+        alert('教科書 P.68  式（7・34）を参照してください。付表3を参考に選定します。許容せん断応力は60[N/mm²]、ブレーキ帯取付ピンのねじ部に作用する力W1は' + W1 + '[N]で設計しています。');
+        } 
+     
+    }
+  </script>
+</body>
+</html>

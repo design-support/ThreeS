@@ -17,15 +17,7 @@
   .font { font-family: 'Times New Roman', serif; }
  </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
     <div class="label">「つめの材質はSF440Aを使用」</div>
@@ -135,7 +127,7 @@
         localStorage.setItem('claw_I', I);
         localStorage.setItem('claw_k', k);
         localStorage.setItem('claw_A', A);
-        
+        localStorage.setItem('claw4', 'done');
         
         alert('値が保存されました。A、I、k、λの値を自動計算しました。');
         window.location.href = 'choice.html';

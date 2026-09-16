@@ -17,15 +17,7 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
     <div class="input-row">
@@ -264,6 +256,7 @@ const kihonWnum = kihon_w !== null ? parseFloat(kihon_w) : 0;
       localStorage.setItem('drum_lw2', lw2);
       localStorage.setItem('drum_lw3', lw3);
       localStorage.setItem('total_W', W);
+      localStorage.setItem('drum2', 'done');
       alert('値が保存されました');
       window.location.href = 'drum_design3.html';
       } catch (e) {

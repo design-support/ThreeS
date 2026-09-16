@@ -18,15 +18,7 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
  <div class="label">「ブレーキ帯取付ピンの材質はS20Cを使用」</div>
@@ -190,7 +182,7 @@ else if (d1answer0 <= 6.646 && d1answer0 >= 4.917)
       // 値をlocalStorageに保存
       localStorage.setItem('brakebracket-pin_d', d);
       localStorage.setItem('brakebracket-pin_d1', d1);
-      
+      localStorage.setItem('brake7', 'done');
 
       alert('値が保存されました');
       window.location.href = 'brake_design8.html';

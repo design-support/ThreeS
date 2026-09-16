@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラム軸設計</title>
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+ </style>
+</head>
+
+  <div class="panel">
+    <div class="label">「設計した値を入れてください」</div>
+    <div class="label">ドラム軸の材質はFC250を使用</div>
+    <div class="input-row">
+      <label for="VG">D歯車とブレーキを合わせた体積<span class="font">VG</span>[cm^3]</label>
+      <input id="VG" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('VG')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="VD">ドラムとつめ車を合わせた体積<span class="font">VD</span>[cm^3]</label>
+      <input id="VD" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('VD')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="WG">D歯車とブレーキを合わせた自重<span class="font">WG</span>[N]</label>
+      <input id="WG" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('WG')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="WD">ドラムとつめ車を合わせた自重<span class="font">WD</span>[N]</label>
+      <input id="WD" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('WD')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="FN">D歯車の歯面に直角に作用する力<span class="font">FN</span>[N]</label>
+      <input id="FN" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('FN')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="WT">軸にかかる力の合力<span class="font">WT</span>[N]</label>
+      <input id="WT" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('WT')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="a">ドラム軸のスパンのAB間の長さ<span class="font">a</span>[mm]</label>
+      <input id="a" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('a')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="b">ドラム軸のスパンのBC間の長さ<span class="font">b</span>[mm]</label>
+      <input id="b" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="ds3">ドラム軸径<span class="font">ds3</span>[mm]</label>
+      <select id="ds3">
+        <option value="">-- 選択してください --</option>
+        <option value="50">50</option>
+        <option value="55">55</option>
+        <option value="65">65</option>
+        <option value="70">70</option>
+        <option value="75">75</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('ds3')">ヒント</button>
+    </div>
+    
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const WG = parseFloat(document.getElementById('WG').value);
+      const WD = parseFloat(document.getElementById('WD').value);
+       const VG = parseFloat(document.getElementById('VG').value);
+      const VD = parseFloat(document.getElementById('VD').value);
+      const FN = parseFloat(document.getElementById('FN').value);
+      const WT = parseFloat(document.getElementById('WT').value);
+      const a = parseFloat(document.getElementById('a').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const ds3 = parseFloat(document.getElementById('ds3').value);
+
+      if (isNaN(VG) || isNaN(VD) ||isNaN(WG) || isNaN(WD) || isNaN(FN) || isNaN(WT) || isNaN(a) || isNaN(b) || isNaN(ds3)) {
+        alert('すべての値を入力してください');
+        return;
+      }
+     
+
+    const lostr = localStorage.getItem('drum_l0');
+        const l0= lostr !== null ? parseFloat(lostr) : NaN;
+        if (isNaN(l0)) {
+          alert('ドラムの長さが設定されていません。');
+          return;
+        }
+
+        const Ddstr = localStorage.getItem('drum_Dd');
+        const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+        if (isNaN(Dd)) {
+          alert('ドラムの直径が設定されていません。');
+          return;
+        }
+
+        const tdstr = localStorage.getItem('drum_td');
+        const td = tdstr !== null ? parseFloat(tdstr) : NaN;
+        if (isNaN(td)) {
+          alert('ドラムの肉厚が設定されていません。');
+          return;
+        }
+      
+
+        const Dfstr = localStorage.getItem('drum_Dfgear');
+        const Df = Dfstr !== null ? parseFloat(Dfstr) : NaN;
+        if (isNaN(Df)) {
+          alert('ドラム歯車側のフランジ直径が設定されていません。');
+          return;
+        }
+
+         const tfstr = localStorage.getItem('drum_tf');
+        const tf = tfstr !== null ? parseFloat(tfstr) : NaN;
+        if (isNaN(tf)) {
+          alert('つめ側のフランジ厚さが設定されていません。');
+          return;
+        }
+
+        const Df2str = localStorage.getItem('drum_Df');
+        const Df2 = Df2str !== null ? parseFloat(Df2str) : NaN;
+        if (isNaN(Df2)) {
+          alert('つめ側のフランジ直径が設定されていません。');
+          return;
+        }
+
+        
+
+        const gearbstr = localStorage.getItem('gear_b');
+        const gearb = gearbstr !== null ? parseFloat(gearbstr) : NaN;
+        if (isNaN(gearb)) {
+          alert('歯車の歯幅が設定されていません。');
+          return;
+        }
+
+         const gear_dKDstr = localStorage.getItem('gear_dKD');
+        const dKD = gear_dKDstr !== null ? parseFloat(gear_dKDstr) : NaN;
+        if (isNaN(dKD)) {
+          alert('D歯車の歯先円直径が設定されていません。');
+          return;
+        }
+
+        const claw_totalbstr = localStorage.getItem('claw_totalb');
+        const totalb = claw_totalbstr !== null ? parseFloat(claw_totalbstr) : NaN;
+        if (isNaN(totalb)) {
+          alert('つめ車の本来の歯幅が設定されていません。');
+          return;
+        }
+
+        const claw_DRstr = localStorage.getItem('claw_DR');
+        const DR = claw_DRstr !== null ? parseFloat(claw_DRstr) : NaN;
+        if (isNaN(DR)) {
+          alert('つめ車の歯先円直径が設定されていません。');
+          return;
+        }
+
+        const hstr = localStorage.getItem('claw_h');
+        const h = hstr !== null ? parseFloat(hstr) : NaN;
+        if (isNaN(h)) {
+          alert('つめ車の歯の高さが設定されていません。');
+          return;
+        }
+
+        const clawTstr = localStorage.getItem('claw_T');
+        const clawT = clawTstr !== null ? parseFloat(clawTstr) : NaN;
+        if (isNaN(clawT)) {
+          alert('つめ車の歯の厚さが設定されていません。');
+          return;
+        }
+
+          const brake_DBstr = localStorage.getItem('brake_DB');
+        const DB = brake_DBstr !== null ? parseFloat(brake_DBstr) : NaN;
+        if (isNaN(DB)) {
+          alert('ブレーキドラムの外径が設定されていません。');
+          return;
+        }
+
+         const brake_Bstr = localStorage.getItem('brake_B');
+        const B = brake_Bstr !== null ? parseFloat(brake_Bstr) : NaN;
+        if (isNaN(B)) {
+          alert('ブレーキ輪の幅が設定されていません。');
+          return;
+        }
+
+         const braketr1str = localStorage.getItem('brake-tr1');
+        const tr1 = braketr1str !== null ? parseFloat(braketr1str) : NaN;
+        if (isNaN(tr1)) {
+          alert('ブレーキ輪のリム厚さが設定されていません。');
+          return;
+        }
+
+
+
+        const VGanswer=(Math.PI*((dKD/2)**2)*gearb+Math.PI*(((DB/2)**2)-(((DB/2)-tr1)**2))*B)*10**(-3);
+
+        if (VG > VGanswer+100) {
+        alert('D歯車とブレーキを合わせた体積が大きいです。計算をやり直してください');
+        return;
+        }
+
+        if (VG < VGanswer-10) {
+        alert('D歯車とブレーキを合わせた体積が小さいです。'+VGanswer+'計算をやり直してください');
+        return;
+        }
+
+        const VDanswer=(Math.PI*(((Dd/2)**2)-(((Dd/2)-td)**2))*l0+Math.PI*((Df/2)**2)*tf+Math.PI*((Df2/2)**2)*tf+Math.PI*(((DR/2)**2)-(((DR/2)-h-clawT)**2))*totalb)*10**(-3);
+    
+        if (VD > VDanswer+100) {
+        alert('ドラムとつめ車を合わせた体積が大きいです。計算をやり直してください');
+        return;
+        }
+
+        if (VD < VDanswer-10) {
+        alert('ドラムとつめ車を合わせた体積が小さいです。'+VDanswer+'計算をやり直してください');
+        return;
+        }
+
+        const WGanswer=VG*7.8e-3*9.81*1.2;
+
+        if (WG > (VG+100)*7.8e-3*9.81*1.2) {
+        alert('D歯車とブレーキを合わせた自重が大きいです。計算をやり直してください');
+        return;
+        }
+
+        if (WG < WGanswer-10) {
+        alert('D歯車とブレーキを合わせた自重が小さいです。計算をやり直してください');
+        return;
+        }
+
+        const WDanswer=VD*7.8e-3*9.81*1.2;
+
+        if (WD > (VD+100)*7.8e-3*9.81*1.2) {
+        alert('ドラムとつめ車を合わせた自重が大きいです。計算をやり直してください');
+        return;
+        }
+
+        if (WD < WDanswer-10) {
+        alert('ドラムとつめ車を合わせた自重が小さいです。'+WDanswer+'計算をやり直してください');
+        return;
+        }
+
+        const total_Wstr = localStorage.getItem('total_W');
+        const total_W = total_Wstr !== null ? parseFloat(total_Wstr) : NaN;
+        if (isNaN(total_W)) {
+          alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。');
+          return;
+        }
+        const W = total_W;
+
+         const gear_ddstr = localStorage.getItem('gear_dd');
+        const dD = gear_ddstr !== null ? parseFloat(gear_ddstr) : NaN;
+        if (isNaN(dD)) {
+          alert('D歯車のピッチ円直径が設定されていません。');
+          return;
+        }
+
+        const FT=(1000*W*(Dd/2))/((dD/2)*0.95);
+
+        const FNanswer=FT/Math.cos(20*Math.PI/180);
+
+        const FR=FT*Math.tan(20*Math.PI/180);
+
+         if (FN > FNanswer+10) {
+        alert('ドラム歯車の歯面に直角に作用する力が大きいです。計算をやり直してください');
+        return;
+        }
+
+        if (FN < FNanswer-1) {
+        alert('ドラム歯車の歯面に直角に作用する力が小さいです。計算をやり直してください');
+        return;
+        }
+
+        
+
+        const brake_T1str = localStorage.getItem('brake_T1');
+        const T1 = brake_T1str !== null ? parseFloat(brake_T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+        const brake_T2str = localStorage.getItem('brake_T2');
+        const T2 = brake_T2str !== null ? parseFloat(brake_T2str) : NaN;
+        if (isNaN(T2)) {
+          alert('ブレーキゆるみ側の張力が設定されていません。');
+          return;
+        }
+
+        const T=Math.sqrt(((T1*1000)**2)+((T2*1000)**2)-(2000000*T1*T2*Math.cos(120 * Math.PI / 180)));
+
+        const θ1_rad = Math.asin((T2*1000*Math.sin(120*Math.PI/180))/T);
+        const θ1_deg = θ1_rad * 180 / Math.PI;
+
+        const θ2 = 60 - θ1_deg;
+
+        const gear_dastr = localStorage.getItem('gear_da');
+        const da = gear_dastr !== null ? parseFloat(gear_dastr) : NaN;
+        if (isNaN(da)) {
+          alert('A歯車のピッチ円直径が設定されていません。');
+          return;
+        }
+
+        const gear_dbstr = localStorage.getItem('gear_db');
+        const db = gear_dbstr !== null ? parseFloat(gear_dbstr) : NaN;
+        if (isNaN(db)) {
+          alert('B歯車のピッチ円直径が設定されていません。');
+          return;
+        }
+
+         const o1o2=(da+db)/2;
+
+         const o2o3=(da+dD)/2;
+
+         const o1o3=(da+dD)/2;
+
+         const B3_rad = Math.acos(((o1o3**2)-(o1o2**2)+(o2o3**2))/(2*o1o3*o2o3));
+         const B3 = B3_rad * 180 / Math.PI;
+
+         const B2=B3/2;
+
+         const B1=B2+20;
+
+         const WT1answer=Math.sqrt(((FN+W*1000)**2)+((WG+WD/2)**2)-(2*(FN+W*1000)*(WG+WD/2)*Math.cos((90+B1)*Math.PI/180)));
+
+         
+
+        const θ3=7.25+θ1_deg;
+
+        const WT2answer=Math.sqrt((T+W*1000)**2+(WG+WD/2)**2-2*(T+W*1000)*(WG+WD/2)*Math.cos((90+θ3)*Math.PI/180));
+
+        let WTanswer;
+        if (WT2answer >= WT1answer) {
+        WTanswer=WT2answer;
+        } else {
+        WTanswer=WT1answer;
+        }
+
+        if (WT > WTanswer + 100) {
+        alert('軸にかかる力の合力が大きいです。計算をやり直してください');
+        return;
+        }
+
+        if (WT < WTanswer-10) {
+        alert('軸にかかる力の合力が小さいです。' + WTanswer + '計算' + B3 + 'をやり直し' + θ1_deg + 'てください' + θ3 + '');
+        return;
+        }
+
+
+
+         if (a > 100+B+gearb/2) {
+        alert('ドラム軸のスパンのAB間の長さが大きいです。計算をやり直してください');
+        return;
+        }
+        
+         if (a < B+gearb/2) {
+        alert('ドラム軸のスパンのAB間の長さが小さいです。計算をやり直してください');
+        return;
+        }
+
+        if (b > l0+2*tf+totalb+gearb/2+20) {
+        alert('ドラム軸のスパンのBC間の長さが大きいです。計算をやり直してください');
+        return;
+        }
+
+         if (b < l0+tf+totalb+gearb/2) {
+        alert('ドラム軸のスパンのBC間の長さが小さいです。計算をやり直してください');
+        return;
+        }
+
+        const R1=(WTanswer*b)/(a+b);
+
+        const MA=R1*a;
+
+        const ds3answer0=(32*MA/Math.PI*194)**(1/3);
+
+        let ds3answer = null;
+if (ds3answer0 <50 && ds3answer0 >= 48) {
+  ds3answer = 50;
+} else if (ds3answer0 < 55 && ds3answer0 >= 50) 
+  ds3answer = 55;
+ else if (ds3answer0 < 65 && ds3answer0 >= 55) 
+  ds3answer = 65;
+ else if (ds3answer0 < 70 && ds3answer0 >= 65) 
+  ds3answer = 70;
+  else if (ds3answer0 < 75 && ds3answer0 >= 70) 
+  ds3answer = 75;
+
+        if (ds3 > ds3answer) {
+        alert('ドラム軸の直径が大きいです。計算をやり直してください');
+        return;
+        }
+
+         if (ds3 < ds3answer) {
+        alert('ドラム軸の直径が小さいです。計算をやり直してください');
+        return;
+        }
+
+
+
+
+
+      
+    
+
+
+
+
+     
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('shaft_VG', VG);
+      localStorage.setItem('shaft_VD', VD);
+      localStorage.setItem('shaft_WD', WD);
+      localStorage.setItem('shaft_WG', WG);
+      localStorage.setItem('shaft_FN', FN);
+      localStorage.setItem('shaft_WT', WT);
+      localStorage.setItem('shaft_a', a);
+      localStorage.setItem('shaft_b', b);
+      localStorage.setItem('shaft_ds3', ds3);
+
+      alert('値が保存されました');
+      window.location.href = 'brake_design2.html';
+    }
+    
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+    function showHint(type) {
+
+      const lostr = localStorage.getItem('drum_l0');
+        const l0= lostr !== null ? parseFloat(lostr) : NaN;
+        if (isNaN(l0)) {
+          alert('ドラムの長さが設定されていません。');
+          return;
+        }
+
+        const Ddstr = localStorage.getItem('drum_Dd');
+        const Dd = Ddstr !== null ? parseFloat(Ddstr) : NaN;
+        if (isNaN(Dd)) {
+          alert('ドラムの直径が設定されていません。');
+          return;
+        }
+
+        const tdstr = localStorage.getItem('drum_td');
+        const td = tdstr !== null ? parseFloat(tdstr) : NaN;
+        if (isNaN(td)) {
+          alert('ドラムの肉厚が設定されていません。');
+          return;
+        }
+      
+
+        const Dfstr = localStorage.getItem('drum_Dfgear');
+        const Df = Dfstr !== null ? parseFloat(Dfstr) : NaN;
+        if (isNaN(Df)) {
+          alert('ドラム歯車側のフランジ直径が設定されていません。');
+          return;
+        }
+
+         const tfstr = localStorage.getItem('drum_tf');
+        const tf = tfstr !== null ? parseFloat(tfstr) : NaN;
+        if (isNaN(tf)) {
+          alert('つめ側のフランジ厚さが設定されていません。');
+          return;
+        }
+
+        const Df2str = localStorage.getItem('drum_Df');
+        const Df2 = Df2str !== null ? parseFloat(Df2str) : NaN;
+        if (isNaN(Df2)) {
+          alert('つめ側のフランジ直径が設定されていません。');
+          return;
+        }
+
+        
+
+        const gearbstr = localStorage.getItem('gear_b');
+        const gearb = gearbstr !== null ? parseFloat(gearbstr) : NaN;
+        if (isNaN(gearb)) {
+          alert('歯車の歯幅が設定されていません。');
+          return;
+        }
+
+         const gear_dKDstr = localStorage.getItem('gear_dKD');
+        const dKD = gear_dKDstr !== null ? parseFloat(gear_dKDstr) : NaN;
+        if (isNaN(dKD)) {
+          alert('D歯車の歯先円直径が設定されていません。');
+          return;
+        }
+
+        const claw_totalbstr = localStorage.getItem('claw_totalb');
+        const totalb = claw_totalbstr !== null ? parseFloat(claw_totalbstr) : NaN;
+        if (isNaN(totalb)) {
+          alert('つめ車の本来の歯幅が設定されていません。');
+          return;
+        }
+
+        const claw_DRstr = localStorage.getItem('claw_DR');
+        const DR = claw_DRstr !== null ? parseFloat(claw_DRstr) : NaN;
+        if (isNaN(DR)) {
+          alert('つめ車の歯先円直径が設定されていません。');
+          return;
+        }
+
+        const hstr = localStorage.getItem('claw_h');
+        const h = hstr !== null ? parseFloat(hstr) : NaN;
+        if (isNaN(h)) {
+          alert('つめ車の歯の高さが設定されていません。');
+          return;
+        }
+
+        const clawTstr = localStorage.getItem('claw_T');
+        const clawT = clawTstr !== null ? parseFloat(clawTstr) : NaN;
+        if (isNaN(clawT)) {
+          alert('つめ車の歯の厚さが設定されていません。');
+          return;
+        }
+
+          const brake_DBstr = localStorage.getItem('brake_DB');
+        const DB = brake_DBstr !== null ? parseFloat(brake_DBstr) : NaN;
+        if (isNaN(DB)) {
+          alert('ブレーキドラムの外径が設定されていません。');
+          return;
+        }
+
+         const brake_Bstr = localStorage.getItem('brake_B');
+        const B = brake_Bstr !== null ? parseFloat(brake_Bstr) : NaN;
+        if (isNaN(B)) {
+          alert('ブレーキ輪の幅が設定されていません。');
+          return;
+        }
+
+         const braketr1str = localStorage.getItem('brake-tr1');
+        const tr1 = braketr1str !== null ? parseFloat(braketr1str) : NaN;
+        if (isNaN(tr1)) {
+          alert('ブレーキ輪のリム厚さが設定されていません。');
+          return;
+        }
+
+        const total_Wstr = localStorage.getItem('total_W');
+        const total_W = total_Wstr !== null ? parseFloat(total_Wstr) : NaN;
+        if (isNaN(total_W)) {
+          alert('ワイヤロープを加味した巻き上げ荷重が設定されていません。');
+          return;
+        }
+
+         const gear_ddstr = localStorage.getItem('gear_dd');
+        const dD = gear_ddstr !== null ? parseFloat(gear_ddstr) : NaN;
+        if (isNaN(dD)) {
+          alert('D歯車のピッチ円直径が設定されていません。');
+          return;
+        }
+
+        const brake_T1str = localStorage.getItem('brake_T1');
+        const T1 = brake_T1str !== null ? parseFloat(brake_T1str) : NaN;
+        if (isNaN(T1)) {
+          alert('ブレーキ張り側の張力が設定されていません。');
+          return;
+        }
+
+        const brake_T2str = localStorage.getItem('brake_T2');
+        const T2 = brake_T2str !== null ? parseFloat(brake_T2str) : NaN;
+        if (isNaN(T2)) {
+          alert('ブレーキゆるみ側の張力が設定されていません。');
+          return;
+        }
+
+      const gear_dKAstr = localStorage.getItem('gear_dKA');
+        const dKA = gear_dKAstr !== null ? parseFloat(gear_dKAstr) : NaN;
+        if (isNaN(dKA)) {
+          alert('A歯車の歯先円直径が設定されていません。');
+          return;
+        }
+
+        const gear_dKBstr = localStorage.getItem('gear_dKB');
+        const dKB = gear_dKBstr !== null ? parseFloat(gear_dKBstr) : NaN;
+        if (isNaN(dKB)) {
+          alert('B歯車の歯根円直径が設定されていません。');
+          return;
+        }
+
+      if(type === 'VG') {
+        alert(' D歯車の体積は円盤として、ブレーキの体積は円柱として計算します。ブレーキの肉厚はリムの厚さで考えます。D歯車の歯先円直径は'+dKD+'[mm]、歯幅は'+gearb+'[mm]、ブレーキ輪の直径は'+DB+'[mm]、ブレーキ輪の幅は'+totalb+'[mm]、ブレーキ輪のリム厚さは'+tr1+'[mm]としています。');
+      } else if(type === 'VD') {
+        alert('ドラムの体積、つめ車の体積は円柱として計算します。つめ車の肉厚は「歯の高さ＋リムの厚さ」で求めることが出来ます。フランジは円盤として計算します。ドラムの直径は'+Dd+'[mm]、肉厚は'+td+'[mm]、長さは'+l0+'[mm]、つめ車の歯先円直径は'+DR+'[mm]、歯幅は'+totalb+'[mm]、歯の高さは'+h+'[mm]、リムの厚さは'+clawT+'[mm]としています。');
+      } else if(type === 'FN') {
+        alert('教科書 P.92 式（8・5）を参照してください。D歯車のピッチ円直径は'+dD+'[mm]、ドラムの外径は'+Dd+'[mm]としています。歯車の効率は0.95、圧力角は20°としています。');
+      } else if(type === 'WG') {
+        alert('材質はFC250で、密度は7.8*10^-3[g/mm^3]としています。体積は概算であるので安全のため1.2を掛けます。重力加速度は9.81[m/s^2]としています。');
+      } else if(type === 'WD') {
+        alert('材質はFC250で、密度は7.8*10^-3[g/mm^3]としています。体積は概算であるので安全のため1.2を掛けます。重力加速度は9.81[m/s^2]としています。');
+      } else if(type === 'WT') {
+        alert('教科書P.93 図8.6 P.94、95を参照してください。θは120°としています。ブレーキ張り側の張力は'+T1+'[kN]、ブレーキゆるみ側の張力は'+T2+'[kN]、A歯車の歯先円直径は'+dKA+'[mm]、B歯車の歯根円直径は'+dKB+'[mm]、D歯車の歯先円直径は'+dKD+'[mm]としています。歯車に作用する力を考慮した時とブレーキ時張力を考慮した時で二通りでるので、大きいほうを採用します。' ) ;
+      } else if(type === 'a') {
+        alert('教科書 P.97 図8.11、P.99 図8.14 を参照してください。ブレーキ輪の幅+D歯車の歯幅の半分+余白50mm前後でaの値を仮定してください。ブレーキ輪の幅は'+B+'[mm]、D歯車の歯幅は'+gearb+'[mm]、D歯車の歯幅は'+gearb+'[mm]としています。');
+      } else if(type === 'b') {
+        alert('教科書 P.97 図8.11、P.99 図8.14 を参照してください。ドラムの長さ+つめ側のフランジ厚さ+ドラム歯車側のフランジ厚さ+つめ車の幅+D歯車の歯幅の半分+余白10mm前後でbの値を仮定してください。ドラムの長さは'+l0+'[mm]、つめ側のフランジの厚さは'+tf+'[mm]、つめ車の幅は'+totalb+'[mm]、D歯車の歯幅は'+gearb+'[mm]としています。');
+      } else if(type === 'ds3') {
+        alert('教科書 P.95 式（8・15）（8・16） P.96 式（8・17）を参照してください。ドラム軸の長さlはa+bで求めることが出来ます。許容曲げ応力はFC250の値で194[N/mm^2]としています。');
+        
+      }
+    }
+  </script>
+</body>
+</html>

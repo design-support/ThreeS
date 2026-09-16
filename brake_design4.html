@@ -18,15 +18,7 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
  <div class="label">「調節金具、ボルトの材質はSF440A 取付ピンの材質はS20Cを使用」</div>
@@ -293,22 +285,6 @@ if (t2answer0 <= 10 && t2answer0 >= 8.01) {
         alert('すきまが小さすぎます。ブレーキレバーの板厚が入ることを考慮し設計をやり直してください。');
         return;
       }
-
-
-
-
-
-
-
-
-      
-
-
-      
-
-
-
-     
       
       // 値をlocalStorageに保存
       localStorage.setItem('brake_d2', d2);
@@ -320,6 +296,7 @@ if (t2answer0 <= 10 && t2answer0 >= 8.01) {
       localStorage.setItem('brake_t1', t1);
       localStorage.setItem('brake_itaatu', itaatu);
       localStorage.setItem('brake_C', C);
+      localStorage.setItem('brake4', 'done');
 
       alert('値が保存されました');
       window.location.href = 'brake_design5.html';

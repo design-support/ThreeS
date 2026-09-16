@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ブレーキ輪のリム、リブ設計</title>
+  
+  <style>
+    body { font-family: 'SansSerif', sans-serif; margin: 0; }
+    .menubar { display: flex; background: #eee; padding: 8px; }
+    .menu { margin-right: 20px; }
+    .panel { margin: 30px auto; width: 400px; }
+    .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
+    .input-row { margin-bottom: 15px; display: flex; align-items: center; }
+    .input-row label { width: 180px; }
+    .input-row input { width: 150px; font-size: 16px; }
+  .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
+  .font { font-family: 'Times New Roman', serif; }
+  </style>
+</head>
+
+  <div class="panel">
+    <div class="label">設計した値を入れてください</div>
+ <div class="label">「ブレーキ輪の材質はFC250を使用」</div>
+ <div class="input-row">
+      <label for="tr0">計算で求めたリムの厚さ<span class="font"></span>[mm]</label>
+       <input id="tr0" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('tr0')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="tr1">ブレーキ輪のリムの厚さ<span class="font">tr1</span>[mm]</label>
+       <input id="tr1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('tr1')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="tr2">ブレーキ輪のリム厚さ<span class="font">tr2</span>[mm]</label>
+       <input id="tr2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('tr2')">ヒント</button>
+    </div>
+     <div class="input-row">
+      <label for="rib">ブレーキ輪のリブ厚さ<span class="font"></span>[mm]</label>
+       <input id="rib" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('rib')">ヒント</button>
+    </div>
+     
+    
+    
+    <button class="btn" onclick="onDecide()">保存</button>
+    <button class="btn" onclick="onBack()">戻る</button>
+  </div>
+  <script>
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
+    function onDecide() {
+       const tr0 = parseFloat(document.getElementById('tr0').value);
+       const tr1 = parseFloat(document.getElementById('tr1').value);
+      const tr2 = parseFloat(document.getElementById('tr2').value);
+      const rib = parseFloat(document.getElementById('rib').value);
+     
+      
+      if (isNaN(tr0) || isNaN(tr1) || isNaN(tr2) || isNaN(rib) ) {
+        alert('すべての値を入力してください');
+        return;
+      }
+      
+      const T1str = localStorage.getItem('brake_T1');
+      const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+      if (isNaN(T1)) {
+        alert('ブレーキ張り側の張力が設定されていません。');
+        return;
+      }
+
+      const T2str = localStorage.getItem('brake_T2');
+      const T2 = T2str !== null ? parseFloat(T2str) : NaN;
+      if (isNaN(T2)) {
+        alert('ブレーキゆるみ側の張力が設定されていません。');
+        return;
+      }
+
+        const Bstr = localStorage.getItem('brake_B');
+        const B = Bstr !== null ? parseFloat(Bstr) : NaN;
+        if (isNaN(B)) {
+          alert('ブレーキ輪の幅が設定されていません。');
+          return;
+        }
+
+        const Q0str = localStorage.getItem('brake_Q0');
+        const Q0 = Q0str !== null ? parseFloat(Q0str) : NaN;
+        if (isNaN(Q0)) {
+          alert('制動力が設定されていません。');
+          return;
+        }
+   
+         const DBstr = localStorage.getItem('brake_DB');
+        const DB = DBstr !== null ? parseFloat(DBstr) : NaN;
+        if (isNaN(DB)) {
+          alert('ブレーキドラムの外径が設定されていません。');
+          return;
+        }
+   
+
+       const Tanswer=Math.sqrt(((T1*1000)**2)+((T2*1000)**2)-(2000000*T1*T2*Math.cos(120 * Math.PI / 180)));
+
+       const M=Tanswer*0.5*B;
+
+       const TB=Q0*1000*0.5*DB;
+
+       const Me=0.5*M*(1+(Math.sqrt(1+(TB/M)**2)));
+
+       const Te=M*(Math.sqrt(1+(TB/M)**2));
+
+       const D11=(((DB)**4)-(32*Me*DB/(19*Math.PI)))**(1/4);
+
+       const tr1answer1=0.5*(DB-D11);
+
+       const D12=(((DB)**4)-(16*Te*DB/(15*Math.PI)))**(1/4);
+
+       const tr1answer2=0.5*(DB-D12);
+
+       let tr1answer = null;
+       if (tr1answer1 < tr1answer2) {
+         tr1answer = tr1answer2;
+       } else {
+         tr1answer = tr1answer1;
+       }
+
+      if (tr0 > tr1answer+0.04) {
+        alert('計算で求めたリム厚さtr1が大きいです。計算をやり直してください');
+        return;
+      }
+      if (tr0 < tr1answer-0.04) {
+        alert('計算で求めたリム厚さtr1が小さいです。計算をやり直してください');
+        return;
+      }
+       
+      if (tr1 < 5) {
+        alert('ブレーキ輪のリムの厚さtr1が小さいです。鋳造品であるため肉厚を5㎜以上にしてください。');
+        return;
+      }
+      if (tr2>tr1) {
+        alert('ブレーキ輪のリムの厚さtr2が大きいです。tr1より小さくなるようにしてください。');
+        return;
+      }
+
+      if (tr1<tr1answer) {
+        alert('ブレーキ輪のリムの厚さtr1が小さいです。設計をやりなおしてください。');
+        return;
+      }
+ 
+      const ribanswer=0.8*tr1;
+
+      if (rib < tr1answer) {
+        alert('ブレーキ輪のリブの厚さが小さいです。設計をやり直してください。');
+        return;
+      }
+      if (rib > tr1) {
+        alert('ブレーキ輪のリブの厚さが大きすぎます。設計をやり直してください。');
+        return;
+      }
+
+
+
+
+
+
+      
+      // 値をlocalStorageに保存
+      localStorage.setItem('brake-tr1', tr1);
+      localStorage.setItem('brake-tr2', tr2);
+      localStorage.setItem('brake-rib', rib);
+
+      alert('値が保存されました。');
+      window.location.href = 'brake_design8.html';
+    }
+    function onBack() {
+      window.location.href = 'Choice.html';
+    }
+   
+   
+    function showHint(type) {
+const T1str = localStorage.getItem('brake_T1');
+      const T1 = T1str !== null ? parseFloat(T1str) : NaN;
+      if (isNaN(T1)) {
+        alert('ブレーキ張り側の張力が設定されていません。');
+        return;
+      }
+
+      const T2str = localStorage.getItem('brake_T2');
+      const T2 = T2str !== null ? parseFloat(T2str) : NaN;
+      if (isNaN(T2)) {
+        alert('ブレーキゆるみ側の張力が設定されていません。');
+        return;
+      }
+
+        const Bstr = localStorage.getItem('brake_B');
+        const B = Bstr !== null ? parseFloat(Bstr) : NaN;
+        if (isNaN(B)) {
+          alert('ブレーキ輪の幅が設定されていません。');
+          return;
+        }
+
+        const Q0str = localStorage.getItem('brake_Q0');
+        const Q0 = Q0str !== null ? parseFloat(Q0str) : NaN;
+        if (isNaN(Q0)) {
+          alert('制動力が設定されていません。');
+          return;
+        }
+   
+         const DBstr = localStorage.getItem('brake_DB');
+        const DB = DBstr !== null ? parseFloat(DBstr) : NaN;
+        if (isNaN(DB)) {
+          alert('ブレーキドラムの外径が設定されていません。');
+          return;
+        }
+       
+
+      if(type === 'tr0') {
+        alert('教科書 P.74,75を参照してください。ブレーキ張り側の張力T1は' + T1 + '[kN]、ブレーキゆるみ側の張力T2は' + T2 + '[kN]、ブレーキ輪の幅Bは' + B + '[mm]、制動力Q0は' + Q0 + '[kN]、ブレーキドラムの外径DBは' + DB + '[mm]で設計しています。許容曲げ応力は19[N/mm²]、許容ねじり応力は15[N/mm²]としています。');
+      } else if(type === 'tr1') {
+        alert('計算で求めたリム厚さtr1が十分に小さければ、鋳造で製作することを考慮し肉厚を決定してください。5㎜以上にしてください。');
+        } else if(type === 'tr2') {
+        alert('tr1と同様に鋳造であることを考慮して設計してください。tr1より小さくなるようにしてください。');
+        } else if(type === 'rib') {
+        alert('ブレーキ輪のリブの厚さはリム厚さtr1の0.8倍程度にしてください。リム厚さより大きくならないようにしてください。');
+        } 
+     
+    }
+  </script>
+</body>
+</html>

@@ -18,15 +18,7 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
  <div class="label">「ブラケット取付ボルトの材質はS20Cを使用」</div>
@@ -165,7 +157,8 @@ if (l > lanswer+5) {
       localStorage.setItem('brakebracket-bolt_d', d);
       localStorage.setItem('brakebracket-bolt_n', n);
       localStorage.setItem('brakebracket-bolt_l', l);
-      
+      localStorage.setItem('brake6', 'done');
+
       alert('値が保存されました');
       window.location.href = 'brake_design7.html';
     }

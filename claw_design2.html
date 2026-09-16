@@ -17,15 +17,7 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
      <div class="label">「つめ車の材質はFC250を使用」</div>
@@ -167,6 +159,7 @@
       localStorage.setItem('claw_R', R);
       localStorage.setItem('claw_p', p);
       localStorage.setItem('claw_totalb', b0);
+      localStorage.setItem('claw2', 'done');
       alert('値が保存されました');
       window.location.href = 'claw_desig3.html';
       

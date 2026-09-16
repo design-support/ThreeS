@@ -18,15 +18,7 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
  <div class="label">「ブラケットの材質はFC200を使用」</div>
@@ -184,22 +176,6 @@ if (lb1 < 10) {
 
 
       
-
-
-
-
-
-
-
-      
-
-
-      
-
-
-
-     
-      
       // 値をlocalStorageに保存
       localStorage.setItem('brake_l1', l1);
       localStorage.setItem('brake_l2', l2);
@@ -208,7 +184,7 @@ if (lb1 < 10) {
       localStorage.setItem('brake_lb2', lb2);
       localStorage.setItem('brake_W1', W1);
       localStorage.setItem('brake_W2', W2);
-
+      localStorage.setItem('brake8', 'done');
       alert('値が保存されました');
       window.location.href = 'brake_design6.html';
     }

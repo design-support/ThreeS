@@ -17,15 +17,7 @@
  .font { font-family: 'Times New Roman', serif; } 
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
      <div class="label">「ブレーキレバーの材質はFC250を使用」</div>
@@ -167,7 +159,7 @@
       localStorage.setItem('brakelever_l', l);
       localStorage.setItem('brakelever_b', b);
       localStorage.setItem('brakelever_b1', b1);
-     
+      localStorage.setItem('brakelever2', 'done');
 
       alert('値が保存されました');
       window.location.href = 'brake_design3.html';

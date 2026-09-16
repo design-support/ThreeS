@@ -16,15 +16,7 @@
   .btn { font-size: 18px; padding: 4px 24px; white-space: nowrap; }
  .font { font-family: 'Times New Roman', serif; }
  </style>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
     <div class="label">「爪軸の材質はS50Cを使用」</div>
@@ -173,6 +165,7 @@ const d0answer =  Math.cbrt((32*P*lp) / (2* Math.PI * 100));
       localStorage.setItem('claw_lp', lp);
       localStorage.setItem('claw_d', d);
       localStorage.setItem('claw_d2', d2);
+      localStorage.setItem('claw3', 'done');
       alert('値が保存されました');
       window.location.href = 'claw_design4.html';
       } catch (e) {

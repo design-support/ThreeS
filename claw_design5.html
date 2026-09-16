@@ -133,9 +133,11 @@
 
       // 正しい場合、値をlocalStorageに保存
       localStorage.setItem('claw_buckling', clawBucklingVal);
-  alert('値が保存されました');
-  window.location.href = 'choice.html';
-  // 必要に応じて計算処理を追加
+      localStorage.setItem('claw_max', clawMaxVal);
+      localStorage.setItem('claw5', 'done');
+      alert('値が保存されました');
+      window.location.href = 'choice.html';
+      // 必要に応じて計算処理を追加
     }
 
     function onBack() {

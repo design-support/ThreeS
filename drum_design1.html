@@ -17,15 +17,7 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-<body>
-  <nav class="menubar">
-    <div class="menu">
-      <button onclick="onFileOpen()">ファイル</button>
-    </div>
-    <div class="menu">
-      <button onclick="onMenuSelect()">メニュー</button>
-    </div>
-  </nav>
+
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
     <div class="label">「ドラムの材質はFC250を使用」</div>
@@ -160,6 +152,7 @@ const l0answer =makisuuanswer*p+120;
   localStorage.setItem('makisuu', makisuuanswer);
   // ドラム長さを数値で保存
   localStorage.setItem('drum_l0', l0);
+  localStorage.setItem('drum1', 'done');
       alert('値が保存されました');
       window.location.href = 'drum_design2.html';
     }

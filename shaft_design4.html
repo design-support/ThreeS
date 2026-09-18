@@ -32,33 +32,52 @@
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d1')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="material">パイプの呼び<span class="font"></span></label>
-      <select id="material">
+      <label for="pipe">パイプの呼び<span class="font"></span></label>
+      <select id="pipe">
         <option value="">-- 選択してください --</option>
         <option value="SGP32A">SGP32A</option>
         <option value="SGP40A">SGP40A</option>
       </select>
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('material')">ヒント</button>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('pipe')">ヒント</button>
     </div>
     <div class="input-row">
       <label for="d2">パイプの外径<span class="font">d2</span>[mm]</label>
-      <input id="d2" type="number" />
+      <select id="d2">
+        <option value="">-- 選択してください --</option>
+        <option value="42.7">42.7</option>
+        <option value="48.6">48.6</option>
+      </select>
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="d2">座金の呼び<span class="font"></span></label>
-      <input id="d2" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+      <label for="washer1">座金(1)の呼び<span class="font"></span></label>
+      <input id="washer1" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('washer1')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="d2">座金の内径<span class="font"></span>[mm]</label>
-      <input id="d2" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+      <label for="d3">座金(1)の内径<span class="font"></span>[mm]</label>
+      <input id="d3" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d3')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="d2">座金の外径<span class="font"></span>[mm]</label>
-      <input id="d2" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+      <label for="d4">座金(1)の外径<span class="font"></span>[mm]</label>
+      <input id="d4" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d4')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="washer2">座金(2)の呼び<span class="font"></span></label>
+      <input id="washer2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('washer2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d5">座金(2)の内径<span class="font"></span>[mm]</label>
+      <input id="d5" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d5')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d6">座金(2)の外径<span class="font"></span>[mm]</label>
+      <input id="d6" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d6')">ヒント</button>
     </div>
     <button class="btn" onclick="onDecide()">保存</button>
     <button class="btn" onclick="onBack()">戻る</button>
@@ -68,6 +87,15 @@
     function onDecide() {
       const aVal = document.getElementById('a').value;
       const d1Val = document.getElementById('d1').value;
+      const pipeVal = document.getElementById('pipe').value;
+      const d2Val = document.getElementById('d2').value;
+      const washer1Val = document.getElementById('washer1').value;
+      const d3Val = document.getElementById('d3').value;
+      const d4Val = document.getElementById('d4').value;
+      const washer2Val = document.getElementById('washer2').value;
+      const d5Val = document.getElementById('d5').value;
+      const d6Val = document.getElementById('d6').value;
+
       if ( aVal === null || aVal.toString().trim() === '' || d1Val === null || d1Val.toString().trim() === '') {
         alert('すべての項目を入力してください');
         return;
@@ -75,7 +103,16 @@
 
       const a = parseFloat(aVal);
       const d1 = parseFloat(d1Val);
-      if (isNaN(a) || isNaN(d1)) {
+      const pipe = document.getElementById('pipe').value;
+      const d2 = parseFloat(d2Val);
+      const washer1 = parseFloat(washer1Val);
+      const d3 = parseFloat(d3Val);
+      const d4 = parseFloat(d4Val);
+      const washer2 = parseFloat(washer2Val);
+      const d5 = parseFloat(d5Val);
+      const d6 = parseFloat(d6Val);
+
+      if (isNaN(a) || isNaN(d1) || isNaN(pipe) || isNaN(d2) || isNaN(washer1) || isNaN(d3) || isNaN(d4) || isNaN(washer2) || isNaN(d5) || isNaN(d6)) {
         alert('有効な数値を入力してください');
         return;
       }
@@ -90,18 +127,27 @@
         return;
       }
       
+      if (pipeVal === 'SGP32A' && d2Val !== '42.7') {
+      alert('SGP32Aの場合、パイプの外径d2は42.7mmを選択してください。');
+      return;
+     }
 
-      const Lhstr = localStorage.getItem('handle_Lh');
-      const Lh = Lhstr !== null ? parseFloat(Lhstr) : NaN;
-      if (isNaN(Lh)) {
-        alert('ハンドルの長さが設定されていません。');
-        return;
-      }
+      if (pipeVal === 'SGP40A' && d2Val !== '48.6') {
+      alert('SGP40Aの場合、パイプの外径d2は48.6mmを選択してください。');
+      return;
+     }
 
 
-      localStorage.setItem('shaft_σb', sigma);
       localStorage.setItem('shaft_a', a);
       localStorage.setItem('shaft_d1', d1);
+      localStorage.setItem('shaft_pipe', pipeVal);
+      localStorage.setItem('shaft_d2', d2);
+      localStorage.setItem('shaft_washer1', washer1);
+      localStorage.setItem('shaft_d3', d3);
+      localStorage.setItem('shaft_d4', d4);
+      localStorage.setItem('shaft_washer2', washer2);
+      localStorage.setItem('shaft_d5', d5);
+      localStorage.setItem('shaft_d6', d6);
       alert('値が保存されました。');
       window.location.href = 'Choice.html';
     }
@@ -117,20 +163,29 @@
       } else if (type === 'd1') {
         const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';
         alert(msg);
-      } else if (type === 'd2') {
-        const msg = '教科書 P.101  式（8.20）を参照してください。d2は40～50mmの範囲で入力してください。';
-        alert(msg);
-      } else if (type === 'd1') {
-        const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';
+      } else if (type === 'pipe') {
+        const msg = '教科書 P.101 8.9表 を参照し、パイプの呼びを選択してください。';
         alert(msg);
       } else if (type === 'd2') {
-        const msg = '教科書 P.101  式（8.20）を参照してください。d2は40～50mmの範囲で入力してください。';
+        const msg = '教科書 P.101 8.9表 を参照し、パイプ呼びに合う寸法を選択してください。';
         alert(msg);
-      } else if (type === 'd1') {
-        const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';
+      } else if (type === 'washer1') {
+        const msg = '';
         alert(msg);
-      } else if (type === 'd2') {
-        const msg = '教科書 P.101  式（8.20）を参照してください。d2は40～50mmの範囲で入力してください。';
+      } else if (type === 'd3') {
+        const msg = '';
+        alert(msg);
+      } else if (type === 'd4') {
+        const msg = '';
+        alert(msg);
+      } else if (type === 'washer2') {
+        const msg = '';
+        alert(msg);
+      } else if (type === 'd5') {
+        const msg = '';
+        alert(msg);
+      } else if (type === 'd6') {
+        const msg = '';
         alert(msg);
       } else {
         alert('ヒントがありません');

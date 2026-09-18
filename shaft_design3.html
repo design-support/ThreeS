@@ -8,7 +8,7 @@
     body { font-family: 'SansSerif', sans-serif; margin: 0; }
     .menubar { display: flex; background: #eee; padding: 8px; }
     .menu { margin-right: 20px; }
-    .panel { margin: 30px auto; width: 420px; }
+    .panel { margin: 30px auto; width: 460px; }
     .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
     .input-row { margin-bottom: 15px; display: flex; align-items: center; }
     .input-row label { width: 180px; }
@@ -114,7 +114,7 @@
 
     function showHint(type) {
       if (type === 'material') {
-        const msg = 'クランクアームの材質はSC360またはSC410を選択してください。SC360の場合、許容曲げ応力は100 N/mm²です。SC410の場合、許容曲げ応力は117 N/mm²です。';
+        const msg = 'クランクアームの材質はSC360またはSC410を選択してください。SC360の場合、許容繰り返し曲げ応力は100 N/mm²、SC410の場合は117 N/mm²です。';
         alert(msg);
       } else if (type === 'b1') {
         const msg = '教科書 P.100 式（8.19）を参照してください。アーム幅b1は30～50mmの範囲で入力してください。';

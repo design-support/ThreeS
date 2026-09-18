@@ -31,18 +31,40 @@
       <input id="d1" type="number" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d1')">ヒント</button>
     </div>
+    <div class="input-row">
+      <label for="material">パイプの呼び<span class="font"></span></label>
+      <select id="material">
+        <option value="">-- 選択してください --</option>
+        <option value="SGP32A">SGP32A</option>
+        <option value="SGP40A">SGP40A</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('material')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d2">パイプの外径<span class="font">d2</span>[mm]</label>
+      <input id="d2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d2">座金の呼び<span class="font"></span></label>
+      <input id="d2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d2">座金の内径<span class="font"></span>[mm]</label>
+      <input id="d2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+    </div>
+    <div class="input-row">
+      <label for="d2">座金の外径<span class="font"></span>[mm]</label>
+      <input id="d2" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
+    </div>
     <button class="btn" onclick="onDecide()">保存</button>
     <button class="btn" onclick="onBack()">戻る</button>
   </div>
   <script>
 
-    
-    function onFileOpen() {
-      alert('ファイルメニューが押されました');
-    }
-    function onMenuSelect() {
-      alert('メニューが押されました');
-    }
     function onDecide() {
       const aVal = document.getElementById('a').value;
       const d1Val = document.getElementById('d1').value;
@@ -76,20 +98,6 @@
         return;
       }
 
-      const M = 147 * Lh;
-      const Z = b2 * Math.pow(b1,2) / 6;
-      const sigma = M / Z;
-
-      alert(
-        "曲げ応力σbを自動計算しました。\n" +
-        "σb = " + sigma.toFixed(2) + " N/mm²"
-      );
-      
-
-      if (sigma > 117) {
-        alert("曲げ応力が許容値117 N/mm²を超えています。設計をやり直してください。");
-        return;
-      }
 
       localStorage.setItem('shaft_σb', sigma);
       localStorage.setItem('shaft_a', a);
@@ -105,6 +113,18 @@
     function showHint(type) {
       if   (type === 'a') {
         const msg = '教科書 P.100 式（8.18）を参照してください。aは300～350mmの範囲で入力してください。';
+        alert(msg);
+      } else if (type === 'd1') {
+        const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';
+        alert(msg);
+      } else if (type === 'd2') {
+        const msg = '教科書 P.101  式（8.20）を参照してください。d2は40～50mmの範囲で入力してください。';
+        alert(msg);
+      } else if (type === 'd1') {
+        const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';
+        alert(msg);
+      } else if (type === 'd2') {
+        const msg = '教科書 P.101  式（8.20）を参照してください。d2は40～50mmの範囲で入力してください。';
         alert(msg);
       } else if (type === 'd1') {
         const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';

@@ -22,6 +22,15 @@
     <div class="label">設計した値を入れてください</div>
      <div class="label">「クランクアームの材質はSC360orSC410を使用」</div>
     <div class="input-row">
+      <label for="material">クランクアームの材料<span class="font"></span></label>
+      <select id="material">
+        <option value="">-- 選択してください --</option>
+        <option value="SC360">SC360</option>
+        <option value="SC410">SC410</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('material')">ヒント</button>
+    </div>
+    <div class="input-row">
       <label for="b1">アーム幅<span class="font">b1</span>[mm]</label>
       <input id="b1" type="number" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b1')">ヒント</button>
@@ -35,15 +44,9 @@
     <button class="btn" onclick="onBack()">戻る</button>
   </div>
   <script>
-
-    
-    function onFileOpen() {
-      alert('ファイルメニューが押されました');
-    }
-    function onMenuSelect() {
-      alert('メニューが押されました');
-    }
+  
     function onDecide() {
+      const df = document.getElementById('material').value;
       const b1Val = document.getElementById('b1').value;
       const b2Val = document.getElementById('b2').value;
       if (b1Val === null || b1Val.toString().trim() === '' || b2Val === null || b2Val.toString().trim() === '') {
@@ -85,10 +88,18 @@
       );
       
 
-      if (sigma > 117) {
-        alert("曲げ応力が許容値117 N/mm²を超えています。設計をやり直してください。");
-        return;
-      }
+      let allowableStress;
+
+    if (df === 'SC360') {
+      allowableStress = 100;
+    } else if (df === 'SC410') {
+      allowableStress = 117;
+    }
+
+    if (sigma > allowableStress) {
+      alert("曲げ応力が許容値" + allowableStress + " N/mm²を超えています。設計をやり直してください。");
+      return;
+    }
 
       localStorage.setItem('shaft_b1', b1);
       localStorage.setItem('shaft_b2', b2);
@@ -102,11 +113,14 @@
     }
 
     function showHint(type) {
-      if (type === 'b1') {
-        const msg = '教科書 P.100 式（8.19）を参照してください。b1は30～50mmの範囲で入力してください。';
+      if (type === 'material') {
+        const msg = 'クランクアームの材質はSC360またはSC410を選択してください。SC360の場合、許容曲げ応力は100 N/mm²です。SC410の場合、許容曲げ応力は117 N/mm²です。';
+        alert(msg);
+      } else if (type === 'b1') {
+        const msg = '教科書 P.100 式（8.19）を参照してください。アーム幅b1は30～50mmの範囲で入力してください。';
         alert(msg);
       } else if (type === 'b2') {
-        const msg = '教科書 P.100 式（8.19）を参照してください。b2は10mm以上で入力してください。';
+        const msg = '教科書 P.100 式（8.19）を参照してください。厚みb2は10mm以上で入力してください。また、長さlを超えない長さにしてください。';
         alert(msg);
       } else {
         alert('ヒントがありません');

@@ -59,7 +59,7 @@
     <button class="btn" onclick="onBack()">戻る</button>
   </div>
   <script>
-    
+  
     function onDecide() {
       const breakLoad = parseFloat(document.getElementById('break').value);
       const rope = document.getElementById('rope').value;
@@ -87,7 +87,7 @@
         alert('破断荷重が大きいです。計算をやり直してください');
         return;
       }
-      if (breakLoad < expectedBreak) {
+      if (breakLoad < w * 5) {
         alert('破断荷重が小さいです。計算をやり直してください');
         return;
       }
@@ -103,23 +103,22 @@
   // 必要に応じて計算処理を追加
 
       // rope_design_breakの値を参照してropekeianswerを判定
-      const breakValue = parseFloat(localStorage.getItem('rope_design_break'));
       let ropekeianswer = null;
-      if (breakValue >= 53.2 && breakValue <= 66.6) 
+      if (breakLoad >= 53.2 && breakLoad <= 66.6) 
         ropekeianswer = 11.2;
-         else if (breakValue >= 66.7 && breakValue <= 76.5) 
+         else if (breakLoad >= 66.7 && breakLoad <= 76.5) 
         ropekeianswer = 12;
-      else if (breakValue >= 76.6 && breakValue <= 83.0) 
+       else if (breakLoad >= 76.6 && breakLoad <= 83.0) 
         ropekeianswer = 12.5;
-       else if (breakValue >= 83.1 && breakValue <= 104) 
+       else if (breakLoad >= 83.1 && breakLoad <= 104) 
         ropekeianswer = 14;
-       else if (breakValue >= 104.1 && breakValue <= 136) 
+       else if (breakLoad >= 104.1 && breakLoad <= 136) 
         ropekeianswer = 16;
-       else if (breakValue >= 136.1 && breakValue <= 172) 
+       else if (breakLoad >= 136.1 && breakLoad <= 172) 
         ropekeianswer = 18;
-       else if (breakValue >= 172.1 && breakValue <= 212) 
+       else if (breakLoad >= 172.1 && breakLoad <= 212) 
         ropekeianswer = 20;
-       else if (breakValue >= 212.1 && breakValue <= 266) 
+       else if (breakLoad >= 212.1 && breakLoad <= 266) 
         ropekeianswer = 22.4;
      
          if (dw > ropekeianswer) {
@@ -153,6 +152,7 @@
         alert('シンブルが小さいです。計算をやり直してください');
         return;
       }
+    
 
       
       // 値をlocalStorageに保存

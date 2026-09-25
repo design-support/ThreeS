@@ -50,11 +50,6 @@
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="washer1">座金(1)の呼び<span class="font"></span></label>
-      <input id="washer1" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('washer1')">ヒント</button>
-    </div>
-    <div class="input-row">
       <label for="d3">座金(1)の内径<span class="font"></span>[mm]</label>
       <input id="d3" type="number" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d3')">ヒント</button>
@@ -63,11 +58,6 @@
       <label for="d4">座金(1)の外径<span class="font"></span>[mm]</label>
       <input id="d4" type="number" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d4')">ヒント</button>
-    </div>
-    <div class="input-row">
-      <label for="washer2">座金(2)の呼び<span class="font"></span></label>
-      <input id="washer2" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('washer2')">ヒント</button>
     </div>
     <div class="input-row">
       <label for="d5">座金(2)の内径<span class="font"></span>[mm]</label>
@@ -89,10 +79,8 @@
       const d1Val = document.getElementById('d1').value;
       const pipeVal = document.getElementById('pipe').value;
       const d2Val = document.getElementById('d2').value;
-      const washer1Val = document.getElementById('washer1').value;
       const d3Val = document.getElementById('d3').value;
       const d4Val = document.getElementById('d4').value;
-      const washer2Val = document.getElementById('washer2').value;
       const d5Val = document.getElementById('d5').value;
       const d6Val = document.getElementById('d6').value;
 
@@ -105,14 +93,12 @@
       const d1 = parseFloat(d1Val);
       const pipe = document.getElementById('pipe').value;
       const d2 = parseFloat(d2Val);
-      const washer1 = parseFloat(washer1Val);
       const d3 = parseFloat(d3Val);
       const d4 = parseFloat(d4Val);
-      const washer2 = parseFloat(washer2Val);
       const d5 = parseFloat(d5Val);
       const d6 = parseFloat(d6Val);
 
-      if (isNaN(a) || isNaN(d1) || isNaN(pipe) || isNaN(d2) || isNaN(washer1) || isNaN(d3) || isNaN(d4) || isNaN(washer2) || isNaN(d5) || isNaN(d6)) {
+      if (isNaN(a) || isNaN(d1) || isNaN(pipe) || isNaN(d2) || isNaN(d3) || isNaN(d4) || isNaN(d5) || isNaN(d6)) {
         alert('有効な数値を入力してください');
         return;
       }
@@ -128,24 +114,41 @@
       }
       
       if (pipeVal === 'SGP32A' && d2Val !== '42.7') {
-      alert('SGP32Aの場合、パイプの外径d2は42.7mmを選択してください。');
-      return;
-     }
+        alert('SGP32Aの場合、パイプの外径d2は42.7mmを選択してください。');
+        return;
+      }
 
       if (pipeVal === 'SGP40A' && d2Val !== '48.6') {
-      alert('SGP40Aの場合、パイプの外径d2は48.6mmを選択してください。');
-      return;
-     }
+        alert('SGP40Aの場合、パイプの外径d2は48.6mmを選択してください。');
+        return;
+      }
 
+      if (d3 >= d1) {
+        alert('座金(1)の内径は、心棒の太さd1より小さい値を選択してください。');
+        return;
+      }
 
+      if (d4 <= d2) {
+        alert('座金(1)の外径は、パイプの外径d2より大きい値を選択してください。');
+        return;
+      }
+
+      if (d5 >= d1) {
+        alert('座金(2)の内径は、心棒の太さd1より小さい値を選択してください。');
+        return;
+      }
+
+      if (d6 <= d2) {
+        alert('座金(2)の外径は、パイプの外径d2より大きい値を選択してください。');
+        return;
+      }
+      
       localStorage.setItem('shaft_a', a);
       localStorage.setItem('shaft_d1', d1);
       localStorage.setItem('shaft_pipe', pipeVal);
       localStorage.setItem('shaft_d2', d2);
-      localStorage.setItem('shaft_washer1', washer1);
       localStorage.setItem('shaft_d3', d3);
       localStorage.setItem('shaft_d4', d4);
-      localStorage.setItem('shaft_washer2', washer2);
       localStorage.setItem('shaft_d5', d5);
       localStorage.setItem('shaft_d6', d6);
       alert('値が保存されました。');
@@ -164,28 +167,22 @@
         const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';
         alert(msg);
       } else if (type === 'pipe') {
-        const msg = '教科書 P.101 8.9表 を参照し、パイプの呼びを選択してください。';
+        const msg = '教科書 P.101 8.10表 を参照し、パイプの呼びを選択してください。外径d2が40～50mmの範囲のため、小さめに作りたい場合はSGP32A、大きめに作りたい場合はSGP40Aを選択してください。';
         alert(msg);
       } else if (type === 'd2') {
-        const msg = '教科書 P.101 8.9表 を参照し、パイプ呼びに合う寸法を選択してください。';
-        alert(msg);
-      } else if (type === 'washer1') {
-        const msg = '';
+        const msg = '教科書 P.101 8.10表 を参照し、パイプ呼びに合う外径d2を選択してください。';
         alert(msg);
       } else if (type === 'd3') {
-        const msg = '';
+        const msg = '教科書 P.162~164 付表5 を参照し、内径d1の値より小さい基準寸法を選択してください。';
         alert(msg);
       } else if (type === 'd4') {
-        const msg = '';
-        alert(msg);
-      } else if (type === 'washer2') {
-        const msg = '';
+        const msg = '教科書 P.162~164 付表5 を参照し、外径d2の値より大きい基準寸法を選択してください。';
         alert(msg);
       } else if (type === 'd5') {
-        const msg = '';
+        const msg = '教科書 P.162~164 付表5 を参照し、内径d1の値より小さい基準寸法を選択してください。';
         alert(msg);
       } else if (type === 'd6') {
-        const msg = '';
+        const msg = '教科書 P.162~164 付表5 を参照し、外径d2の値より大きい基準寸法を選択してください。';
         alert(msg);
       } else {
         alert('ヒントがありません');

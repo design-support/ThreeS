@@ -167,7 +167,29 @@
         '区切り7': '----------軸設計----------',
         'shaft_S0': '四角形状の辺長さ[mm]',
         'shaft_ds1': 'ハンドル軸の直径[mm]',
-        'shaft_ds2': '中間軸の直径[mm]'
+        'shaft_ds2': '中間軸の直径[mm]',
+        'shaft_b_x_h1': 'キーの呼び寸法（ハンドル軸）',
+        'shaft_b_x_h2': 'キーの呼び寸法（中間軸）',
+        'shaft_VG': 'D歯車とブレーキを合わせた体積[cm^3]',
+        'shaft_VD': 'ドラムとつめ車を合わせた体積[cm^3]',
+        'shaft_WG': 'D歯車とブレーキを合わせた自重[N]',
+        'shaft_WD': 'ドラムとつめ車を合わせた自重[N]',
+        'shaft_FN': 'D歯車の歯面に直角に作用する力[N]',
+        'shaft_WT': '軸にかかる力の合力[N]',
+        'shaft_a': 'ドラム軸のスパンのAB間の長さ[mm]',
+        'shaft_b': 'ドラム軸のスパンのBC間の長さ[mm]',
+        'shaft_ds3': 'ドラム軸径[mm]',
+        'shaft_material': 'クランクアームの材料',
+        'shaft_b1': 'アーム幅[mm]',
+        'shaft_b2': '厚み[mm]',
+        'shaft_a': 'にぎりの長さ[mm]',
+        'shaft_d1': '心棒の太さ[mm]',
+        'shaft_pipe': 'パイプの呼び[mm]',
+        'shaft_d2': 'パイプの外径[mm]',
+        'shaft_d3': '座金(1)の内径[mm]',
+        'shaft_d4': '座金(1)の外径[mm]',
+        'shaft_d5': '座金(2)の内径[mm]',
+        'shaft_d6': '座金(2)の外径[mm]'
       };
       let msg = '保存された値一覧:\n';
       let found = false;
@@ -188,7 +210,9 @@
         'brakekanagu_n', 'brake_t2', 'brakekanagu_b', 'brake_t1', 'brake_itaatu', 'brake_C',
         'brake_l1', 'brake_l2', 'brake_R0', 'brake_lb1', 'brake_lb2', 'brake_W1', 'brake_W2',
         'brakebracket-bolt_d','brakebracket-bolt_n','brakebracket-bolt_l','brakebracket-pin_d','brakebracket-pin_d1',
-        '区切り7','shaft_S0', 'shaft_ds1', 'shaft_ds2'
+        '区切り7','shaft_S0', 'shaft_ds1', 'shaft_ds2','shaft_b_x_h1', 'shaft_b_x_h2','shaft_VG','shaft_VD','shaft_WD', 
+        'shaft_WG', 'shaft_FN', 'shaft_WT','shaft_a','shaft_b', 'shaft_ds3','shaft_b1', 'shaft_b2','shaft_σb',
+        'shaft_pipe','shaft_d1','shaft_d2','shaft_d3','shaft_d4','shaft_d5','shaft_d6'
       ];
       for (const key of orderedKeys) {
         const val = localStorage.getItem(key);

@@ -97,7 +97,7 @@
   localStorage.setItem('Ddanswer', Ddanswer);
 
   // 入力したドラム直径と計算した Ddanswer を比較し、入力が小さい場合は警告して中断
-  if (Dd < Ddanswer) {
+  if (Dd < Ddanswer-10) {
     alert('ドラム直径が小さいです。設計をやり直してください');
     return;
   }

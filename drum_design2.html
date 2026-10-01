@@ -141,12 +141,12 @@ if (sin === 12) {
 
 const lw3answer = (sinbleL * 0.001 * Math.PI);
 
-if (lw3 < lw3answer-0.05) {
+if (lw3 < lw3answer-0.1) {
     alert('シンブルに巻き付ける長さが小さいです。設計をやり直してください ');
     return;
   }
 
-  if (lw3 > lw3answer+0.05) {
+  if (lw3 > lw3answer+0.1) {
     alert('シンブルに巻き付ける長さが大きいです。設計をやり直してください。');
     return;
   }
@@ -230,12 +230,12 @@ const kihonWnum = kihon_w !== null ? parseFloat(kihon_w) : 0;
 
   const Wanswer = (ropetotalL * ropesituryou * 9.81*0.001 + kihonWnum);
 
-  if (W < Wanswer-0.05) {
+  if (W < Wanswer-0.1) {
     alert('巻き上げ荷重が小さいです。'+ropetotalL+'設計をやり直してください'+Wanswer+' ');
     return;
   }
 
-  if (W > Wanswer+0.05) {
+  if (W > Wanswer+0.1) {
     alert('巻き上げ荷重が大きいです。設計をやり直してください。');
     return;
   }

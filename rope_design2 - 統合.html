@@ -98,39 +98,94 @@
         alert('ワイヤロープを選択してください');
         return;
       }
+
+
       
 
   
   // 必要に応じて計算処理を追加
 
       // rope_design_breakの値を参照してropekeianswerを判定
-      let ropekeianswer = null;
-      if (49.4<breakLoad < 53.2) {
-        ropekeianswer = 10;
+
+      let ropekeianswer1 = null;
+      if (43.8<breakLoad < 54.0) {
+        ropekeianswer1 = 10;
+      } else if(breakLoad >= 54.1 && breakLoad <= 67.8) {
+        ropekeianswer1 = 11.2;
+      } else if (breakLoad >= 67.9 && breakLoad <= 77.8) {
+        ropekeianswer1 = 12;
+      } else if (breakLoad >= 77.9 && breakLoad <= 84.4) {
+        ropekeianswer1 = 12.5;
+      }
+       else if (breakLoad >= 84.5 && breakLoad <= 106) 
+        ropekeianswer1 = 14;
+       else if (breakLoad >= 106.1 && breakLoad <= 138) 
+        ropekeianswer1 = 16;
+       else if (breakLoad >= 138.1 && breakLoad <= 175) 
+        ropekeianswer1 = 18;
+       else if (breakLoad >= 175.1 && breakLoad <= 216) 
+        ropekeianswer1 = 20;
+       else if (breakLoad >= 216.1 && breakLoad <= 271) 
+        ropekeianswer1 = 22.4;
+     
+
+      let ropekeianswer2 = null;
+      if (39.9 < breakLoad && breakLoad < 49.2) {
+        ropekeianswer2 = 10;
+      } else if(breakLoad >= 49.2 && breakLoad <= 61.8) {
+        ropekeianswer2 = 11.2;
+      } else if (breakLoad >= 61.9 && breakLoad <= 71.0) {
+        ropekeianswer2 = 12;
+      } else if (breakLoad >= 71.1 && breakLoad <= 77.0) {
+        ropekeianswer2 = 12.5;
+      }
+       else if (breakLoad >= 77.1 && breakLoad <= 96.6) 
+        ropekeianswer2 = 14;
+       else if (breakLoad >= 96.7 && breakLoad <= 126) 
+        ropekeianswer2 = 16;
+       else if (breakLoad >= 126.1 && breakLoad <= 160) 
+        ropekeianswer2 = 18;
+       else if (breakLoad >= 160.1 && breakLoad <= 197) 
+        ropekeianswer2 = 20;
+       else if (breakLoad >= 197.1 && breakLoad <= 247) 
+        ropekeianswer2 = 22.4;
+     
+
+      let ropekeianswer3 = null;
+      if (43.1 < breakLoad && breakLoad < 53.1) {
+        ropekeianswer3 = 10;
       } else if(breakLoad >= 53.2 && breakLoad <= 66.6) {
-        ropekeianswer = 11.2;
+        ropekeianswer3 = 11.2;
       } else if (breakLoad >= 66.7 && breakLoad <= 76.5) {
-        ropekeianswer = 12;
+        ropekeianswer3 = 12;
       } else if (breakLoad >= 76.6 && breakLoad <= 83.0) {
-        ropekeianswer = 12.5;
+        ropekeianswer3 = 12.5;
       }
        else if (breakLoad >= 83.1 && breakLoad <= 104) 
-        ropekeianswer = 14;
+        ropekeianswer3 = 14;
        else if (breakLoad >= 104.1 && breakLoad <= 136) 
-        ropekeianswer = 16;
+        ropekeianswer3 = 16;
        else if (breakLoad >= 136.1 && breakLoad <= 172) 
-        ropekeianswer = 18;
+        ropekeianswer3 = 18;
        else if (breakLoad >= 172.1 && breakLoad <= 212) 
-        ropekeianswer = 20;
+        ropekeianswer3 = 20;
        else if (breakLoad >= 212.1 && breakLoad <= 266) 
-        ropekeianswer = 22.4;
+        ropekeianswer3 = 22.4;
      
-         if (dw > ropekeianswer) {
-        alert('ロープ径が大きいです。計算をやり直してください');
+
+      if(rope == '6x19') {
+        ropekeianswer = ropekeianswer1;
+      } else if(rope == '6x24') {
+        ropekeianswer = ropekeianswer2;
+      } else if(rope == '6x37') {
+        ropekeianswer = ropekeianswer3;
+      } else {
+        alert('ワイヤロープの種類が正しく選択されていません。');
         return;
       }
-      if (dw < ropekeianswer) {
-        alert('ロープ径が小さいです。計算をやり直してください');
+
+      if(dw !== ropekeianswer) {
+        alert('ワイヤロープ径が破断荷重に対して適切ではありません。計算をやり直してください');
         return;
       }
 
@@ -159,7 +214,7 @@
         return;
       }
     
-
+    
       
       // 値をlocalStorageに保存
       localStorage.setItem('rope_design_break', breakLoad);

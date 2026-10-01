@@ -29,6 +29,7 @@
       <label for="dw">ワイヤロープ径<span class="dw-font">dw</span>[mm]</label>
       <select id="dw">
         <option value="">-- 選択してください --</option>
+        <option value="10">10</option>
         <option value="11.2">11.2</option>
         <option value="12">12</option>
         <option value="12.5">12.5</option>
@@ -104,12 +105,15 @@
 
       // rope_design_breakの値を参照してropekeianswerを判定
       let ropekeianswer = null;
-      if (breakLoad >= 53.2 && breakLoad <= 66.6) 
+      if (49.4<breakLoad < 53.2) {
+        ropekeianswer = 10;
+      } else if(breakLoad >= 53.2 && breakLoad <= 66.6) {
         ropekeianswer = 11.2;
-         else if (breakLoad >= 66.7 && breakLoad <= 76.5) 
+      } else if (breakLoad >= 66.7 && breakLoad <= 76.5) {
         ropekeianswer = 12;
-       else if (breakLoad >= 76.6 && breakLoad <= 83.0) 
+      } else if (breakLoad >= 76.6 && breakLoad <= 83.0) {
         ropekeianswer = 12.5;
+      }
        else if (breakLoad >= 83.1 && breakLoad <= 104) 
         ropekeianswer = 14;
        else if (breakLoad >= 104.1 && breakLoad <= 136) 
@@ -131,7 +135,9 @@
       }
 
       let thimbleanswer = null;
-      if (ropekeianswer >= 11.2 && ropekeianswer <= 12.5) 
+      if (ropekeianswer >=  9.1 && ropekeianswer <= 11.1) 
+        thimbleanswer = 10;
+       else if (ropekeianswer >= 11.2 && ropekeianswer <= 12.5) 
         thimbleanswer = 12;
          else if (ropekeianswer >= 12.6 && ropekeianswer <= 14) 
         thimbleanswer = 14;

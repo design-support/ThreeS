@@ -47,6 +47,11 @@
       <input id="lbolt" type="text" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lbolt')">ヒント</button>
     </div>
+    <div class="input-row">
+      <label for="lbolt">ドラム長さ（本決定）<span class="font">l0</span>[mm]</label>
+      <input id="lbolt" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('lbolt')">ヒント</button>
+    </div>
     <button class="btn" onclick="onDecide()">保存</button>
     <button class="btn" onclick="onBack()">戻る</button>
   </div>
@@ -59,7 +64,8 @@
       const dfVal = document.getElementById('df').value;
       const bVal = document.getElementById('b').value;
       const lboltVal = document.getElementById('lbolt').value;
-      if (dfVal === null || dfVal.toString().trim() === '' || bVal === null || bVal.toString().trim() === '' || lboltVal === null || lboltVal.toString().trim() === '') {
+      const l0Val = document.getElementById('l0').value;
+      if (dfVal === null || dfVal.toString().trim() === '' || bVal === null || bVal.toString().trim() === '' || lboltVal === null || lboltVal.toString().trim() === '' || l0Val === null || l0Val.toString().trim() === '') {
         alert('すべての項目を入力してください');
         return;
       }
@@ -68,7 +74,8 @@
       const df = parseFloat(dfVal);
       const b = parseFloat(bVal);
       const lbolt = parseFloat(lboltVal);
-      if (isNaN(df) || isNaN(b) || isNaN(lbolt)) {
+      const l0 = parseFloat(l0Val);
+      if (isNaN(df) || isNaN(b) || isNaN(lbolt) || isNaN(l0)) {
         alert('ワイヤロープ止金具の直径、座の厚さ、ボルトのねじ込み深さ、には有効な数値を入力してください');
         return;
       }
@@ -191,7 +198,7 @@
        const lboltanswer = boltanswer*1.5+td;
        
 
-       if (lbolt< lboltanswer) {
+       if (lbolt< lboltanswer-5) {
        alert('ボルトのねじ込み深さが小さいです。設計をやり直してください');
        return;
        }
@@ -201,7 +208,19 @@
       return;
       }
 
-         
+          const l1 = localStorage.getItem('drum_l0demo');
+const l0answer = l1+d1answer*2;
+       
+
+       if (l0< l0answer-d1answer) {
+       alert('ドラム長さが小さいです。設計をやり直してください');
+       return;
+       }
+
+      if (l0 > l0answer+d1answer) {
+      alert('ドラム長さが大きいです。設計をやり直してください。');
+      return;
+      }
 
 
      
@@ -215,6 +234,7 @@
       localStorage.setItem('drum_b', b);
       localStorage.setItem('drum_lbplt', lbolt);
       localStorage.setItem('drum4', 'done');
+      localStorage.setItem('drum_l0', l0);
       alert('値が保存されました');
       window.location.href = 'drum_design5.html';
       } 
@@ -254,6 +274,13 @@
         return;
       }
 
+      const l0str = localStorage.getItem('drum_l0demo');
+      const l0 = l0str !== null ? parseFloat(l0str) : NaN;
+      if (isNaN(l0)) {
+        alert('ドラム長さが設定されていません。');
+        return;
+      }
+
       if (type === 'df') {
         const msg = '教科書 P.20 式（3・13）を参照してください。 ワイヤロープを加味した巻き上げ荷重は' +  W + ' [kN]、材質はSF440Aを使用し許容せん断応力は56[N/mm^2]で設計しています。';
         alert(msg);
@@ -261,7 +288,10 @@
         const msg = '教科書 P.20 式（3・14）を参照してください。 ワイヤロープを加味した巻き上げ荷重は' +  W + ' [kN]、許容引張応力は70[N/mm^2]で設計しています。ボルトの選定の際は製図の教科書の表を用いて第1選択から選んでください。';
         alert(msg);
       } else if (type === 'lbolt') {
-        const msg = '教科書 P.20 3・7表を参照してください。 dの値には選択した取付ボルトの径が入ります';
+        const msg = '教科書 P.20 3・7表を参照してください。 dの値には選択した取付ボルトの径が入ります。余裕を見て25mm前後の長さを加えてください。';
+        alert(msg);
+      } else if (type === 'l0') {
+        const msg = '授業スライド 33 を参照してください。 仮決めしたドラム長さは' +  l0 + ' [mm]です。';
         alert(msg);
       } else {
         alert('ヒントがありません');

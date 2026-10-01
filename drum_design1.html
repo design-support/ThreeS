@@ -32,7 +32,7 @@
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('p')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="l0">ドラム長さ<span class="font">l0</span>[mm]</label>
+      <label for="l0">ドラム長さ（仮決め）<span class="font">l0</span>[mm]</label>
       <input id="l0" type="text" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l0')">ヒント</button>
     </div>
@@ -126,13 +126,13 @@
 const makisuuanswer = Math.ceil(kihon_l *1000/ (Math.PI * Dd)) + 2;
 localStorage.setItem('makisuu', makisuuanswer);
 
-const l0answer =makisuuanswer*p+120;
+const l0answer =makisuuanswer*p;
 
       if (l0 < l0answer-10) {
         alert('ドラム長さが小さいです。計算をやり直してください');
         return;
       }
-      if (l0 > l0answer+10) {
+      if (l0 > l0answer+30) {
         alert('ドラム長さが大きいです。計算をやり直してください');
         return;
       }
@@ -142,7 +142,7 @@ const l0answer =makisuuanswer*p+120;
   localStorage.setItem('drum_p', p);
   localStorage.setItem('makisuu', makisuuanswer);
   // ドラム長さを数値で保存
-  localStorage.setItem('drum_l0', l0);
+  localStorage.setItem('drum_l0demo', l0);
   localStorage.setItem('drum1', 'done');
       alert('値が保存されました');
       window.location.href = 'drum_design2.html';
@@ -161,7 +161,7 @@ const l0answer =makisuuanswer*p+120;
         const msg = '教科書 P.16 式（3.4）を参照してください。 ワイヤロープ径: ' + ( dwVal + ' [mm]で設計しています。');
         alert(msg);
       } else if (type === 'l0') {
-        const msg = '教科書 P.16 式（3.4）を参照してください。 揚程: ' + (kihonVal + ' [m]で設計しています。止金具取付の余裕として120ほど足してください。');
+        const msg = '教科書 P.16 式（3.4）を参照してください。 揚程: ' + (kihonVal + ' [m]で設計しています。');
         alert(msg);
       } else {
         alert('ヒントがありません');

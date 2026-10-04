@@ -154,7 +154,7 @@
       }
       
       const dwstr = localStorage.getItem('rope_dw');
-      const dw = Ddstr !== null ? parseFloat(dwstr) : NaN;
+      const dw = dwstr !== null ? parseFloat(dwstr) : NaN;
       if (isNaN(dw)) {
         alert('ワイヤロープ径が設定されていません。');
         return;
@@ -214,7 +214,7 @@
       localStorage.setItem('gear_hf', hf);
       localStorage.setItem('gear_b', b);
       localStorage.setItem('gear_C', C);
-      alert('値が保存されました。歯車の値をいくつか自動計算しました。');
+      alert('値が保存されました。歯車の値をいくつか自動計算しました。記録ボタンを確認してください。');
       window.location.href = 'Choice.html';
       } 
     

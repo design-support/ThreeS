@@ -2,7 +2,6 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ドラム設計</title>
   <style>
     body { font-family: 'SansSerif', sans-serif; margin: 0; }
@@ -17,7 +16,15 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
     <div class="input-row">
@@ -42,7 +49,16 @@
 
   <script>
 
-  
+    
+
+
+
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
     function onDecide() {
       const tdVal = document.getElementById('td').value;
       const DfVal = document.getElementById('Df').value;
@@ -127,24 +143,23 @@
        return;
        }
 
-      if (tf > tfanswer*1.33+1) {
+      if (tf > tfanswer*1.33+10) {
       alert('爪側のフランジ厚さが大きいです。設計をやり直してください。');
       return;
       }
-      //標準数の丸め方がわからないため＋１mmで許容範囲とする
+      //標準数の差の最大が10mmになるため10ｍｍまで許容
 
 
       // 値をlocalStorageに保存
       localStorage.setItem('drum_td', td);
       localStorage.setItem('drum_Df', Df);
       localStorage.setItem('drum_tf', tf);
-      localStorage.setItem('drum3', 'done');
       alert('値が保存されました');
       window.location.href = 'drum_design4.html';
       } 
     
     function onBack() {
-      window.location.href = 'Choice.html';
+      window.location.href = 'choice.html';
     }
 
 

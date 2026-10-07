@@ -132,8 +132,8 @@ const l0answer =makisuuanswer*p;
         alert('ドラム長さが小さいです。計算をやり直してください');
         return;
       }
-      if (l0 > l0answer+30) {
-        alert('ドラム長さが大きいです。計算をやり直してください');
+      if (l0 > l0answer+130) {
+        alert('ドラム長さが大きすぎます。計算をやり直してください');
         return;
       }
 
@@ -161,7 +161,7 @@ const l0answer =makisuuanswer*p;
         const msg = '教科書 P.16 式（3.4）を参照してください。 ワイヤロープ径: ' + ( dwVal + ' [mm]で設計しています。');
         alert(msg);
       } else if (type === 'l0') {
-        const msg = '教科書 P.16 式（3.4）を参照してください。 揚程: ' + (kihonVal + ' [m]で設計しています。');
+        const msg = '教科書 P.16 式（3.4）を参照してください。 揚程: ' + (kihonVal + ' [m]で設計しています。本決定はロープ止金具の座を設計した後に行います。');
         alert(msg);
       } else {
         alert('ヒントがありません');

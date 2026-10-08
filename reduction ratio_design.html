@@ -78,11 +78,12 @@
       const zb = parseFloat(zbVal);
       const zd = parseFloat(zdVal);
       // 入力の有効性チェック：許容範囲を満たすか
-      if (!isFinite(zb) || zb < 62 || zb > 72) {
+      if (!isFinite(zb) || zb < 23 || zb > 72) {
         alert('B歯車の歯数が許容範囲を超えています。設計をやり直してください');
         const el = document.getElementById('zb'); if (el) el.focus();
         return;
       }
+      //63から23へ変更
       if (!isFinite(zd) || zd < 92 || zd > 102) {
         alert('D歯車の歯数が許容範囲を超えています。設計をやり直してください。');
         const el2 = document.getElementById('zd'); if (el2) el2.focus();

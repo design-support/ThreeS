@@ -131,7 +131,6 @@
         'brake_b': 'ブレーキレバーの幅[mm]',
         'brake_b1': 'ブレーキレバーの板厚[mm]',
         'brake_p1': '張り側の圧力[N/cm^2]',
-        'brakelever_d': '調整金具取付ピン直径[mm]',
         'brakelever_l1': '控えボルトからT2の作用点までの距離[mm]',
         'brakelever_l': 'ブレーキレバーの長さ[mm]',
         'brakelever_b': 'ブレーキレバーの幅[mm]', 
@@ -144,27 +143,9 @@
         'brakebelt_b': 'ブレーキ帯の帯幅[mm]',
         'brake_e1': 'マージンe1[mm]',
         'brake_e2': 'マージンe2[mm]',
-        'brake_d2': '調節ボルトの外径[mm]',
-        'brake_d3': '調節金具の径d3[mm]',
-        'brake_t0': '調節ボルトの板厚[mm]',
-        'brakekanagu_n': '調節金具のねじ山数[-]',
-        'brake_t2': '調節金具のねじ部の長さ[mm]',
-        'brakekanagu_b': '調節金具の幅[mm]',
-        'brake_t1': '調節金具の厚さ[mm]',
-        'brake_itaatu': 'ブレーキレバーの板厚[mm]',
-        'brake_C': '調節金具の間の距離[mm]',
-        'brake_l1': '帯幅中心から反力R0の作用点までの距離[mm]',
-        'brake_l2': '帯幅の中心からブラケットの座の厚さの中心までの距離[mm]',
-        'brake_R0': 'T1の反力としてブラケット自由端に作用する力[N]',
-        'brake_lb1': 'ブレーキ帯取付ピンからブラケットの座の上端までの距離[mm]',
-        'brake_lb2': 'ブラケット取付ボルトから座の上端までの距離[mm]',
-        'brake_W1': 'ブレーキ帯取付ピンのねじ部に作用する力[N]',
-        'brake_W2': 'ブラケット取付ボルトに作用する力[N]',
-        'brakebracket-bolt_d': '取付ボルトの谷の径[mm]',
-        'brakebracket-bolt_n': 'ねじ山の数[mm]',
-        'brakebracket-bolt_l': '有効締め付け長さ[mm]',
-        'brakebracket-pin_d': 'ブレーキ帯取付ピンの外径（太いほう）[mm]',
-        'brakebracket-pin_d1': 'ブレーキ帯取付ピンのおねじの谷径（細いほう）[mm]',
+        'brake_tr1': 'ブレーキの張力1[kN]',
+        'brake_tr2': 'ブレーキの張力2[kN]',
+        'brake_rib': 'ブレーキのリブ厚さ[mm]',
         '区切り7': '----------軸設計----------',
         'shaft_S0': '四角形状の辺長さ[mm]',
         'shaft_ds1': 'ハンドル軸の直径[mm]',
@@ -185,12 +166,15 @@
         'shaft_b2': '厚み[mm]',
         'shaft_a': 'にぎりの長さ[mm]',
         'shaft_d1': '心棒の太さ[mm]',
-        'shaft_pipe': 'パイプの呼び[mm]',
+        'shaft_pipe': 'パイプの呼び',
         'shaft_d2': 'パイプの外径[mm]',
-        'shaft_d3': '座金(1)の内径[mm]',
-        'shaft_d4': '座金(1)の外径[mm]',
-        'shaft_d5': '座金(2)の内径[mm]',
-        'shaft_d6': '座金(2)の外径[mm]'
+        'shaft_d3bolt': '座金(1)側のボルト直径[mm]',
+        'shaft_d4bolt': '座金(2)側のボルト直径[mm]',
+        'shaft_d5': '座金(1)の内径[mm]',
+        'shaft_d6': '座金(1)の外径[mm]',
+        'shaft_d7': '座金(2)の内径[mm]',
+        'shaft_d8': '座金(2)の外径[mm]'
+
       };
       let msg = '保存された値一覧:\n';
       let found = false;
@@ -207,13 +191,9 @@
         'claw_l','claw_A','claw_I','claw_k','claw_lambda','claw_buckling','区切り6','brake_DB','brake_Q0',
         'brake_T1','brake_T2','brake_b','brake_b1','brake_p1','brakelever_d','brakelever_l1',
         'brakelever_l','brakelever_b','brakelever_b1', 'brake_d', 'brake_l', 'brake_n', 'brake_p',
-        'brake_kouritu', 'brakebelt_b', 'brake_e1', 'brake_e2', 'brake_d2', 'brake_d3', 'brake_t0',
-        'brakekanagu_n', 'brake_t2', 'brakekanagu_b', 'brake_t1', 'brake_itaatu', 'brake_C',
-        'brake_l1', 'brake_l2', 'brake_R0', 'brake_lb1', 'brake_lb2', 'brake_W1', 'brake_W2',
-        'brakebracket-bolt_d','brakebracket-bolt_n','brakebracket-bolt_l','brakebracket-pin_d','brakebracket-pin_d1',
-        '区切り7','shaft_S0', 'shaft_ds1', 'shaft_ds2','shaft_b_x_h1', 'shaft_b_x_h2','shaft_VG','shaft_VD','shaft_WD', 
+        'brake_kouritu', 'brakebelt_b', 'brake_e1', 'brake_e2','brake_tr1','brake_tr2','brake_rib', '区切り7','shaft_S0', 'shaft_ds1', 'shaft_ds2','shaft_b_x_h1', 'shaft_b_x_h2','shaft_VG','shaft_VD','shaft_WD', 
         'shaft_WG', 'shaft_FN', 'shaft_WT','shaft_a','shaft_b', 'shaft_ds3','shaft_b1', 'shaft_b2','shaft_σb',
-        'shaft_pipe','shaft_d1','shaft_d2','shaft_d3','shaft_d4','shaft_d5','shaft_d6'
+        'shaft_pipe','shaft_d1','shaft_d2','shaft_d3bolt','shaft_d4bolt','shaft_d5','shaft_d6','shaft_d7','shaft_d8'
       ];
       for (const key of orderedKeys) {
         const val = localStorage.getItem(key);

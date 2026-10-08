@@ -103,7 +103,7 @@ const Dbanswer=(Dd+60);
     return;
   }
 
-  if (Db > Dbanswer+20) {
+  if (Db > Dbanswer+200) {
     alert('ボルト穴ピッチの直径が大きいです。設計をやり直してください。');
     return;
   }
@@ -153,7 +153,7 @@ const danswer =  Math.sqrt((8* 1000 * W*Dd*0.5) / (n * Math.PI * 40*(Dd+60)));
     return;
   }
 
-  if (Df > Dfanswer+20) {
+  if (Df > Dfanswer+100) {
     alert('歯車側フランジの直径が大きいです。設計をやり直してください。');
     return;
   }

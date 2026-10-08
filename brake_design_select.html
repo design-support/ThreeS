@@ -29,11 +29,7 @@
     <button id="btn1" class="btn" onclick="onDecide1()">(1)基本設計</button>
     <button id="btn2" class="btn" onclick="onDecide2()" disabled>(2)ブレーキレバー設計</button>
     <button id="btn3" class="btn" onclick="onDecide3()" disabled>(3)リベット設計</button>
-    <button id="btn4" class="btn" onclick="onDecide4()" disabled>(4)調節金具設計</button>
-    <button id="btn5" class="btn" onclick="onDecide5()" disabled>(5)ブラケット荷重</button>
-    <button id="btn6" class="btn" onclick="onDecide6()" disabled>(6)取付ボルト設計</button>
-    <button id="btn7" class="btn" onclick="onDecide7()" disabled>(7)ブレーキ帯取付ピン設計</button>
-    <button id="btn8" class="btn" onclick="onDecide8()" disabled>(8)ブラケット設計</button>
+    <button id="btn4" class="btn" onclick="onDecide4()" disabled>(4)ブレーキ輪のリム設計</button>
     <button class="btn back-button" onclick="onBack()">戻る</button>
   </div>
   </div>
@@ -49,19 +45,7 @@
       window.location.href = 'brake_design3.html';
     }
     function onDecide4() {
-      window.location.href = 'brake_design4.html';
-    }
-    function onDecide5() {
-      window.location.href = 'brake_design5.html';
-    }
-    function onDecide6() {
-      window.location.href = 'brake_design6.html';
-    }
-    function onDecide7() {
-      window.location.href = 'brake_design7.html';
-    }
-    function onDecide8() {
-      window.location.href = 'brake_design8.html';
+      window.location.href = 'brake_design9.html';
     }
     function onFileOpen() {
     }
@@ -80,20 +64,8 @@
             document.getElementById("btn4").disabled = false;
         }
 
-        if(localStorage.getItem("brake4") == "done"){
-            document.getElementById("btn5").disabled = false;
-        }
-
-        if(localStorage.getItem("brake5") == "done"){
-            document.getElementById("btn6").disabled = false;
-        }
-
-        if(localStorage.getItem("brake6") == "done"){
-            document.getElementById("btn7").disabled = false;
-        }
-
-        if(localStorage.getItem("brake7") == "done"){
-            document.getElementById("btn8").disabled = false;
+        if(localStorage.getItem("brake9") == "done"){
+            document.getElementById("btn4").disabled = false;
         }
     }
     function onBack() {

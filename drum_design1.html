@@ -102,7 +102,7 @@
     return;
   }
 
-  if (Dd > Ddanswer+10) {
+  if (Dd > Ddanswer+100) {
     alert('ドラム直径が大きいです。設計をやり直してください。');
     return;
   }
@@ -115,7 +115,7 @@
     return;
   }
 
-  if (p > pdanswer+1) {
+  if (p > pdanswer+3) {
     alert('ドラムの溝ピッチが大きいです。設計をやり直してください。');
     return;
   }
@@ -132,8 +132,8 @@ const l0answer =makisuuanswer*p;
         alert('ドラム長さが小さいです。計算をやり直してください');
         return;
       }
-      if (l0 > l0answer+130) {
-        alert('ドラム長さが大きすぎます。計算をやり直してください');
+      if (l0 > l0answer+200) {
+        alert('ドラム長さが大きすぎます。計算をやり直してください' + l0answer + 'あ' + makisuuanswer+ '');
         return;
       }
 

@@ -61,13 +61,53 @@
         return;
       }
 
+      if (df === '') {
+       alert('クランクアームの材料を選択してください。');
+      return;
+    } 
+
+     let allowableStress;
+
+     if (df === 'SC360') {
+       allowableStress = 100;
+     } else if (df === 'SC410') {
+       allowableStress = 117;
+     }
+
       if (b1 < 30 || b1 > 50) {
         alert('アーム幅は30mm~50mmの範囲で入力してください。');
         return;
       }
+      const S0str = localStorage.getItem('shaft_S0');
+      const S0 = S0str !== null ? parseFloat(S0str) : NaN;
+
+      let l;
+
+      if (S0 === 12) {
+        l = 18;
+      } else if (S0 === 14) {
+        l = 20;
+      } else if (S0 === 17) {
+        l = 22;
+      } else if (S0 === 19) {
+        l = 26;
+      } else if (S0 === 22) {
+        l = 30;
+      } else if (S0 === 27) {
+        l = 32;
+      } else if (S0 === 30) {
+        l = 36;
+      } else {
+        alert('S0の値が正しく設定されていません。');
+      return;
+    }
 
       if (b2 < 10 ) {
         alert('厚みは10mm以上で入力してください。');
+        return;
+      }
+      if (b2 > l) {
+        alert('厚みb2は長さlを超えない値を入力してください。');
         return;
       }
 
@@ -88,14 +128,6 @@
       );
       
 
-      let allowableStress;
-
-    if (df === 'SC360') {
-      allowableStress = 100;
-    } else if (df === 'SC410') {
-      allowableStress = 117;
-    }
-
     if (sigma > allowableStress) {
       alert("曲げ応力が許容値" + allowableStress + " N/mm²を超えています。設計をやり直してください。");
       return;
@@ -105,7 +137,7 @@
       localStorage.setItem('shaft_b2', b2);
       localStorage.setItem('shaft_σb', sigma);
       alert('値が保存されました。');
-      window.location.href = 'Choice.html';
+      window.location.href = 'shaft_design4.html';
     }
 
     function onBack() {
@@ -120,7 +152,7 @@
         const msg = '教科書 P.100 式（8.19）を参照してください。アーム幅b1は30～50mmの範囲で入力してください。';
         alert(msg);
       } else if (type === 'b2') {
-        const msg = '教科書 P.100 式（8.19）を参照してください。厚みb2は10mm以上で入力してください。また、長さlを超えない値にしてください。';
+        const msg = '教科書 P.100 式（8.19）を参照してください。厚みb2は10mm以上で入力してください。また、教科書 p.86 8.3表の長さlを超えない値にしてください。';
         alert(msg);
       } else {
         alert('ヒントがありません');

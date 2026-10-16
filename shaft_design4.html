@@ -8,7 +8,7 @@
     body { font-family: 'SansSerif', sans-serif; margin: 0; }
     .menubar { display: flex; background: #eee; padding: 8px; }
     .menu { margin-right: 20px; }
-    .panel { margin: 30px auto; width: 420px; }
+    .panel { margin: 30px auto; width: 410px; }
     .label { font-size: 20px; font-weight: bold; margin-bottom: 0px; }
     .input-row { margin-bottom: 15px; display: flex; align-items: center; }
     .input-row label { width: 180px; }
@@ -50,24 +50,28 @@
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d2')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="d3">座金(1)の内径<span class="font"></span>[mm]</label>
-      <input id="d3" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d3')">ヒント</button>
+      <label for="d3bolt">座金(1)側のボルト呼び径<span class="font"></span></label>
+      <select id="d3bolt">
+        <option value="">-- 選択してください --</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="16">16</option>
+        <option value="20">20</option>
+        <option value="24">24</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d3bolt')">ヒント</button>
     </div>
     <div class="input-row">
-      <label for="d4">座金(1)の外径<span class="font"></span>[mm]</label>
-      <input id="d4" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d4')">ヒント</button>
-    </div>
-    <div class="input-row">
-      <label for="d5">座金(2)の内径<span class="font"></span>[mm]</label>
-      <input id="d5" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d5')">ヒント</button>
-    </div>
-    <div class="input-row">
-      <label for="d6">座金(2)の外径<span class="font"></span>[mm]</label>
-      <input id="d6" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d6')">ヒント</button>
+      <label for="d4bolt">座金(2)側のボルト呼び径<span class="font"></span></label>
+      <select id="d4bolt">
+        <option value="">-- 選択してください --</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="16">16</option>
+        <option value="20">20</option>
+        <option value="24">24</option>
+      </select>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('d4bolt')">ヒント</button>
     </div>
     <button class="btn" onclick="onDecide()">保存</button>
     <button class="btn" onclick="onBack()">戻る</button>
@@ -79,27 +83,16 @@
       const d1Val = document.getElementById('d1').value;
       const pipeVal = document.getElementById('pipe').value;
       const d2Val = document.getElementById('d2').value;
-      const d3Val = document.getElementById('d3').value;
-      const d4Val = document.getElementById('d4').value;
-      const d5Val = document.getElementById('d5').value;
-      const d6Val = document.getElementById('d6').value;
+      const d3boltVal = document.getElementById('d3bolt').value;
+      const d4boltVal = document.getElementById('d4bolt').value;
 
-      if ( aVal === null || aVal.toString().trim() === '' || d1Val === null || d1Val.toString().trim() === '') {
+      const a = Number(aVal);
+      const d1 = Number(d1Val);
+      const d2 = Number(d2Val);
+
+      
+      if (aVal === null || aVal.toString().trim() === '' || d1Val === null || d1Val.toString().trim() === '' || pipeVal === null || pipeVal.toString().trim() === '' || d2Val === null || d2Val.toString().trim() === '' || d3boltVal === null || d3boltVal.toString().trim() === '' || d4boltVal === null || d4boltVal.toString().trim() === '') {
         alert('すべての項目を入力してください');
-        return;
-      }
-
-      const a = parseFloat(aVal);
-      const d1 = parseFloat(d1Val);
-      const pipe = document.getElementById('pipe').value;
-      const d2 = parseFloat(d2Val);
-      const d3 = parseFloat(d3Val);
-      const d4 = parseFloat(d4Val);
-      const d5 = parseFloat(d5Val);
-      const d6 = parseFloat(d6Val);
-
-      if (isNaN(a) || isNaN(d1) || isNaN(pipe) || isNaN(d2) || isNaN(d3) || isNaN(d4) || isNaN(d5) || isNaN(d6)) {
-        alert('有効な数値を入力してください');
         return;
       }
 
@@ -123,35 +116,84 @@
         return;
       }
 
-      if (d3 >= d1) {
-        alert('座金(1)の内径は、心棒の太さd1より小さい値を選択してください。');
-        return;
-      }
-
-      if (d4 <= d2) {
-        alert('座金(1)の外径は、パイプの外径d2より大きい値を選択してください。');
-        return;
-      }
-
-      if (d5 >= d1) {
-        alert('座金(2)の内径は、心棒の太さd1より小さい値を選択してください。');
-        return;
+      if (d5 >= d1 || d7 >= d1) {
+        alert('ボルトの穴径は心棒の太さd1より小さい値を選択してください。');
+      return;
       }
 
       if (d6 <= d2) {
-        alert('座金(2)の外径は、パイプの外径d2より大きい値を選択してください。');
-        return;
+        alert('座金(1)の外径がパイプの外径d2以下です。別のボルト呼び径を選択してください。');
+      return;
       }
+
+      if (d8 <= d2) {
+        alert('座金(2)の外径がパイプの外径d2以下です。別のボルト呼び径を選択してください。');
+      return;
+     }
+
+      let d5 = null;
+      if  (d3boltVal == '10') {
+       d5 = 10.50;
+      } else if (d3boltVal == '12') 
+       d5 = 13.00;
+       else if (d3boltVal == '16') 
+       d5 = 17.00;
+      else if (d3boltVal == '20') 
+       d5 = 21.00;
+      else if (d3boltVal == '24') 
+       d5 = 25.00;
+      
+
+      let d6 = null;
+      if  (d3boltVal == '10') {
+       d6 = 20.00;
+      } else if (d3boltVal == '12') 
+       d6 = 24.00;
+       else if (d3boltVal == '16') 
+       d6 = 30.00;
+      else if (d3boltVal == '20') 
+       d6 = 37.00;
+      else if (d3boltVal == '24') 
+       d6 = 44.00;
+      
+
+      let d7 = null;
+      if  (d4boltVal == '10') {
+       d7 = 10.50;
+      } else if (d4boltVal == '12') 
+       d7 = 13.00;
+       else if (d4boltVal == '16') 
+       d7 = 17.00;
+      else if (d4boltVal == '20') 
+       d7 = 21.00;
+      else if (d4boltVal == '24') 
+       d7 = 25.00;
+      
+
+      let d8 = null;
+      if  (d4boltVal == '10') {
+       d8 = 30.00;
+      } else if (d4boltVal == '12') 
+       d8 = 37.00;
+       else if (d4boltVal == '16') 
+       d8 = 50.00;
+      else if (d4boltVal == '20') 
+       d8 = 60.00;
+      else if (d4boltVal == '24') 
+       d8 = 72.00;
+      
       
       localStorage.setItem('shaft_a', a);
       localStorage.setItem('shaft_d1', d1);
       localStorage.setItem('shaft_pipe', pipeVal);
       localStorage.setItem('shaft_d2', d2);
-      localStorage.setItem('shaft_d3', d3);
-      localStorage.setItem('shaft_d4', d4);
+      localStorage.setItem('shaft_d3bolt', d3boltVal);
+      localStorage.setItem('shaft_d4bolt', d4boltVal);
       localStorage.setItem('shaft_d5', d5);
       localStorage.setItem('shaft_d6', d6);
-      alert('値が保存されました。');
+      localStorage.setItem('shaft_d7', d7);
+      localStorage.setItem('shaft_d8', d8);
+      alert('値が保存されました。座金の寸法は自動計算されました。記録ボタンを確認してください。');
       window.location.href = 'Choice.html';
     }
 
@@ -161,7 +203,7 @@
 
     function showHint(type) {
       if   (type === 'a') {
-        const msg = '教科書 P.100 式（8.18）を参照してください。aは300～350mmの範囲で入力してください。';
+        const msg = '教科書 P.100 式（8.18）を参照してください。aは二人巻き用の300～350mmの範囲で入力してください。';
         alert(msg);
       } else if (type === 'd1') {
         const msg = '教科書 P.101 式（8.20）を参照してください。d1は15～30mmの範囲で入力してください。';
@@ -172,17 +214,11 @@
       } else if (type === 'd2') {
         const msg = '教科書 P.101 8.10表 を参照し、パイプ呼びに合う外径d2を選択してください。';
         alert(msg);
-      } else if (type === 'd3') {
-        const msg = '教科書 P.162~164 付表5 を参照し、内径d1の値より小さい基準寸法を選択してください。';
+      } else if (type === 'd3bolt') {
+        const msg = '教科書 P.163 付表5(a) を参照し、内径d1より小さいねじ呼び系dを選択してください。座金(1)では並形(部品等級A)を使用してください。';
         alert(msg);
-      } else if (type === 'd4') {
-        const msg = '教科書 P.162~164 付表5 を参照し、外径d2の値より大きい基準寸法を選択してください。';
-        alert(msg);
-      } else if (type === 'd5') {
-        const msg = '教科書 P.162~164 付表5 を参照し、内径d1の値より小さい基準寸法を選択してください。';
-        alert(msg);
-      } else if (type === 'd6') {
-        const msg = '教科書 P.162~164 付表5 を参照し、外径d2の値より大きい基準寸法を選択してください。';
+      } else if (type === 'd4bolt') {
+        const msg = '教科書 P.164 付表5(c) を参照し、内径d1より小さいねじ呼び系dを選択してください。座金(2)では大形(部品等級A)を使用してください。';
         alert(msg);
       } else {
         alert('ヒントがありません');

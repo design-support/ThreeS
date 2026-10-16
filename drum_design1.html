@@ -32,6 +32,11 @@
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('p')">ヒント</button>
     </div>
     <div class="input-row">
+      <label for="n">ワイヤロープ巻き数<span class="font">n</span>[mm]</label>
+      <input id="n" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('n')">ヒント</button>
+    </div>
+    <div class="input-row">
       <label for="l0">ドラム長さ（仮決め）<span class="font">l0</span>[mm]</label>
       <input id="l0" type="text" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('l0')">ヒント</button>
@@ -47,8 +52,9 @@
     function onDecide() {
       const DdVal = document.getElementById('Dd').value;
       const pVal = document.getElementById('p').value;
+      const nVal = document.getElementById('n').value;
       const l0Val = document.getElementById('l0').value;
-      if (DdVal === null || DdVal.toString().trim() === '' || pVal === null || pVal.toString().trim() === '' || l0Val === null || l0Val.toString().trim() === '') {
+      if (DdVal === null || DdVal.toString().trim() === '' || pVal === null || pVal.toString().trim() === '' || nVal === null || nVal.toString().trim() === '' || l0Val === null || l0Val.toString().trim() === '') {
         alert('すべての項目を入力してください');
         return;
       }
@@ -56,9 +62,10 @@
       // 入力値を数値に変換してチェック
       const Dd = parseFloat(DdVal);
       const p = parseFloat(pVal);
+      const n = parseFloat(nVal);
       const l0 = parseFloat(l0Val);
-      if (isNaN(Dd) || isNaN(p) || isNaN(l0)) {
-        alert('ドラム直径、ドラム溝ピッチ、ドラム長さには有効な数値を入力してください');
+      if (isNaN(Dd) || isNaN(p) || isNaN(n) || isNaN(l0)) {
+        alert('ドラム直径、ドラム溝ピッチ、巻き数、ドラム長さには有効な数値を入力してください');
         return;
       }
       
@@ -125,7 +132,15 @@
 // 端数は切り上げ、+2 を余裕分として追加
 const makisuuanswer = Math.ceil(kihon_l *1000/ (Math.PI * Dd)) + 2;
 localStorage.setItem('makisuu', makisuuanswer);
+ if (n < makisuuanswer) {
+    alert('ドラムの溝ピッチが小さいです。設計をやり直してください。 ');
+    return;
+  }
 
+  if (p > pdanswer*2) {
+    alert('ワオやロープ巻き数が大きすぎます。設計をやり直してください。');
+    return;
+  }
 const l0answer =makisuuanswer*p;
 
       if (l0 < l0answer-10) {
@@ -133,7 +148,7 @@ const l0answer =makisuuanswer*p;
         return;
       }
       if (l0 > l0answer+200) {
-        alert('ドラム長さが大きすぎます。計算をやり直してください' + l0answer + 'あ' + makisuuanswer+ '');
+        alert('ドラム長さが大きすぎます。計算をやり直してください');
         return;
       }
 
@@ -160,8 +175,11 @@ const l0answer =makisuuanswer*p;
       } else if (type === 'p') {
         const msg = '教科書 P.16 式（3.4）を参照してください。 ワイヤロープ径: ' + ( dwVal + ' [mm]で設計しています。');
         alert(msg);
+      } else if (type === 'n') {
+        const msg = '教科書 P.16 式（3.2）を参照してください。 揚程は ' + kihonVal + ' [mm]で設計しています。';
+        alert(msg);
       } else if (type === 'l0') {
-        const msg = '教科書 P.16 式（3.4）を参照してください。 揚程: ' + (kihonVal + ' [m]で設計しています。本決定はロープ止金具の座を設計した後に行います。');
+        const msg = '教科書 P.16  式（3.4）を参照してください。 揚程: ' + (kihonVal + ' [m]で設計しています。本決定はロープ止金具の座を設計した後に行います。止金具分の補正は行わないでください。');
         alert(msg);
       } else {
         alert('ヒントがありません');

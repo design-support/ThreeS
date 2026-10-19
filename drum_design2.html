@@ -96,7 +96,7 @@ const nStr = localStorage.getItem('makisuu');
     return;
   }
 
-  if (lw1 > lw1answer+1) {
+  if (lw1 > lw1answer*1.5) {
     alert('ドラムに巻き付ける長さが大きいです。設計をやり直してください。');
     return;
   }
@@ -116,7 +116,7 @@ const lw2answer = (dw*0.001*40);
     return;
   }
 
-  if (lw2 > lw2answer+0.01) {
+  if (lw2 > lw2answer*1.5) {
     alert('スプライスに要する長さが大きいです。設計をやり直してください。');
     return;
   }
@@ -146,7 +146,7 @@ if (lw3 < lw3answer-0.1) {
     return;
   }
 
-  if (lw3 > lw3answer+0.1) {
+  if (lw3 > lw3answer*1.5) {
     alert('シンブルに巻き付ける長さが大きいです。設計をやり直してください。');
     return;
   }
@@ -235,7 +235,7 @@ const kihonWnum = kihon_w !== null ? parseFloat(kihon_w) : 0;
     return;
   }
 
-  if (W > Wanswer+0.1) {
+  if (W > Wanswer*1.5) {
     alert('巻き上げ荷重が大きいです。設計をやり直してください。');
     return;
   }

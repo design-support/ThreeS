@@ -139,7 +139,7 @@
        return;
        }
 
-      if (df > dfanswer2) {
+      if (df > dfanswer2*1.5) {
       alert('ワイヤロープ止金具の直径大きいです。設計をやり直してください。');
       return;
       }
@@ -204,7 +204,7 @@
        return;
        }
 
-      if (b > banswer+5) {
+      if (b > banswer*1.5) {
       alert('座の厚さが大きいです。設計をやり直してください。');
       return;
       }
@@ -226,7 +226,7 @@
        return;
        }
 
-      if (lbolt > lboltanswer+10) {
+      if (lbolt > lboltanswer*1.5) {
       alert('ボルトのねじ込み深さが大きいです。設計をやり直してください。');
       return;
       }
@@ -240,7 +240,7 @@
        return;
        }
 
-      if (l0 > l0answer+d1*2) {
+      if (l0 > l0answer*1.5) {
       alert('ドラム長さが大きいです。設計をやり直してください。');
       return;
       }

@@ -102,7 +102,7 @@
 
       const clawBucklinganswer = 330/(1+(4/7500)*(l/k)**2);
 
-      if (clawBucklingVal > clawBucklinganswer+1) {
+      if (clawBucklingVal > clawBucklinganswer*1.5) {
         alert('爪の座屈強さが大きいです。計算をやり直してください');
         return;
       }

@@ -92,7 +92,7 @@
        return;
        }
 
-      if (T1 > T1answer+50) {
+      if (T1 > T1answer*1.5) {
       alert('ハンドル軸に作用するトルクが大きいです。設計をやり直してください。');
       return;
       }
@@ -106,7 +106,7 @@
        return;
        }
 
-      if (T2 > T2answer+50) {
+      if (T2 > T2answer*1.5) {
       alert('中間軸に作用するトルクが大きいです。設計をやり直してください。');
       return;
       }
@@ -131,7 +131,7 @@
       return;
       }
 
-      if (m > manswer) {
+      if (m > manswer*1.5) {
       alert('モジュールが大きいです。設計をやり直してください。');
       return;
       }

@@ -121,9 +121,9 @@
           return;
         }
 
-         const Ddboltstr = localStorage.getItem('drum_Ddbolt');
-        const Ddbolt = Ddboltstr !== null ? parseFloat(Ddboltstr) : NaN;
-        if (isNaN(Ddbolt)) {
+         const Dbstr = localStorage.getItem('drum_Db');
+        const Db = Dbstr !== null ? parseFloat(Dbstr) : NaN;
+        if (isNaN(Db)) {
           alert('ドラムのボルト穴ピッチ円直径が設定されていません。');
           return;
         }
@@ -266,9 +266,9 @@ if (DB==250) {
           return;
         }
 
-        const Ddboltstr = localStorage.getItem('drum_Ddbolt');
-        const Ddbolt = Ddboltstr !== null ? parseFloat(Ddboltstr) : NaN;
-        if (isNaN(Ddbolt)) {
+        const Dbstr = localStorage.getItem('drum_Db');
+        const Db = Dbstr !== null ? parseFloat(Dbstr) : NaN;
+        if (isNaN(Db)) {
           alert('ドラムのボルト穴ピッチ円直径が設定されていません。');
           return;
         }

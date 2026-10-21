@@ -148,7 +148,7 @@
         return;
         }
        
-        const t0_raw = 0.7*Pc;
+        const t0_raw = 0.5*Pc;
         const t0answer = Math.round(t0_raw * 10) / 10; // 小数点1位まで
           
           if (t0 < t0answer) {
@@ -156,7 +156,7 @@
          return;
          }
 
-        if (t0 > t0answer*1.5) {
+        if (t0 > t0answer*1.4*1.5) {
         alert('つめ車の歯元の厚さが大きいです。設計をやり直してください。');
         return;
         }

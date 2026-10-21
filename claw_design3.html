@@ -23,7 +23,7 @@
     <div class="input-row">
       <label for="P">爪軸に作用するトルク<span class="font">P</span>[N]</label>
       <input id="P" type="number" />
-      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('P')">ヒント</button>
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('p')">ヒント</button>
     </div>
     <div class="input-row">
       <label for="lp">幅<span class="font">lp</span>[mm]</label>
@@ -202,7 +202,7 @@ const d0answer =  Math.cbrt((32*P*lp) / (2* Math.PI * 100));
         return;
       }
 
-      if (type === 'p') {
+      if (type === 'P') {
         const msg = '教科書 P.42式(6・9)を参照してください。巻き上げ荷重は'+W+'[kN]、ドラム直径'+Dd+'、つめ車の歯先円直径は'+DR+'[mm]で設計しています。';
         alert(msg);
       } else if (type === 'lp') {

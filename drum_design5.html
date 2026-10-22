@@ -183,8 +183,8 @@ const danswer =  Math.sqrt((8* 1000 * W*Dd*0.5) / (n * Math.PI * 40*(Dd+60)));
    
     function showHint(type) {
       // localStorage から必要な値を安全に取得
-  const drumDbStr = localStorage.getItem('drum_Db');
-  const DbVal = drumDbStr !== null ? parseFloat(drumDbStr) : null;
+  const Ddstr = localStorage.getItem('drum_Dd');
+  const Dd = DdStr !== null ? parseFloat(Ddstr) : null;
       const WStr = localStorage.getItem('total_W');
       const W = WStr !== null ? parseFloat(WStr) : null;
 
@@ -192,7 +192,7 @@ const danswer =  Math.sqrt((8* 1000 * W*Dd*0.5) / (n * Math.PI * 40*(Dd+60)));
         const msg = '図面に書くことを考え、6本を推奨します。';
         alert(msg);
       } else if (type === 'Db') {
-        const msg = 'ボルトがドラムに干渉しないようにドラム直径にドラム直径25%ほどを足してください。おおよその値で構いませんドラム直径は'+DbVal+'[mm]で設計しています。';
+        const msg = 'ボルトがドラムに干渉しないようにドラム直径にドラム直径25%ほどを足してください。おおよその値で構いませんドラム直径は'+Dd+'[mm]で設計しています。';
         alert(msg);
       } else if (type === 'd') {
         const msg = '教科書 P.21式(31・5)を参照してください。 トルクは荷重×半径で計算し、荷重は'+W+'[kN]で設計しています。材質は軟鋼を使用し許容せん断応力は40[N/mm^2]として計算します。';

@@ -97,7 +97,7 @@
       const e1 = parseFloat(document.getElementById('e1').value);
       const e2 = parseFloat(document.getElementById('e2').value);
       const utikata = document.getElementById('utikata').value;
-      if (isNaN(d) || isNaN(l) || isNaN(n) || isNaN(p) || isNaN(kouritu) || isNaN(b) || isNaN(e1)|| isNaN(e2)|| isNaN(utikata)) {
+      if (isNaN(d) || isNaN(l) || isNaN(n) || isNaN(p) || isNaN(kouritu) || isNaN(b) || isNaN(e1)|| isNaN(e2)|| utikata === '') {
         alert('すべての値を入力してください');
         return;
       }
@@ -286,7 +286,7 @@
       localStorage.setItem('brake_e2', e2);
       localStorage.setItem('brake3', 'done');
       alert('値が保存されました');
-      window.location.href = 'brake_design9.html';
+      window.location.href = 'brake_design4.html';
     }
     function onBack() {
       window.location.href = 'Choice.html';

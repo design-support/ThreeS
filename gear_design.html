@@ -36,6 +36,11 @@
       <input id="m" type="text" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('m')">ヒント</button>
     </div>
+     <div class="input-row">
+      <label for="b">歯幅<span class="font">b</span>[mm]</label>
+      <input id="b" type="text" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
+    </div>
     <button class="btn" onclick="onDecide()">保存</button>
     <button class="btn" onclick="onBack()">戻る</button>
   </div>
@@ -48,7 +53,8 @@
       const T1Val = document.getElementById('T1').value;
       const T2Val = document.getElementById('T2').value;
       const mVal = document.getElementById('m').value;
-      if (T1Val === null || T1Val.toString().trim() === '' || T2Val === null || T2Val.toString().trim() === '' || mVal === null || mVal.toString().trim() === '') {
+      const bVal = document.getElementById('b').value;
+      if (T1Val === null || T1Val.toString().trim() === '' || T2Val === null || T2Val.toString().trim() === '' || mVal === null || mVal.toString().trim() === ''|| bVal === null || bVal.toString().trim() === '') {
         alert('すべての項目を入力してください');
         return;
       }
@@ -57,7 +63,8 @@
       const T1 = parseFloat(T1Val);
       const T2 = parseFloat(T2Val);
       const m = parseFloat(mVal);
-      if (isNaN(T1) || isNaN(T2) || isNaN(m)) {
+      const b = parseFloat(bVal);
+      if (isNaN(T1) || isNaN(T2) || isNaN(m) || isNaN(b)) {
         alert('有効な数値を入力してください');
         return;
       }
@@ -174,23 +181,18 @@
       const hf=(1.25*m);
 
       //標準数を加味して歯幅b=8*mを補正
-      let b = null;
-      if (manswer=5) {
-      b = 40;
-      } else if (manswer=6) {
-      b = 50;
-      } else if (manswer=8) {
-      b = 67;
-      } else if (manswer=10) {
-      b = 80;
-      } else if (manswer=12) {
-      b = 100;
-      }
+     
 
       const C=((dc+dd)/2)-((dKB+Dd+dw)/2);
 
-      if (F <= dw) {
-      alert('ドラムと歯車の隙間がないです設計をやり直してください。');
+      if (C <= dw+10
+      ) {
+      alert('ドラムと歯車の隙間がないです。B、D歯車の歯数を変更して小さくなるようにしてください。');
+      return;
+      }
+
+      if (C > 100) {
+      alert('ドラムと歯車の隙間が大きすぎます。B、D歯車の歯数を変更して小さくなるようにしてください。');
       return;
       }
 

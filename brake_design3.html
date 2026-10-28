@@ -213,8 +213,24 @@
       }
 
       const banswer = T1*1000/(b1*54*kouritu);
-      if (b > banswer+10) {
-        alert('ブレーキ帯の帯幅が大きいです。計算をやり直してください');
+
+let B = null;
+            if (DB == 250 ) {
+            B = 50;
+            } else if (DB == 300) {
+            B = 60;
+            }else if (DB == 350) {
+            B = 70;
+            }else if (DB == 400) {
+            B = 80;
+            }else if (DB == 450) {
+            B = 100;
+            }else if (DB == 500) {
+            B = 120;
+            }
+
+      if (b > B-2) {
+        alert('ブレーキ帯の帯幅が大きいです。ブレーキ輪の幅より小さくなるようにしてください。');
         return;
       }
       if (b < banswer) {

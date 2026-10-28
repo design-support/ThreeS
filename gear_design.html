@@ -53,7 +53,7 @@
       const T1Val = document.getElementById('T1').value;
       const T2Val = document.getElementById('T2').value;
       const mVal = document.getElementById('m').value;
-      const bVal = document.getElementById('b').value;
+       const bVal = document.getElementById('b').value;
       if (T1Val === null || T1Val.toString().trim() === '' || T2Val === null || T2Val.toString().trim() === '' || mVal === null || mVal.toString().trim() === ''|| bVal === null || bVal.toString().trim() === '') {
         alert('すべての項目を入力してください');
         return;
@@ -134,7 +134,7 @@
       manswer = 12;  }
 
       if (m < manswer) {
-      alert('モジュールが小さいです。設計をやり直してください ');
+      alert('モジュールが小さいです。設計をやり直してください。');
       return;
       }
 
@@ -185,7 +185,7 @@
 
       const C=((dc+dd)/2)-((dKB+Dd+dw)/2);
 
-      if (C <= dw+10
+      if (C <= dw+5
       ) {
       alert('ドラムと歯車の隙間がないです。B、D歯車の歯数を変更して小さくなるようにしてください。');
       return;

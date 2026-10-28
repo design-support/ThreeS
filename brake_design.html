@@ -30,7 +30,7 @@
     <div class="label">「設計した値を入れてください」</div>
     <div class="label">「ブレーキ輪の材質はFC250を使用」</div>
     <div class="input-row">
-      <label for="DB">ブレーキ輪の直径<span class="font">DB</span>[mm]</label>
+      <label for="DB">ブレーキ輪の直径<span class="font">D</span>[mm]</label>
       <select id="DB">
         <option value="">-- 選択してください --</option>
         <option value="250">250</option>
@@ -135,12 +135,12 @@
           return;
         }
 
-         if (DB > Ddbolt) {
+         if (DB < Db) {
         alert('ブレーキ輪の直径が小さいです。ドラムのボルト穴ピッチ円直径より大きくしてください。');
         return;
       }
 
-       if (DB < dKD) {
+       if (DB > dKD) {
         alert('ブレーキ輪の直径が大きいです。D歯車の歯先円直径より小さくしてください。');
         return;
       }
@@ -281,7 +281,7 @@ if (DB==250) {
         }
 
       if(type === 'DB') {
-        alert('教科書 P.47 表7.1 を参照してください。バランスを考えボルト穴ピッチ円直径以上かつD歯車の歯先円直径以下の範囲で選択してください。zドラムのボルト穴ピッチ円直径は'+Db+'[mm]、D歯車の歯先円直径は'+dKD+'[mm]としています。');
+        alert('教科書 P.47 表7.1 を参照してください。バランスを考えボルト穴ピッチ円直径以上かつD歯車の歯先円直径以下の範囲で選択してください。ドラムのボルト穴ピッチ円直径は'+Db+'[mm]、D歯車の歯先円直径は'+dKD+'[mm]としています。');
       } else if(type === 'Q0') {
         alert('教科書 P.49 式（7・1）を参照してください。 巻き上げ荷重は'+W+'[kN]、ドラム直径は'+Dd+'[mm]としています。');
       } else if(type === 'T1') {

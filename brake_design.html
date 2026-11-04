@@ -148,11 +148,11 @@
 
       
     const Q0answer=W*Dd/DB;
-      if (Q0 > Q0answer*1.5) {
+      if (Q0 > Q0answer+0.1) {
         alert('制動力が大きいです。計算をやり直してください');
         return;
       }
-      if (Q0 < Q0answer-0.01) {
+      if (Q0 < Q0answer*0.2) {
         alert('制動力が小さいです。計算をやり直してください');
         return;
       }

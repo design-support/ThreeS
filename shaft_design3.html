@@ -69,7 +69,7 @@
      let allowableStress;
 
      if (df === 'SC360') {
-       allowableStress = 100;
+       allowableStress = 72;
      } else if (df === 'SC410') {
        allowableStress = 117;
      }
@@ -146,7 +146,7 @@
 
     function showHint(type) {
       if (type === 'material') {
-        const msg = 'クランクアームの材質はSC360またはSC410を選択してください。SC360の場合、許容繰り返し曲げ応力は100 N/mm²、SC410の場合は117 N/mm²です。';
+        const msg = 'クランクアームの材質はSC360またはSC410を選択してください。SC360の場合、許容繰り返し曲げ応力は72 N/mm²、SC410の場合は117 N/mm²です。';
         alert(msg);
       } else if (type === 'b1') {
         const msg = '教科書 P.100 式（8.19）を参照してください。アーム幅b1は30～50mmの範囲で入力してください。';

@@ -17,7 +17,15 @@
   .font { font-family: 'Times New Roman', serif; }
   </style>
 </head>
-
+<body>
+  <nav class="menubar">
+    <div class="menu">
+      <button onclick="onFileOpen()">ファイル</button>
+    </div>
+    <div class="menu">
+      <button onclick="onMenuSelect()">メニュー</button>
+    </div>
+  </nav>
   <div class="panel">
     <div class="label">設計した値を入れてください</div>
  <div class="label">「ブレーキ輪の材質はFC250を使用」</div>
@@ -48,7 +56,12 @@
     <button class="btn" onclick="onBack()">戻る</button>
   </div>
   <script>
-    
+    function onFileOpen() {
+      alert('ファイルメニューが押されました');
+    }
+    function onMenuSelect() {
+      alert('メニューが押されました');
+    }
     function onDecide() {
        const tr0 = parseFloat(document.getElementById('tr0').value);
        const tr1 = parseFloat(document.getElementById('tr1').value);
@@ -131,8 +144,8 @@
         return;
       }
        
-      if (tr1 < 5) {
-        alert('ブレーキ輪のリムの厚さtr1が小さいです。鋳造品であるため肉厚を5㎜以上にしてください。');
+      if (tr1 < 10) {
+        alert('ブレーキ輪のリムの厚さtr1が小さいです。鋳造品であるため肉厚を10㎜以上にしてください。');
         return;
       }
       if (tr2>tr1) {
@@ -163,9 +176,9 @@
 
       
       // 値をlocalStorageに保存
-      localStorage.setItem('brake-tr1', tr1);
-      localStorage.setItem('brake-tr2', tr2);
-      localStorage.setItem('brake-rib', rib);
+      localStorage.setItem('brake_tr1', tr1);
+      localStorage.setItem('brake_tr2', tr2);
+      localStorage.setItem('brake_rib', rib);
 
       alert('値が保存されました。');
       window.location.href = 'Choice.html';
@@ -215,7 +228,7 @@ const T1str = localStorage.getItem('brake_T1');
       if(type === 'tr0') {
         alert('教科書 P.74,75を参照してください。ブレーキ張り側の張力T1は' + T1 + '[kN]、ブレーキゆるみ側の張力T2は' + T2 + '[kN]、ブレーキ輪の幅Bは' + B + '[mm]、制動力Q0は' + Q0 + '[kN]、ブレーキドラムの外径DBは' + DB + '[mm]で設計しています。許容曲げ応力は19[N/mm²]、許容ねじり応力は15[N/mm²]としています。');
       } else if(type === 'tr1') {
-        alert('計算で求めたリム厚さtr1が十分に小さければ、鋳造で製作することを考慮し肉厚を決定してください。5㎜以上にしてください。');
+        alert('計算で求めたリム厚さtr1が十分に小さければ、鋳造で製作することを考慮し肉厚を決定してください。10㎜以上にしてください。');
         } else if(type === 'tr2') {
         alert('tr1と同様に鋳造であることを考慮して設計してください。tr1より小さくなるようにしてください。');
         } else if(type === 'rib') {

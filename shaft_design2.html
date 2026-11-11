@@ -196,7 +196,7 @@
           return;
         }
 
-         const braketr1str = localStorage.getItem('brake-tr1');
+         const braketr1str = localStorage.getItem('brake_tr1');
         const tr1 = braketr1str !== null ? parseFloat(braketr1str) : NaN;
         if (isNaN(tr1)) {
           alert('ブレーキ輪のリム厚さが設定されていません。');
@@ -213,7 +213,7 @@
         }
 
         if (VG < VGanswer-10) {
-        alert('D歯車とブレーキを合わせた体積が小さいです。'+VGanswer+'計算をやり直してください');
+        alert('D歯車とブレーキを合わせた体積が小さいです。計算をやり直してください');
         return;
         }
 
@@ -225,7 +225,7 @@
         }
 
         if (VD < VDanswer-10) {
-        alert('ドラムとつめ車を合わせた体積が小さいです。'+VDanswer+'計算をやり直してください');
+        alert('ドラムとつめ車を合わせた体積が小さいです。計算をやり直してください');
         return;
         }
 
@@ -249,7 +249,7 @@
         }
 
         if (WD < WDanswer-10) {
-        alert('ドラムとつめ車を合わせた自重が小さいです。'+WDanswer+'計算をやり直してください');
+        alert('ドラムとつめ車を合わせた自重が小さいです。計算をやり直してください');
         return;
         }
 
@@ -355,7 +355,7 @@
         }
 
         if (WT < WTanswer-10) {
-        alert('軸にかかる力の合力が小さいです。' + WTanswer + '計算' + B3 + 'をやり直し' + θ1_deg + 'てください' + θ3 + '');
+        alert('軸にかかる力の合力が小さいです。計算をやり直してください');
         return;
         }
 
@@ -399,10 +399,7 @@ if (ds3answer0 <50 && ds3answer0 >= 48) {
   else if (ds3answer0 < 75 && ds3answer0 >= 70) 
   ds3answer = 75;
 
-        if (ds3 > ds3answer) {
-        alert('ドラム軸の直径が大きいです。計算をやり直してください');
-        return;
-        }
+      
 
          if (ds3 < ds3answer) {
         alert('ドラム軸の直径が小さいです。計算をやり直してください');
@@ -592,7 +589,7 @@ if (ds3answer0 <50 && ds3answer0 >= 48) {
         }
 
       if(type === 'VG') {
-        alert(' D歯車の体積は円盤として、ブレーキの体積は円筒として計算します。ブレーキの肉厚はリムの厚さで考えます。D歯車の歯先円直径は'+dKD+'[mm]、歯幅は'+gearb+'[mm]、ブレーキ輪の直径は'+DB+'[mm]、ブレーキ輪の幅は'+totalb+'[mm]、ブレーキ輪のリム厚さは'+tr1+'[mm]としています。');
+        alert(' D歯車の体積は円盤として、ブレーキの体積は円筒として計算します。ブレーキの肉厚はリムの厚さで考えます。D歯車の歯先円直径は'+dKD+'[mm]、歯幅は'+gearb+'[mm]、ブレーキ輪の直径は'+DB+'[mm]、ブレーキ輪の幅は'+B+'[mm]、ブレーキ輪のリム厚さは'+tr1+'[mm]としています。');
       } else if(type === 'VD') {
         alert('ドラムの体積、つめ車の体積は円筒として計算します。つめ車の肉厚は「歯の高さ＋リムの厚さ」で求めることが出来ます。フランジは円盤として計算します。ドラムの直径は'+Dd+'[mm]、肉厚は'+td+'[mm]、長さは'+l0+'[mm]、つめ車の歯先円直径は'+DR+'[mm]、歯幅は'+totalb+'[mm]、歯の高さは'+h+'[mm]、リムの厚さは'+clawT+'[mm]としています。');
       } else if(type === 'FN') {

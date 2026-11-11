@@ -66,6 +66,7 @@
         <option value="">-- 選択してください --</option>
         <option value="50">50</option>
         <option value="55">55</option>
+        <option value="60">60</option>
         <option value="65">65</option>
         <option value="70">70</option>
         <option value="75">75</option>
@@ -371,10 +372,7 @@
         return;
         }
 
-        if (b > l0+2*tf+totalb+gearb/2+20) {
-        alert('ドラム軸のスパンのBC間の長さが大きいです。計算をやり直してください');
-        return;
-        }
+       
 
          if (b < l0+tf+totalb+gearb/2) {
         alert('ドラム軸のスパンのBC間の長さが小さいです。計算をやり直してください');
@@ -392,7 +390,9 @@ if (ds3answer0 <50 && ds3answer0 >= 48) {
   ds3answer = 50;
 } else if (ds3answer0 < 55 && ds3answer0 >= 50) 
   ds3answer = 55;
- else if (ds3answer0 < 65 && ds3answer0 >= 55) 
+  else if (ds3answer0 < 60 && ds3answer0 >= 55) 
+  ds3answer = 60;
+ else if (ds3answer0 < 65 && ds3answer0 >= 60) 
   ds3answer = 65;
  else if (ds3answer0 < 70 && ds3answer0 >= 65) 
   ds3answer = 70;

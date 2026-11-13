@@ -44,6 +44,11 @@
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('DB')">ヒント</button>
     </div>
     <div class="input-row">
+      <label for="B">ブレーキ輪の幅<span class="font">B</span>[mm]</label>
+      <input id="B" type="number" />
+      <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('B')">ヒント</button>
+    </div>
+    <div class="input-row">
       <label for="Q0">制動力<span class="font">Q0</span>[kN]</label>
       <input id="Q0" type="number" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('Q0')">ヒント</button>
@@ -85,13 +90,14 @@
     }
     function onDecide() {
        const DB = parseFloat(document.getElementById('DB').value);
+       const B = parseFloat(document.getElementById('B').value);
       const Q0 = parseFloat(document.getElementById('Q0').value);
       const T1 = parseFloat(document.getElementById('T1').value);
       const T2 = parseFloat(document.getElementById('T2').value);
       const b = parseFloat(document.getElementById('b').value);
       const Thick = parseFloat(document.getElementById('Thick').value);
       const p1 = parseFloat(document.getElementById('p1').value);
-      if (isNaN(DB) || isNaN(Q0) || isNaN(T1) || isNaN(T2) || isNaN(b) || isNaN(Thick) || isNaN(p1)) {
+      if (isNaN(DB) || isNaN(B) || isNaN(Q0) || isNaN(T1) || isNaN(T2) || isNaN(b) || isNaN(Thick) || isNaN(p1)) {
         alert('すべての値を入力してください');
         return;
       }
@@ -213,20 +219,7 @@ if (b <= 63 && b >= 25) {
         return;
       }
 
-      let B = null;
-if (DB==250) {
-  B = 50;
-} else if (DB==300) {
-  B = 60;
-} else if (DB==350) {
-  B = 70;
-} else if (DB==400) {
-  B = 80;
-}else if (DB==450) {
-  B = 100;
-}else if (DB==500) {
-  B = 120;
-}
+     
 
 
 
@@ -282,8 +275,10 @@ if (DB==250) {
 
       if(type === 'DB') {
         alert('教科書 P.47 表7.1 を参照してください。バランスを考えボルト穴ピッチ円直径以上かつD歯車の歯先円直径以下の範囲で選択してください。ドラムのボルト穴ピッチ円直径は'+Db+'[mm]、D歯車の歯先円直径は'+dKD+'[mm]としています。');
+      } else if(type === 'B') {
+        alert('教科書 P.47 表（7・1）を参考に設計してください。 ブレーキ帯が入らななどの問題が生じた際はこの値を調整してください。');
       } else if(type === 'Q0') {
-        alert('教科書 P.49 式（7・1）を参照してください。 巻き上げ荷重は'+W+'[kN]、ドラム直径は'+Dd+'[mm]としています。');
+        alert('教科書 P.49  式（7・1）を参照してください。 巻き上げ荷重は'+W+'[kN]、ドラム直径は'+Dd+'[mm]としています。');
       } else if(type === 'T1') {
         alert('教科書 P.49 式（7・2）表7.4、7.5を参照してください。今回ブレーキライニングはウーブン系、ロール形のものを使用しているため摩擦係数をμ=0.43とし、帯の巻きかけ中心角は240°とします。');
       } else if(type === 'T2') {

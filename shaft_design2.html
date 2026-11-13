@@ -60,19 +60,13 @@
       <input id="b" type="number" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('b')">ヒント</button>
     </div>
-    <div class="input-row">
+     <div class="input-row">
       <label for="ds3">ドラム軸径<span class="font">ds3</span>[mm]</label>
-      <select id="ds3">
-        <option value="">-- 選択してください --</option>
-        <option value="50">50</option>
-        <option value="55">55</option>
-        <option value="60">60</option>
-        <option value="65">65</option>
-        <option value="70">70</option>
-        <option value="75">75</option>
-      </select>
+      <input id="ds3" type="number" />
       <button type="button" class="btn" style="margin-left:8px;" onclick="showHint('ds3')">ヒント</button>
     </div>
+    
+    
     
     <button class="btn" onclick="onDecide()">保存</button>
     <button class="btn" onclick="onBack()">戻る</button>
@@ -386,9 +380,27 @@
         const ds3answer0=(32*MA/Math.PI*194)**(1/3);
 
         let ds3answer = null;
-if (ds3answer0 <50 && ds3answer0 >= 48) {
+if (ds3answer0 <30 && ds3answer0 >= 28) 
+  ds3answer = 30;
+else if (ds3answer0 < 32 && ds3answer0 >= 30) 
+  ds3answer = 32;
+else if (ds3answer0 < 35 && ds3answer0 >= 32) 
+  ds3answer = 35;
+else if (ds3answer0 < 36 && ds3answer0 >= 35) 
+  ds3answer = 36;
+else if (ds3answer0 < 38 && ds3answer0 >= 36) 
+  ds3answer = 38;
+else if (ds3answer0 <40 && ds3answer0 >= 38) 
+  ds3answer = 40;
+else if (ds3answer0 < 42 && ds3answer0 >= 40) 
+  ds3answer = 42;
+else if (ds3answer0 < 45 && ds3answer0 >= 42) 
+  ds3answer = 45;
+   else if (ds3answer0 < 48 && ds3answer0 >= 45) 
+  ds3answer = 48;
+ else if (ds3answer0 < 50 && ds3answer0 >= 48) 
   ds3answer = 50;
-} else if (ds3answer0 < 55 && ds3answer0 >= 50) 
+ else if (ds3answer0 < 55 && ds3answer0 >= 50) 
   ds3answer = 55;
   else if (ds3answer0 < 60 && ds3answer0 >= 55) 
   ds3answer = 60;
@@ -405,6 +417,12 @@ if (ds3answer0 <50 && ds3answer0 >= 48) {
         alert('ドラム軸の直径が小さいです。計算をやり直してください');
         return;
         }
+
+          if (ds3 < 29) {
+        alert('ドラム軸の直径が小さいです。計算をやり直してください');
+        return;
+        }
+
 
 
 
@@ -605,7 +623,7 @@ if (ds3answer0 <50 && ds3answer0 >= 48) {
       } else if(type === 'b') {
         alert('教科書 P.97 図8.11、P.99 図8.14 を参照してください。ドラムの長さ+つめ側のフランジ厚さ+ドラム歯車側のフランジ厚さ+つめ車の幅+D歯車の歯幅の半分+余白10mm前後でbの値を仮定してください。ドラムの長さは'+l0+'[mm]、つめ側のフランジの厚さは'+tf+'[mm]、つめ車の幅は'+totalb+'[mm]、D歯車の歯幅は'+gearb+'[mm]としています。');
       } else if(type === 'ds3') {
-        alert('教科書 P.95 式（8・15）（8・16） P.96 式（8・17）を参照してください。ドラム軸の長さlはa+bで求めることが出来ます。許容曲げ応力はFC250の値で194[N/mm^2]としています。');
+        alert('教科書 P.95 式（8・15）（8・16） P.96 式（8・17）を参照してください。P.86の（8・2）表から選定してください。ドラム軸の長さlはa+bで求めることが出来ます。許容曲げ応力はFC250の値で194[N/mm^2]としています。');
         
       }
     }
